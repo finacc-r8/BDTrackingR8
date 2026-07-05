@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BD Tracking System R8 - Enterprise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+    
+    <style>
+        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: #1a1a24; -webkit-font-smoothing: antialiased; }
+        .apple-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03); border: 1px solid rgba(255, 255, 255, 0.7); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .apple-input { background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; font-size: 0.95rem; width: 100%; transition: all 0.2s ease; }
+        .apple-input:focus { background: #ffffff; border-color: #1e3c72; box-shadow: 0 0 0 4px rgba(30, 60, 114, 0.08); outline: none; }
+        .apple-btn-primary { background: #1e3c72; color: #ffffff; border-radius: 12px; padding: 12px 28px; font-weight: 500; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(30, 60, 114, 0.15); }
+        .apple-btn-primary:hover { background: #162c5b; transform: translateY(-1px); }
+        .apple-btn-secondary { background: transparent; color: #1e3c72; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 20px; font-weight: 500; transition: all 0.2s ease; }
+        .apple-btn-secondary:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-edit { background: #f1f5f9; color: #3b82f6; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
+        .btn-edit:hover { background: #e0e7ff; color: #1d4ed8; }
+        .apple-table th { border-bottom: 2px solid #f1f5f9; font-weight: 600; color: #64748b; font-size: 0.85rem; padding-bottom: 16px; text-transform: uppercase; }
+        .apple-table tr { border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+        .apple-table tr:hover { background: #f8fafc; }
+        .apple-table td { padding: 16px 8px; font-size: 0.95rem; color: #334155; vertical-align: middle; }
+        .animate-view { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-12 border-b border-gray-200/60 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0f172a] mb-2">ระบบติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD)</h1>
+                <p class="text-[15px] text-gray-500 font-light tracking-wide">ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="displayUser" class="text-sm font-medium text-gray-600 bg-gray-100 px-4 py-2 rounded-full">กำลังตรวจสอบ...</span>
+                <button onclick="handleLogout()" class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">ออกจากระบบ</button>
+            </div>
+        </div>
+
+        <div id="dashboardView" class="hidden animate-view">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="apple-card p-8 border-l-4 border-l-gray-300">
+                    <p class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">จำนวนรายการทั้งหมด</p>
+                    <p class="text-4xl font-bold text-[#0f172a]" id="sum-count">0</p>
+                </div>
+                <div class="apple-card p-8 border-l-4 border-l-[#1e3c72]">
+                    <p class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">ยอดเงินยืมรองจ่ายรวม (บาท)</p>
+                    <p class="text-4xl font-bold text-[#1e3c72]" id="sum-amount">0.00</p>
+                </div>
+            </div>
+
+            <div class="apple-card p-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <h2 class="text-xl font-semibold text-[#0f172a]">ประวัติการทำรายการ</h2>
+                    <button onclick="openCreateForm()" class="apple-btn-primary">+ สร้างรายการใหม่</button>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                    
+                    <div class="relative w-full md:w-2/5">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        </div>
+                        <input type="text" id="searchInput" class="apple-input pl-10 py-2.5 bg-white shadow-sm" placeholder="ค้นหา เลข BD, ชื่อผู้ขอยืม, รายการ..." onkeyup="applyFilters()">
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        
+                        <div class="relative">
+                            <select id="statusFilter" class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm appearance-none cursor-pointer text-sm font-medium text-gray-700" onchange="applyFilters()">
+                                <option value="all">สถานะทั้งหมด</option>
+                                <option value="pending">🟢 กำลังดำเนินการ</option>
+                                <option value="completed">⚪️ ปิดรายการสมบูรณ์</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <select id="yearFilter" class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm appearance-none cursor-pointer text-sm font-bold text-[#1e3c72]" onchange="applyFilters()">
+                                <option value="2026">ปี 2026</option>
+                                <option value="2025">ปี 2025</option>
+                                <option value="all">ดูทุกปี</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#1e3c72]">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse apple-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th class="pl-4">เลขที่ BD</th>
+                                <th>ชื่อผู้ขอยืม</th>
+                                <th>รายการ</th>
+                                <th class="text-right">จำนวนเงิน (บาท)</th>
+                                <th class="text-center">สถานะ</th>
+                                <th class="text-center pr-4">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr><td colspan="6" class="text-center py-16 text-gray-400 font-light">กำลังโหลดข้อมูล...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="formView" class="hidden animate-view">
+            <div class="mb-8">
+                <button onclick="switchView('dashboard')" class="apple-btn-secondary flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    กลับหน้าหลัก
+                </button>
+            </div>
+
+            <div class="apple-card p-8 sm:p-12">
+                <h2 id="formTitle" class="text-2xl font-bold mb-10 text-[#0f172a] border-b border-gray-100 pb-4">
+                    กรอกข้อมูลใบยืมเหลือง (BD)
+                </h2>
+
+                <form id="bdForm" class="space-y-8" onsubmit="event.preventDefault(); handleFormSubmit();">
+                    <input type="hidden" id="currentRecordId" value="">
+                    <input type="hidden" id="rowVersion" value="">
+
+                    <div id="step1-container" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง BD <span class="text-red-500">*</span></label>
+                                <input type="text" id="bdNumber" class="apple-input" onblur="checkDuplicateBD(this)">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เลขที่ MM / ศล.ภ. / คำสั่ง <span class="text-red-500">*</span></label>
+                                <input type="text" id="mmNumber" class="apple-input" required>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">ชื่อผู้ขอยืม <span class="text-red-500">*</span></label>
+                                <input type="text" id="borrowerName" class="apple-input" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            <div class="flex flex-col md:col-span-2">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">รายการ <span class="text-red-500">*</span></label>
+                                <input type="text" id="itemName" class="apple-input" required>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
+                                <input type="text" id="amount" class="apple-input font-bold text-[#1e3c72]" oninput="formatCurrencyInput(this)" required placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step2-container" class="hidden bg-gray-50/50 p-6 rounded-xl border border-gray-100 transition-all duration-300">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">วันที่ภาคฯ ได้รับเงินจากศูนย์</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                    </div>
+                                    <input type="text" id="receiveDate" class="flex h-11 w-full rounded-md border border-gray-200 bg-white pl-10 pr-3 py-2 text-sm text-gray-800 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm" placeholder="เลือกวันที่..." readonly>
+                                </div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">วันที่ส่งเงินให้ผู้ขอยืม</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                    </div>
+                                    <input type="text" id="sendDate" class="flex h-11 w-full rounded-md border border-gray-200 bg-white pl-10 pr-3 py-2 text-sm text-gray-800 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm" placeholder="เลือกวันที่..." readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step3-container" class="hidden space-y-8 transition-all duration-300">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เงินที่ใช้ไป (บาท)</label>
+                                <input type="text" id="usedAmount" class="apple-input font-bold text-[#1e3c72] transition-colors" oninput="formatCurrencyInput(this)">
+                                <p id="usedAmountError" class="text-red-500 text-xs mt-1.5 font-medium hidden">⚠️ ยอดเงินที่ใช้ไปต้องไม่เกินจำนวนเงินตั้งต้น</p>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เงินที่เหลือ (บาท)</label>
+                                <input type="text" id="balanceAmount" class="apple-input font-bold text-[#1e3c72] bg-gray-100/50" readonly>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เลขที่บันทึกนำส่งเงิน</label>
+                                <input type="text" id="docReturnNumber" class="apple-input">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">เลขที่งบใบสำคัญ (PP)</label>
+                                <input type="text" id="ppNumber" class="apple-input">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[13px] font-semibold text-gray-600 mb-2 uppercase tracking-wide">วันที่ส่งเอกสารใช้คืนเงิน</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                    </div>
+                                    <input type="text" id="returnDate" class="flex h-11 w-full rounded-md border border-gray-200 bg-white pl-10 pr-3 py-2 text-sm text-gray-800 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm" placeholder="เลือกวันที่..." readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 mt-4 flex justify-end border-t border-gray-100">
+                        <button type="submit" id="submitBtn" class="apple-btn-primary w-full sm:w-auto shadow-sm">
+                            บันทึกข้อมูล
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. ตั้งค่าการเชื่อมต่อ (กรุณาใส่ API Key ของคุณ)
+        const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUserContext = ''; 
+
+        // 2. ฟังก์ชันตรวจสอบการล็อกอิน
+        async function checkAuth() {
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            
+            if (!user) {
+                window.location.replace('login.html');
+                return;
+            }
+
+            // เมื่อตรวจผ่าน ให้แสดงหน้า Dashboard
+            document.getElementById('dashboardView').classList.remove('hidden');
+
+            currentUserContext = user.email.split('@')[0];
+            document.getElementById('displayUser').innerText = `ผู้ใช้งาน: ${currentUserContext}`;
+            
+            fetchDashboardData();
+        }
+
+        // 3. ฟังก์ชันออกจากระบบ
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.replace('login.html');
+        }
+
+        let allBdData = []; 
+
+        // 4. ฟังก์ชันดึงข้อมูลจากฐานข้อมูล (เรียกใช้ตอนเปิดหน้าเว็บหรือบันทึกข้อมูลเสร็จ)
+        async function fetchDashboardData() {
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" class="text-center py-16 text-gray-400">กำลังดึงข้อมูล...</td></tr>`;
+            
+            const { data, error } = await supabaseClient
+                .from('bd_data')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" class="text-center py-16 text-red-500">ข้อผิดพลาด: ${error.message}</td></tr>`;
+                return;
+            }
+
+            // เก็บข้อมูลดิบไว้ในตัวแปรกลาง และสั่งให้ฟังก์ชันกรองข้อมูลทำงาน
+            allBdData = data || []; 
+            applyFilters(); 
+        }
+
+        // 5. ฟังก์ชันประมวลผลการกรองและค้นหา (ทำงานทันทีเมื่อมีการพิมพ์หรือเปลี่ยนตัวเลือก)
+        function applyFilters() {
+            // ดึงค่าจากแถบเครื่องมือ
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const yearFilter = document.getElementById('yearFilter').value;
+
+            // กรองข้อมูลทีละเงื่อนไข
+            const filteredData = allBdData.filter(item => {
+                // เงื่อนไขที่ 1: การค้นหาจากข้อความ (เลข BD, ชื่อ, หรือรายการ)
+                const matchSearch = !searchText || 
+                    (item.bd_number && item.bd_number.toLowerCase().includes(searchText)) ||
+                    (item.borrower_name && item.borrower_name.toLowerCase().includes(searchText)) ||
+                    (item.item_name && item.item_name.toLowerCase().includes(searchText));
+
+                // เงื่อนไขที่ 2: การกรองสถานะ (เช็คว่าปิดรายการสมบูรณ์หรือยัง)
+                const isCompleted = item.doc_return_number && item.pp_number && item.return_date;
+                const itemStatus = isCompleted ? 'completed' : 'pending';
+                const matchStatus = statusFilter === 'all' || itemStatus === statusFilter;
+
+                // เงื่อนไขที่ 3: การกรองปี (ดึงปี ค.ศ. จากวันที่สร้างรายการ)
+                const itemYear = item.created_at ? item.created_at.substring(0, 4) : "";
+                const matchYear = yearFilter === 'all' || itemYear === yearFilter;
+
+                // ข้อมูลจะผ่านการกรองก็ต่อเมื่อตรงตามเงื่อนไขทั้ง 3 ข้อ
+                return matchSearch && matchStatus && matchYear;
+            });
+
+            // ส่งข้อมูลที่ผ่านการกรองแล้วไปสร้างตาราง
+            renderTable(filteredData);
+        }
+
+        // 6. ฟังก์ชันสร้างตารางและคำนวณยอดรวม (Reusable Table Renderer)
+        function renderTable(dataToRender) {
+            const tbody = document.getElementById('tableBody');
+            let totalAmount = 0;
+            tbody.innerHTML = ''; 
+
+            if (dataToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-16 text-gray-400">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา</td></tr>`;
+                document.getElementById('sum-count').innerText = "0";
+                document.getElementById('sum-amount').innerText = "0.00";
+                return;
+            }
+
+            dataToRender.forEach(item => {
+                totalAmount += parseFloat(item.amount || 0);
+                
+                // ตรวจสอบสถานะและสร้างป้ายกำกับ (Badge)
+                let statusBadge = '';
+                const isCompleted = item.doc_return_number && item.pp_number && item.return_date;
+                
+                // หากข้อมูลครบถ้วนถือว่าปิดรายการสมบูรณ์ หากไม่ใช่ให้ใช้สถานะเดิมจากฐานข้อมูล
+                if (isCompleted) {
+                    statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
+                } else {
+                    switch(item.status) {
+                        case 'รอเงินจากศูนย์': statusBadge = `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`; break;
+                        case 'รอจ่ายเงิน': statusBadge = `<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">รอจ่ายเงิน</span>`; break;
+                        case 'รอเคลียร์เอกสาร': statusBadge = `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`; break;
+                        case 'เคลียร์เรียบร้อย': statusBadge = `<span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold">เคลียร์เรียบร้อย</span>`; break;
+                        default: statusBadge = `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">${item.status || 'กำลังดำเนินการ'}</span>`;
+                    }
+                }
+                    
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="pl-4 font-medium text-gray-900">${item.bd_number}</td>
+                    <td>${item.borrower_name}</td>
+                    <td class="text-gray-500">${item.item_name}</td>
+                    <td class="text-right font-medium">${parseFloat(item.amount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                    <td class="text-center">${statusBadge}</td>
+                    <td class="text-center pr-4">
+                        <button onclick="editRecord('${item.id}')" class="btn-edit">แก้ไข</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // อัปเดตตัวเลขสรุปผลด้านบนตาราง (สรุปผลเฉพาะรายการที่ถูกกรอง)
+            document.getElementById('sum-count').innerText = dataToRender.length;
+            document.getElementById('sum-amount').innerText = totalAmount.toLocaleString('th-TH', {minimumFractionDigits: 2});
+        }
+
+        // ==========================================
+        // ระบบจัดการฟอร์ม (Form Logic & SPA)
+        // ==========================================
+        
+        function switchView(viewName) {
+            if (viewName === 'form') {
+                document.getElementById('dashboardView').classList.add('hidden');
+                document.getElementById('formView').classList.remove('hidden');
+            } else {
+                document.getElementById('formView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                fetchDashboardData();
+            }
+        }
+
+        function openCreateForm() {
+            document.getElementById('bdForm').reset();
+            document.getElementById('currentRecordId').value = '';
+            document.getElementById('formTitle').innerText = 'สร้างข้อมูลใบยืมเหลือง (BD) ใหม่';
+            document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลใหม่';
+            
+            if (document.getElementById('receiveDate')._flatpickr) {
+                document.getElementById('receiveDate')._flatpickr.clear();
+                document.getElementById('sendDate')._flatpickr.clear();
+                document.getElementById('returnDate')._flatpickr.clear();
+            }
+            
+            document.getElementById('step2-container').classList.add('hidden');
+            document.getElementById('step3-container').classList.add('hidden');
+            
+            switchView('form');
+        }
+
+        // ฟังก์ชันสำหรับจัดฟอร์แมตคอมม่าหลักพันตอนผู้ใช้งานกำลังพิมพ์
+        function formatCurrencyInput(input) {
+            // 1. ดึงค่าที่พิมพ์ออกมา ลบทุกอย่างที่ไม่ใช่ตัวเลขและจุดทศนิยมทิ้ง
+            let value = input.value.replace(/[^0-9.]/g, '');
+            
+            // ป้องกันไม่ให้ใส่จุดทศนิยมซ้ำกันมากกว่า 1 จุด
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // 2. แยกส่วนจำนวนเต็มกับทศนิยมเพื่อใส่คอมม่า
+            let integerPart = parts[0];
+            let decimalPart = parts[1] !== undefined ? '.' + parts[1] : '';
+
+            // ใส่คอมม่าเฉพาะส่วนจำนวนเต็ม (ถ้ามีตัวเลข)
+            if (integerPart) {
+                integerPart = parseInt(integerPart, 10).toLocaleString('en-US');
+            }
+
+            // 3. ส่งค่าที่ใส่คอมม่าแล้วกลับไปแสดงในช่องกรอก
+            input.value = integerPart + decimalPart;
+
+            // 4. สั่งให้คำนวณเงินคงเหลือใหม่ทันที
+            calculateBalance();
+        }
+
+        // ฟังก์ชันช่วยเหลือ: แปลงข้อความที่มีคอมม่าให้กลับเป็นตัวเลขบริสุทธิ์ก่อนส่งไปฐานข้อมูล
+        function parseCurrency(value) {
+            if (!value) return 0;
+            // ลบคอมม่าออกจากข้อความทั้งหมด แล้วแปลงเป็น Float
+            const cleanValue = value.toString().replace(/,/g, '');
+            const parsed = parseFloat(cleanValue);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+        
+        function calculateBalance() {
+            const amount = parseCurrency(document.getElementById('amount').value);
+            const usedAmount = parseCurrency(document.getElementById('usedAmount').value); 
+            const balance = amount - usedAmount;
+            
+            const usedAmountInput = document.getElementById('usedAmount');
+            const errorText = document.getElementById('usedAmountError');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // --- ตรวจสอบเงื่อนไข ---
+            if (usedAmount > amount) {
+                errorText.classList.remove('hidden');
+                usedAmountInput.classList.add('border-red-500', 'focus:ring-red-500', 'bg-red-50');
+                
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                errorText.classList.add('hidden');
+                usedAmountInput.classList.remove('border-red-500', 'focus:ring-red-500', 'bg-red-50');
+                
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            document.getElementById('balanceAmount').value = balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        async function checkDuplicateBD(inputElement) {
+            const bdValue = inputElement.value.trim();
+            if (!bdValue) return; 
+
+            const currentRecordId = document.getElementById('currentRecordId').value;
+
+            try {
+                let query = supabaseClient
+                    .from('bd_data')
+                    .select('id')
+                    .eq('bd_number', bdValue);
+
+                if (currentRecordId) {
+                    query = query.neq('id', currentRecordId);
+                }
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'พบข้อมูลซ้ำซ้อน',
+                        text: `เลขที่ใบยืมเหลือง BD "${bdValue}" มีการใช้งานไปแล้ว กรุณาระบุเลขอื่น`,
+                        confirmButtonText: 'รับทราบ',
+                        confirmButtonColor: '#eab308', 
+                        customClass: { popup: 'rounded-[20px]' }
+                    });
+                    
+                    inputElement.value = '';
+                    setTimeout(() => inputElement.focus(), 100); 
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการตรวจสอบ BD:", error);
+            }
+        }
+
+        async function handleFormSubmit() {
+            const submitBtn = document.getElementById('submitBtn');
+            const currentRecordId = document.getElementById('currentRecordId').value;
+            const bdNumberInput = document.getElementById('bdNumber').value.trim();
+
+            if (!bdNumberInput) {
+                Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาระบุเลขที่ใบยืมเหลือง BD' });
+                return;
+            }
+
+            const isEditMode = currentRecordId !== "";
+            const actionText = isEditMode ? 'กำลังอัปเดตข้อมูล...' : 'กำลังบันทึกข้อมูลใหม่...';
+
+            // 1. จัดเตรียมข้อมูล (Payload) และลบคอมม่าออกจากตัวเลข
+            const payload = {
+                bd_number: bdNumberInput,
+                mm_number: document.getElementById('mmNumber').value.trim(),
+                borrower_name: document.getElementById('borrowerName').value.trim(),
+                item_name: document.getElementById('itemName').value.trim(),
+                amount: parseCurrency(document.getElementById('amount').value),
+                receive_date: document.getElementById('receiveDate').value || null,
+                send_date: document.getElementById('sendDate').value || null,
+                used_amount: parseCurrency(document.getElementById('usedAmount').value),
+                balance_amount: parseCurrency(document.getElementById('balanceAmount').value),
+                doc_return_number: document.getElementById('docReturnNumber').value.trim() || null,
+                pp_number: document.getElementById('ppNumber').value.trim() || null,
+                return_date: document.getElementById('returnDate').value || null
+            };
+
+            // 🚨 ปราการด่านสุดท้าย: ดักจับเงินที่ใช้ไปเกินกว่ายอดตั้งต้น 
+            if (payload.used_amount > payload.amount) {
+                Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'ข้อมูลไม่ถูกต้อง', 
+                    text: 'ไม่สามารถบันทึกได้ เนื่องจากเงินที่ใช้ไปเกินกว่าจำนวนเงินตั้งต้น',
+                    confirmButtonColor: '#eab308',
+                    customClass: { popup: 'rounded-[20px]' }
+                });
+                return; // หยุดการทำงานทันที
+            }
+
+            // เปลี่ยนสถานะปุ่มตอนกำลังโหลด (Loading State)
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${actionText}`;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            try {
+                if (isEditMode) {
+                    const { error: updateErr } = await supabaseClient
+                        .from('bd_data')
+                        .update(payload)
+                        .eq('id', currentRecordId);
+                        
+                    if (updateErr) throw updateErr;
+                    
+                    const isCompleted = payload.doc_return_number && payload.pp_number && payload.return_date;
+                    var successMessage = isCompleted 
+                        ? "บันทึกและปิดรายการสมบูรณ์เรียบร้อยแล้ว" 
+                        : "อัปเดตข้อมูลเรียบร้อยแล้ว";
+                        
+                } else {
+                    payload.created_by = currentUserContext; 
+                    const { error: insertErr } = await supabaseClient.from('bd_data').insert([payload]);
+                    
+                    if (insertErr) {
+                        if (insertErr.code === '23505') {
+                            throw new Error(`พบเลขที่ใบยืมเหลือง BD '${bdNumberInput}' ซ้ำซ้อนในระบบ`);
+                        }
+                        throw insertErr;
+                    }
+                    var successMessage = "บันทึกข้อมูลรายการใหม่เรียบร้อยแล้ว";
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ',
+                    text: successMessage,
+                    confirmButtonText: 'รับทราบ',
+                    confirmButtonColor: '#1e3c72',
+                    customClass: { popup: 'rounded-[20px]' }
+                }).then(() => {
+                    document.getElementById('bdForm').reset();
+                    switchView('dashboard');
+                });
+
+            } catch (error) {
+                Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'ไม่สามารถดำเนินการได้', 
+                    text: error.message || error.toString(),
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#f59e0b',
+                    customClass: { popup: 'rounded-[20px]' }
+                });
+            } finally {
+                // คืนค่าสถานะปุ่มกลับมาเหมือนเดิม
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = isEditMode ? 'บันทึกการแก้ไข' : 'บันทึกข้อมูลใหม่';
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }
+
+        async function editRecord(id) {
+            // 1. แสดงหน้าต่างโหลดข้อมูลระหว่างรอฐานข้อมูลตอบกลับ
+            Swal.fire({
+                title: 'กำลังดึงข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); },
+                customClass: { popup: 'rounded-[20px]' }
+            });
+
+            try {
+                // 2. ขอข้อมูลรายการนี้จาก Supabase (.single() คือระบุว่าเอามาแค่แถวเดียว)
+                const { data, error } = await supabaseClient
+                    .from('bd_data')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                // 3. นำข้อมูลที่ได้ มาเติมลงในช่องฟอร์มต่างๆ
+                document.getElementById('currentRecordId').value = data.id;
+                document.getElementById('bdNumber').value = data.bd_number || '';
+                document.getElementById('mmNumber').value = data.mm_number || '';
+                document.getElementById('borrowerName').value = data.borrower_name || '';
+                document.getElementById('itemName').value = data.item_name || '';
+                
+                // --- จัดการฟอร์แมตตัวเลขให้มีคอมม่า (ดักจับค่าว่างให้เป็น 0) ---
+                const rawAmount = parseFloat(data.amount) || 0;
+                document.getElementById('amount').value = rawAmount.toLocaleString('en-US');
+
+                // เช็คว่ามีค่า used_amount ไหม ถ้ามีค่อยแปลง ถ้าไม่มีปล่อยว่าง
+                if (data.used_amount !== null && data.used_amount !== undefined) {
+                    const rawUsedAmount = parseFloat(data.used_amount) || 0;
+                    document.getElementById('usedAmount').value = rawUsedAmount.toLocaleString('en-US');
+                } else {
+                    document.getElementById('usedAmount').value = '';
+                }
+
+                if (data.balance_amount !== null && data.balance_amount !== undefined) {
+                    const rawBalance = parseFloat(data.balance_amount) || 0;
+                    document.getElementById('balanceAmount').value = rawBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                } else {
+                    document.getElementById('balanceAmount').value = '';
+                }
+                
+                // --- ข้อมูลวันที่ (ใช้คำสั่งของ Flatpickr เพื่อบังคับอัปเดตหน้าตาปฏิทิน) ---
+                const fpReceive = document.getElementById('receiveDate')._flatpickr;
+                const fpSend = document.getElementById('sendDate')._flatpickr;
+                const fpReturn = document.getElementById('returnDate')._flatpickr;
+
+                // ถ้ามีข้อมูลในฐานข้อมูลให้ setDate ถ้าไม่มีให้ clear ทิ้ง
+                if (fpReceive) {
+                    data.receive_date ? fpReceive.setDate(data.receive_date) : fpReceive.clear();
+                    data.send_date ? fpSend.setDate(data.send_date) : fpSend.clear();
+                    data.return_date ? fpReturn.setDate(data.return_date) : fpReturn.clear();
+                }
+                
+                // ข้อมูลช่องอื่นๆ ใน Step 3
+                document.getElementById('docReturnNumber').value = data.doc_return_number || '';
+                document.getElementById('ppNumber').value = data.pp_number || '';
+
+                // 4. ปรับหน้าตาฟอร์มให้กลายเป็น "โหมดแก้ไข"
+                document.getElementById('formTitle').innerText = 'แก้ไขข้อมูลใบยืมเหลือง (BD)';
+                document.getElementById('submitBtn').innerText = 'บันทึกการแก้ไข';
+                
+                // โชว์ Step 2 เสมอเมื่ออยู่ในโหมดแก้ไข
+                document.getElementById('step2-container').classList.remove('hidden');
+                
+                // โลจิก (Logic) เดิมของคุณ: ถ้ามีวันที่ส่งเงินให้ผู้ขอยืมแล้ว ค่อยโชว์ Step 3
+                if (data.send_date) {
+                    document.getElementById('step3-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('step3-container').classList.add('hidden');
+                }
+
+                // 5. ปิดหน้าต่างโหลด และสลับหน้าจอไปที่ฟอร์ม
+                Swal.close();
+                switchView('form');
+
+            } catch (error) {
+                // กรณีเกิดข้อผิดพลาด
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'ผิดพลาด', 
+                    text: 'ไม่สามารถดึงข้อมูลได้: ' + error.message,
+                    confirmButtonColor: '#1e3c72',
+                    customClass: { popup: 'rounded-[20px]' }
+                });
+            }
+        }
+
+        function initDatePickers() {
+            const config = {
+                locale: "th",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j F Y",
+                disableMobile: "true"
+            };
+
+            flatpickr("#receiveDate", config);
+            flatpickr("#sendDate", config);
+            flatpickr("#returnDate", config);
+        }
+
+        // เริ่มทำงานเมื่อเปิดหน้าเว็บ
+        window.onload = () => {
+            checkAuth();
+            initDatePickers();
+        };
+    </script>
+</body>
+</html>
