@@ -33,7 +33,7 @@
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
 
-    <div class="max-w-6xl mx-auto">
+    <div id="mainContainer" class="max-w-6xl mx-auto hidden">
         <div class="mb-12 border-b border-gray-200/60 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
                 <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0f172a] mb-2">ระบบติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD)</h1>
@@ -64,7 +64,6 @@
                 </div>
                 
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-                    
                     <div class="relative w-full md:w-2/5">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -73,7 +72,6 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        
                         <div class="relative">
                             <select id="statusFilter" class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm appearance-none cursor-pointer text-sm font-medium text-gray-700" onchange="applyFilters()">
                                 <option value="all">สถานะทั้งหมด</option>
@@ -231,23 +229,24 @@
     </div>
 
     <script>
-        // 1. ตั้งค่าการเชื่อมต่อ (กรุณาใส่ API Key ของคุณ)
         const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let currentUserContext = ''; 
 
-        // 2. ฟังก์ชันตรวจสอบการล็อกอิน
+        // 🌟 แก้ไขจุดที่ 2: ปรับปรุงฟังก์ชันตรวจสอบสิทธิ์ให้เปิดการแสดงผลเมื่อล็อกอินสำเร็จแล้วเท่านั้น
         async function checkAuth() {
             const { data: { user }, error } = await supabaseClient.auth.getUser();
             
             if (!user) {
+                // หากยังไม่ได้ล็อกอิน ให้ดีดไปหน้าล็อกอินทันทีโดยไม่มีอาการแว็บของข้อมูลเก่า
                 window.location.replace('login.html');
                 return;
             }
 
-            // เมื่อตรวจผ่าน ให้แสดงหน้า Dashboard
+            // เมื่อตรวจสอบสิทธิ์ผ่าน (Authenticated) แล้ว จึงค่อยสั่งให้แสดง Container หลัก
+            document.getElementById('mainContainer').classList.remove('hidden');
             document.getElementById('dashboardView').classList.remove('hidden');
 
             currentUserContext = user.email.split('@')[0];
@@ -256,7 +255,6 @@
             fetchDashboardData();
         }
 
-        // 3. ฟังก์ชันออกจากระบบ
         async function handleLogout() {
             await supabaseClient.auth.signOut();
             window.location.replace('login.html');
@@ -264,7 +262,6 @@
 
         let allBdData = []; 
 
-        // 4. ฟังก์ชันดึงข้อมูลจากฐานข้อมูล (เรียกใช้ตอนเปิดหน้าเว็บหรือบันทึกข้อมูลเสร็จ)
         async function fetchDashboardData() {
             document.getElementById('tableBody').innerHTML = `<tr><td colspan="6" class="text-center py-16 text-gray-400">กำลังดึงข้อมูล...</td></tr>`;
             
@@ -278,44 +275,34 @@
                 return;
             }
 
-            // เก็บข้อมูลดิบไว้ในตัวแปรกลาง และสั่งให้ฟังก์ชันกรองข้อมูลทำงาน
             allBdData = data || []; 
             applyFilters(); 
         }
 
-        // 5. ฟังก์ชันประมวลผลการกรองและค้นหา (ทำงานทันทีเมื่อมีการพิมพ์หรือเปลี่ยนตัวเลือก)
         function applyFilters() {
-            // ดึงค่าจากแถบเครื่องมือ
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
             const yearFilter = document.getElementById('yearFilter').value;
 
-            // กรองข้อมูลทีละเงื่อนไข
             const filteredData = allBdData.filter(item => {
-                // เงื่อนไขที่ 1: การค้นหาจากข้อความ (เลข BD, ชื่อ, หรือรายการ)
                 const matchSearch = !searchText || 
                     (item.bd_number && item.bd_number.toLowerCase().includes(searchText)) ||
                     (item.borrower_name && item.borrower_name.toLowerCase().includes(searchText)) ||
                     (item.item_name && item.item_name.toLowerCase().includes(searchText));
 
-                // เงื่อนไขที่ 2: การกรองสถานะ (เช็คว่าปิดรายการสมบูรณ์หรือยัง)
                 const isCompleted = item.doc_return_number && item.pp_number && item.return_date;
                 const itemStatus = isCompleted ? 'completed' : 'pending';
                 const matchStatus = statusFilter === 'all' || itemStatus === statusFilter;
 
-                // เงื่อนไขที่ 3: การกรองปี (ดึงปี ค.ศ. จากวันที่สร้างรายการ)
                 const itemYear = item.created_at ? item.created_at.substring(0, 4) : "";
                 const matchYear = yearFilter === 'all' || itemYear === yearFilter;
 
-                // ข้อมูลจะผ่านการกรองก็ต่อเมื่อตรงตามเงื่อนไขทั้ง 3 ข้อ
                 return matchSearch && matchStatus && matchYear;
             });
 
-            // ส่งข้อมูลที่ผ่านการกรองแล้วไปสร้างตาราง
             renderTable(filteredData);
         }
 
-        // 6. ฟังก์ชันสร้างตารางและคำนวณยอดรวม (Reusable Table Renderer)
         function renderTable(dataToRender) {
             const tbody = document.getElementById('tableBody');
             let totalAmount = 0;
@@ -331,11 +318,9 @@
             dataToRender.forEach(item => {
                 totalAmount += parseFloat(item.amount || 0);
                 
-                // ตรวจสอบสถานะและสร้างป้ายกำกับ (Badge)
                 let statusBadge = '';
                 const isCompleted = item.doc_return_number && item.pp_number && item.return_date;
                 
-                // หากข้อมูลครบถ้วนถือว่าปิดรายการสมบูรณ์ หากไม่ใช่ให้ใช้สถานะเดิมจากฐานข้อมูล
                 if (isCompleted) {
                     statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
                 } else {
@@ -362,15 +347,10 @@
                 tbody.appendChild(tr);
             });
 
-            // อัปเดตตัวเลขสรุปผลด้านบนตาราง (สรุปผลเฉพาะรายการที่ถูกกรอง)
             document.getElementById('sum-count').innerText = dataToRender.length;
             document.getElementById('sum-amount').innerText = totalAmount.toLocaleString('th-TH', {minimumFractionDigits: 2});
         }
 
-        // ==========================================
-        // ระบบจัดการฟอร์ม (Form Logic & SPA)
-        // ==========================================
-        
         function switchView(viewName) {
             if (viewName === 'form') {
                 document.getElementById('dashboardView').classList.add('hidden');
@@ -400,37 +380,23 @@
             switchView('form');
         }
 
-        // ฟังก์ชันสำหรับจัดฟอร์แมตคอมม่าหลักพันตอนผู้ใช้งานกำลังพิมพ์
         function formatCurrencyInput(input) {
-            // 1. ดึงค่าที่พิมพ์ออกมา ลบทุกอย่างที่ไม่ใช่ตัวเลขและจุดทศนิยมทิ้ง
             let value = input.value.replace(/[^0-9.]/g, '');
-            
-            // ป้องกันไม่ให้ใส่จุดทศนิยมซ้ำกันมากกว่า 1 จุด
             const parts = value.split('.');
             if (parts.length > 2) {
                 value = parts[0] + '.' + parts.slice(1).join('');
             }
-
-            // 2. แยกส่วนจำนวนเต็มกับทศนิยมเพื่อใส่คอมม่า
             let integerPart = parts[0];
             let decimalPart = parts[1] !== undefined ? '.' + parts[1] : '';
-
-            // ใส่คอมม่าเฉพาะส่วนจำนวนเต็ม (ถ้ามีตัวเลข)
             if (integerPart) {
                 integerPart = parseInt(integerPart, 10).toLocaleString('en-US');
             }
-
-            // 3. ส่งค่าที่ใส่คอมม่าแล้วกลับไปแสดงในช่องกรอก
             input.value = integerPart + decimalPart;
-
-            // 4. สั่งให้คำนวณเงินคงเหลือใหม่ทันที
             calculateBalance();
         }
 
-        // ฟังก์ชันช่วยเหลือ: แปลงข้อความที่มีคอมม่าให้กลับเป็นตัวเลขบริสุทธิ์ก่อนส่งไปฐานข้อมูล
         function parseCurrency(value) {
             if (!value) return 0;
-            // ลบคอมม่าออกจากข้อความทั้งหมด แล้วแปลงเป็น Float
             const cleanValue = value.toString().replace(/,/g, '');
             const parsed = parseFloat(cleanValue);
             return isNaN(parsed) ? 0 : parsed;
@@ -445,17 +411,14 @@
             const errorText = document.getElementById('usedAmountError');
             const submitBtn = document.getElementById('submitBtn');
 
-            // --- ตรวจสอบเงื่อนไข ---
             if (usedAmount > amount) {
                 errorText.classList.remove('hidden');
                 usedAmountInput.classList.add('border-red-500', 'focus:ring-red-500', 'bg-red-50');
-                
                 submitBtn.disabled = true;
                 submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             } else {
                 errorText.classList.add('hidden');
                 usedAmountInput.classList.remove('border-red-500', 'focus:ring-red-500', 'bg-red-50');
-                
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
@@ -480,7 +443,6 @@
                 }
 
                 const { data, error } = await query;
-
                 if (error) throw error;
 
                 if (data && data.length > 0) {
@@ -492,7 +454,6 @@
                         confirmButtonColor: '#eab308', 
                         customClass: { popup: 'rounded-[20px]' }
                     });
-                    
                     inputElement.value = '';
                     setTimeout(() => inputElement.focus(), 100); 
                 }
@@ -514,7 +475,6 @@
             const isEditMode = currentRecordId !== "";
             const actionText = isEditMode ? 'กำลังอัปเดตข้อมูล...' : 'กำลังบันทึกข้อมูลใหม่...';
 
-            // 1. จัดเตรียมข้อมูล (Payload) และลบคอมม่าออกจากตัวเลข
             const payload = {
                 bd_number: bdNumberInput,
                 mm_number: document.getElementById('mmNumber').value.trim(),
@@ -530,7 +490,6 @@
                 return_date: document.getElementById('returnDate').value || null
             };
 
-            // 🚨 ปราการด่านสุดท้าย: ดักจับเงินที่ใช้ไปเกินกว่ายอดตั้งต้น 
             if (payload.used_amount > payload.amount) {
                 Swal.fire({ 
                     icon: 'warning', 
@@ -539,10 +498,9 @@
                     confirmButtonColor: '#eab308',
                     customClass: { popup: 'rounded-[20px]' }
                 });
-                return; // หยุดการทำงานทันที
+                return;
             }
 
-            // เปลี่ยนสถานะปุ่มตอนกำลังโหลด (Loading State)
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${actionText}`;
             submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
@@ -557,10 +515,7 @@
                     if (updateErr) throw updateErr;
                     
                     const isCompleted = payload.doc_return_number && payload.pp_number && payload.return_date;
-                    var successMessage = isCompleted 
-                        ? "บันทึกและปิดรายการสมบูรณ์เรียบร้อยแล้ว" 
-                        : "อัปเดตข้อมูลเรียบร้อยแล้ว";
-                        
+                    var successMessage = isCompleted ? "บันทึกและปิดรายการสมบูรณ์เรียบร้อยแล้ว" : "อัปเดตข้อมูลเรียบร้อยแล้ว";
                 } else {
                     payload.created_by = currentUserContext; 
                     const { error: insertErr } = await supabaseClient.from('bd_data').insert([payload]);
@@ -596,7 +551,6 @@
                     customClass: { popup: 'rounded-[20px]' }
                 });
             } finally {
-                // คืนค่าสถานะปุ่มกลับมาเหมือนเดิม
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = isEditMode ? 'บันทึกการแก้ไข' : 'บันทึกข้อมูลใหม่';
                 submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
@@ -604,7 +558,6 @@
         }
 
         async function editRecord(id) {
-            // 1. แสดงหน้าต่างโหลดข้อมูลระหว่างรอฐานข้อมูลตอบกลับ
             Swal.fire({
                 title: 'กำลังดึงข้อมูล...',
                 allowOutsideClick: false,
@@ -613,7 +566,6 @@
             });
 
             try {
-                // 2. ขอข้อมูลรายการนี้จาก Supabase (.single() คือระบุว่าเอามาแค่แถวเดียว)
                 const { data, error } = await supabaseClient
                     .from('bd_data')
                     .select('*')
@@ -622,18 +574,15 @@
 
                 if (error) throw error;
 
-                // 3. นำข้อมูลที่ได้ มาเติมลงในช่องฟอร์มต่างๆ
                 document.getElementById('currentRecordId').value = data.id;
                 document.getElementById('bdNumber').value = data.bd_number || '';
                 document.getElementById('mmNumber').value = data.mm_number || '';
                 document.getElementById('borrowerName').value = data.borrower_name || '';
                 document.getElementById('itemName').value = data.item_name || '';
                 
-                // --- จัดการฟอร์แมตตัวเลขให้มีคอมม่า (ดักจับค่าว่างให้เป็น 0) ---
                 const rawAmount = parseFloat(data.amount) || 0;
                 document.getElementById('amount').value = rawAmount.toLocaleString('en-US');
 
-                // เช็คว่ามีค่า used_amount ไหม ถ้ามีค่อยแปลง ถ้าไม่มีปล่อยว่าง
                 if (data.used_amount !== null && data.used_amount !== undefined) {
                     const rawUsedAmount = parseFloat(data.used_amount) || 0;
                     document.getElementById('usedAmount').value = rawUsedAmount.toLocaleString('en-US');
@@ -648,42 +597,34 @@
                     document.getElementById('balanceAmount').value = '';
                 }
                 
-                // --- ข้อมูลวันที่ (ใช้คำสั่งของ Flatpickr เพื่อบังคับอัปเดตหน้าตาปฏิทิน) ---
                 const fpReceive = document.getElementById('receiveDate')._flatpickr;
                 const fpSend = document.getElementById('sendDate')._flatpickr;
                 const fpReturn = document.getElementById('returnDate')._flatpickr;
 
-                // ถ้ามีข้อมูลในฐานข้อมูลให้ setDate ถ้าไม่มีให้ clear ทิ้ง
                 if (fpReceive) {
                     data.receive_date ? fpReceive.setDate(data.receive_date) : fpReceive.clear();
                     data.send_date ? fpSend.setDate(data.send_date) : fpSend.clear();
                     data.return_date ? fpReturn.setDate(data.return_date) : fpReturn.clear();
                 }
                 
-                // ข้อมูลช่องอื่นๆ ใน Step 3
                 document.getElementById('docReturnNumber').value = data.doc_return_number || '';
                 document.getElementById('ppNumber').value = data.pp_number || '';
 
-                // 4. ปรับหน้าตาฟอร์มให้กลายเป็น "โหมดแก้ไข"
                 document.getElementById('formTitle').innerText = 'แก้ไขข้อมูลใบยืมเหลือง (BD)';
                 document.getElementById('submitBtn').innerText = 'บันทึกการแก้ไข';
                 
-                // โชว์ Step 2 เสมอเมื่ออยู่ในโหมดแก้ไข
                 document.getElementById('step2-container').classList.remove('hidden');
                 
-                // โลจิก (Logic) เดิมของคุณ: ถ้ามีวันที่ส่งเงินให้ผู้ขอยืมแล้ว ค่อยโชว์ Step 3
                 if (data.send_date) {
                     document.getElementById('step3-container').classList.remove('hidden');
                 } else {
                     document.getElementById('step3-container').classList.add('hidden');
                 }
 
-                // 5. ปิดหน้าต่างโหลด และสลับหน้าจอไปที่ฟอร์ม
                 Swal.close();
                 switchView('form');
 
             } catch (error) {
-                // กรณีเกิดข้อผิดพลาด
                 Swal.fire({ 
                     icon: 'error', 
                     title: 'ผิดพลาด', 
@@ -708,11 +649,9 @@
             flatpickr("#returnDate", config);
         }
 
-        // เริ่มทำงานเมื่อเปิดหน้าเว็บ
-        window.onload = () => {
-            checkAuth();
-            initDatePickers();
-        };
+        // 🌟 แก้ไขจุดที่ 3: สั่งให้สคริปต์ทำงานตรวจสิทธิ์ทันทีเมื่อเบราว์เซอร์อ่านถึงบรรทัดนี้เพื่อลดความล่าช้า (Delay) สูงสุด
+        checkAuth();
+        initDatePickers();
     </script>
 </body>
 </html>
