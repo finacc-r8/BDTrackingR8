@@ -12,64 +12,154 @@
     <style>
         body {
             font-family: 'Prompt', sans-serif;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            color: #1a1a24;
+            background-color: #030514;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(91, 33, 182, 0.2), transparent 40%), 
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.15), transparent 40%);
+            color: #ededed;
+            background-attachment: fixed;
         }
         .apple-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            background: rgba(10, 15, 30, 0.25);
+            backdrop-filter: blur(16px);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0,0,0,0.02);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.5s ease;
+        }
+        .apple-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.1);
         }
         .apple-input {
-            background: #f8f9fa;
-            border: 1px solid #e2e8f0;
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 12px;
             padding: 14px 16px;
             width: 100%;
             transition: all 0.2s ease;
+            color: #ffffff !important;
         }
         .apple-input:focus {
-            background: #ffffff;
-            border-color: #1e3c72;
-            box-shadow: 0 0 0 4px rgba(30, 60, 114, 0.08);
+            background: rgba(0, 0, 0, 0.5) !important;
+            border-color: #0ea5e9 !important;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
             outline: none;
         }
         .apple-btn-primary {
-            background: #1e3c72;
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
             color: #ffffff;
             border-radius: 12px;
             padding: 12px 28px;
             font-weight: 500;
             width: 100%;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.15);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .apple-btn-primary:hover { background: #162c5b; transform: translateY(-1px); }
+        .apple-btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+        /* SweetAlert dark mode */
+        .swal2-popup { background: #0b1120 !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #ededed !important; }
+        .swal2-title, .swal2-html-container { color: #ededed !important; }
+        /* Twinkling Stars */
+        .stars-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+        .star-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='40' r='1' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='120' cy='80' r='1.5' fill='rgba(255,255,255,1)'/%3E%3Ccircle cx='80' cy='150' r='0.5' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='180' cy='20' r='2' fill='rgba(255,255,255,0.9)'/%3E%3Ccircle cx='160' cy='140' r='1' fill='rgba(255,255,255,0.7)'/%3E%3C/svg%3E"); }
+        .star-layer-1 { animation: twinkle 4s ease-in-out infinite alternate; }
+        .star-layer-2 { background-position: 50px 50px; transform: scale(1.2); animation: twinkle 5s ease-in-out infinite alternate-reverse; }
+        .star-layer-3 { background-position: 120px 80px; transform: scale(0.8) rotate(45deg); animation: twinkle 6s ease-in-out infinite alternate 2s; }
+        @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: 0.8; } }
+        /* Masterpiece Rotating Rings */
+        .rings-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; overflow: hidden; z-index: -1; perspective: 1200px; display: flex; justify-content: center; align-items: center; pointer-events: none; }
+        .ring { position: absolute; border-radius: 50%; transform-style: preserve-3d; }
+        .ring-1 { width: 120vmin; height: 120vmin; border: 1px solid rgba(14, 165, 233, 0.15); border-top: 2px solid rgba(14, 165, 233, 0.8); box-shadow: 0 0 30px rgba(14, 165, 233, 0.2), inset 0 0 30px rgba(14, 165, 233, 0.2); animation: rotate1 30s linear infinite; }
+        .ring-2 { width: 95vmin; height: 95vmin; border: 2px dashed rgba(91, 33, 182, 0.4); animation: rotate2 45s linear infinite; }
+        .ring-3 { width: 70vmin; height: 70vmin; border: 1px solid rgba(255, 255, 255, 0.05); border-right: 2px solid rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); animation: rotate3 20s linear infinite; }
+        .orb-1 { position: absolute; width: 45vmin; height: 45vmin; background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, transparent 70%); border-radius: 50%; filter: blur(25px); animation: floatOrb1 15s ease-in-out infinite alternate; }
+        .orb-2 { position: absolute; width: 60vmin; height: 60vmin; background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%); border-radius: 50%; filter: blur(30px); animation: floatOrb2 20s ease-in-out infinite alternate-reverse; }
+        @keyframes rotate1 { 0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg); } 100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg); } }
+        @keyframes rotate2 { 0% { transform: rotateX(75deg) rotateY(-10deg) rotateZ(360deg); } 100% { transform: rotateX(75deg) rotateY(-10deg) rotateZ(0deg); } }
+        @keyframes rotate3 { 0% { transform: rotateX(55deg) rotateY(25deg) rotateZ(0deg); } 100% { transform: rotateX(55deg) rotateY(25deg) rotateZ(360deg); } }
+        @keyframes floatOrb1 { 0% { transform: translate(-40vw, -30vh) scale(0.8); opacity: 0.5; } 100% { transform: translate(40vw, 30vh) scale(1.2); opacity: 1; } }
+        @keyframes floatOrb2 { 0% { transform: translate(30vw, -40vh) scale(1.2); opacity: 1; } 100% { transform: translate(-30vw, 40vh) scale(0.8); opacity: 0.6; } }
+        
+        /* Success Overlay Planet */
+        .success-overlay { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(3, 5, 20, 0.85); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+        .success-overlay.active { opacity: 1; pointer-events: auto; }
+        .planet-container { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; perspective: 1000px; transform-style: preserve-3d; }
+        .planet { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, rgba(15, 5, 35, 0.95) 0%, rgba(60, 20, 110, 0.85) 60%, rgba(200, 100, 255, 0.9) 100%); box-shadow: 0 0 50px rgba(147, 51, 234, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.5), inset 10px 0 40px rgba(216, 180, 254, 0.8), inset -10px 0 40px rgba(168, 85, 247, 0.8); backdrop-filter: blur(8px); animation: pulsePlanet 4s infinite alternate ease-in-out, spinPlanet 12s linear infinite; transform: translateZ(0); }
+        @keyframes pulsePlanet { 0% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.4), inset 10px 0 30px rgba(216, 180, 254, 0.6), inset -10px 0 30px rgba(168, 85, 247, 0.6); } 100% { box-shadow: 0 0 80px rgba(168, 85, 247, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.7), inset 10px 0 50px rgba(216, 180, 254, 0.9), inset -10px 0 50px rgba(168, 85, 247, 0.9); } }
+        @keyframes spinPlanet { 0% { transform: translateZ(0) rotate(0deg); } 100% { transform: translateZ(0) rotate(360deg); } }
+        .orbit-wrapper { position: absolute; width: 280px; height: 280px; transform-style: preserve-3d; }
+        .ow-1 { transform: rotateZ(20deg) rotateX(70deg); }
+        .ow-2 { transform: rotateZ(-40deg) rotateX(70deg); }
+        .ow-3 { transform: rotateZ(70deg) rotateX(70deg); }
+        .orbit-path-inner { width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); border-top: 2px solid rgba(255,255,255,0.5); position: absolute; transform-style: preserve-3d; }
+        .op-1 { animation: orbitSpinInner 5s linear infinite; }
+        .op-2 { animation: orbitSpinInner 8s linear infinite reverse; }
+        .op-3 { animation: orbitSpinInner 6s linear infinite; }
+        .moon-inner { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); border-radius: 50%; box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; background: currentColor; }
+        .moon-inner-1 { width: 12px; height: 12px; color: #d8b4fe; }
+        .moon-inner-2 { width: 8px; height: 8px; color: #38bdf8; }
+        .moon-inner-3 { width: 14px; height: 14px; color: #fb923c; }
+        @keyframes orbitSpinInner { 0% { transform: rotateZ(0deg); } 100% { transform: rotateZ(360deg); } }
+    </style>
+    <style id="anti-fouc">
+        body { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" onload="document.getElementById('anti-fouc').remove()">
 
-    <div class="apple-card p-8 sm:p-12 w-full max-w-md">
+    <!-- Twinkling Stars Background -->
+    <div class="stars-bg">
+        <div class="star-layer star-layer-1"></div>
+        <div class="star-layer star-layer-2"></div>
+        <div class="star-layer star-layer-3"></div>
+    </div>
+
+    <!-- Masterpiece Rings Animation -->
+    <div class="rings-container">
+        <div class="orb-1"></div>
+        <div class="orb-2"></div>
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+    </div>
+
+    <div class="apple-card p-8 sm:p-12 w-full max-w-md relative z-10">
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-[#0f172a] mb-2">เข้าสู่ระบบ</h1>
-            <p class="text-sm text-gray-500">BD Tracking System R8</p>
+            <h1 class="text-2xl font-bold text-white mb-2">เข้าสู่ระบบ</h1>
+            <p class="text-sm text-gray-400">BD Tracking System R8</p>
         </div>
 
         <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();" class="space-y-6">
             <div>
-                <label class="text-[13px] font-semibold text-gray-600 mb-2 block uppercase tracking-wide">ชื่อผู้ใช้งาน (Username)</label>
+                <label class="text-[13px] font-semibold text-gray-300 mb-2 block uppercase tracking-wide">ชื่อผู้ใช้งาน (Username)</label>
                 <input type="text" id="username" class="apple-input">
             </div>
             <div>
-                <label class="text-[13px] font-semibold text-gray-600 mb-2 block uppercase tracking-wide">รหัสผ่าน (Password)</label>
+                <label class="text-[13px] font-semibold text-gray-300 mb-2 block uppercase tracking-wide">รหัสผ่าน (Password)</label>
                 <input type="password" id="password" class="apple-input">
             </div>
             <button type="submit" id="loginBtn" class="apple-btn-primary mt-4">
                 ลงชื่อเข้าใช้
             </button>
         </form>
+    </div>
+
+    <!-- Success Landing Animation Overlay -->
+    <div id="successOverlay" class="success-overlay">
+        <div class="planet-container">
+            <div class="planet"></div>
+            <div class="orbit-wrapper ow-1"><div class="orbit-path-inner op-1"><div class="moon-inner moon-inner-1"></div></div></div>
+            <div class="orbit-wrapper ow-2"><div class="orbit-path-inner op-2"><div class="moon-inner moon-inner-2"></div></div></div>
+            <div class="orbit-wrapper ow-3"><div class="orbit-path-inner op-3"><div class="moon-inner moon-inner-3"></div></div></div>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-3 tracking-wider animate-pulse">เข้าสู่ระบบสำเร็จ</h2>
+        <p class="text-sky-300 text-lg">ระบบกำลังนำท่านเข้าสู่หน้าหลัก กรุณารอสักครู่...</p>
     </div>
 
     <script>
@@ -118,17 +208,17 @@
                 btn.classList.remove('opacity-70', 'cursor-not-allowed');
             } else {
                 // กรณีล็อกอินสำเร็จ
-                Swal.fire({ 
-                    icon: 'success', 
-                    title: 'เข้าสู่ระบบสำเร็จ', 
-                    text: 'ระบบกำลังนำท่านเข้าสู่หน้าหลัก กรุณารอสักครู่...', 
-                    timer: 2000, 
-                    showConfirmButton: false,
-                    customClass: { popup: 'rounded-[20px]' }
-                }).then(() => {
+                document.querySelector('.apple-card').style.opacity = '0';
+                document.querySelector('.apple-card').style.transform = 'scale(0.9)';
+                document.querySelector('.apple-card').style.pointerEvents = 'none';
+                
+                const overlay = document.getElementById('successOverlay');
+                overlay.classList.add('active');
+                
+                setTimeout(() => {
                     // Redirect ไปยังหน้าหลัก
                     window.location.href = 'index.html'; 
-                });
+                }, 3000);
             }
         }
     </script>
