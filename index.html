@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -16,44 +17,43 @@
     <style>
         body {
             font-family: 'Prompt', sans-serif;
-            background-color: #030514;
+            background-color: #f8fafc;
             background-image:
-                radial-gradient(circle at 10% 20%, rgba(91, 33, 182, 0.2), transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.15), transparent 40%);
-            color: #ededed;
+                radial-gradient(circle at 10% 20%, rgba(91, 33, 182, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08), transparent 40%);
+            color: #1e293b;
             -webkit-font-smoothing: antialiased;
             background-attachment: fixed;
         }
 
         .apple-card {
-            background: rgba(10, 15, 30, 0.5);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(24px);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .apple-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
             box-shadow: 0 10px 40px rgba(14, 165, 233, 0.1);
         }
 
         .apple-input {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
             border-radius: 12px;
             padding: 14px 16px;
             font-size: 0.95rem;
             width: 100%;
             transition: all 0.2s ease;
-            color: #ffffff !important;
+            color: #1e293b !important;
         }
 
         .apple-input:focus {
-            background: rgba(0, 0, 0, 0.5) !important;
+            background: #ffffff !important;
             border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
             outline: none;
         }
 
@@ -76,9 +76,9 @@
         }
 
         .apple-btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.03);
+            color: #475569;
+            border: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 12px;
             padding: 10px 20px;
             font-weight: 500;
@@ -86,14 +86,13 @@
         }
 
         .apple-btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
+            background: rgba(0, 0, 0, 0.06);
+            color: #1e293b;
         }
 
         .btn-edit {
             background: rgba(14, 165, 233, 0.1);
-            color: #38bdf8;
+            color: #0284c7;
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
@@ -104,12 +103,12 @@
 
         .btn-edit:hover {
             background: rgba(14, 165, 233, 0.2);
-            color: #7dd3fc;
+            color: #0369a1;
         }
 
         .btn-view {
             background: rgba(168, 85, 247, 0.1);
-            color: #c084fc;
+            color: #9333ea;
             padding: 0;
             border-radius: 8px;
             font-size: 0.8rem;
@@ -125,31 +124,31 @@
 
         .btn-view:hover {
             background: rgba(168, 85, 247, 0.2);
-            color: #e879f9;
+            color: #7e22ce;
         }
 
         .apple-table th {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             font-weight: 600;
-            color: #94a3b8;
+            color: #64748b;
             font-size: 0.85rem;
             padding-bottom: 16px;
             text-transform: uppercase;
         }
 
         .apple-table tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             transition: background 0.2s;
         }
 
         .apple-table tr:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(0, 0, 0, 0.02);
         }
 
         .apple-table td {
             padding: 16px 8px;
             font-size: 0.95rem;
-            color: #cbd5e1;
+            color: #334155;
             vertical-align: middle;
         }
 
@@ -169,98 +168,53 @@
             }
         }
 
-        /* Flatpickr & SweetAlert dark mode overrides */
+        /* Flatpickr & SweetAlert light mode overrides */
         .flatpickr-calendar {
-            background: #0b1120 !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
         }
 
         .flatpickr-day {
-            color: #e2e8f0 !important;
+            color: #334155 !important;
         }
 
         .flatpickr-day.selected {
             background: #0ea5e9 !important;
             border-color: #0ea5e9 !important;
+            color: #ffffff !important;
         }
 
         .flatpickr-months .flatpickr-month {
-            color: #e2e8f0 !important;
-            fill: #e2e8f0 !important;
+            color: #1e293b !important;
+            fill: #1e293b !important;
         }
 
         .flatpickr-current-month .flatpickr-monthDropdown-months {
-            background: #0b1120 !important;
+            background: #ffffff !important;
         }
 
         span.flatpickr-weekday {
-            color: #94a3b8 !important;
+            color: #64748b !important;
         }
 
         .swal2-popup {
-            background: rgba(11, 17, 32, 0.85) !important;
+            background: rgba(255, 255, 255, 0.9) !important;
             backdrop-filter: blur(20px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #ededed !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 1) !important;
+            color: #1e293b !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
         }
 
         .swal2-title,
         .swal2-html-container {
-            color: #ededed !important;
+            color: #1e293b !important;
         }
 
         .swal2-container.swal2-backdrop-show,
         .swal2-container.swal2-noanimation {
-            background: rgba(3, 5, 20, 0.6) !important;
+            background: rgba(248, 250, 252, 0.8) !important;
             backdrop-filter: blur(8px) !important;
-        }
-
-        /* Twinkling Stars */
-        .stars-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        .star-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='40' r='1' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='120' cy='80' r='1.5' fill='rgba(255,255,255,1)'/%3E%3Ccircle cx='80' cy='150' r='0.5' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='180' cy='20' r='2' fill='rgba(255,255,255,0.9)'/%3E%3Ccircle cx='160' cy='140' r='1' fill='rgba(255,255,255,0.7)'/%3E%3C/svg%3E");
-        }
-
-        .star-layer-1 {
-            animation: twinkle 4s ease-in-out infinite alternate;
-        }
-
-        .star-layer-2 {
-            background-position: 50px 50px;
-            transform: scale(1.2);
-            animation: twinkle 5s ease-in-out infinite alternate-reverse;
-        }
-
-        .star-layer-3 {
-            background-position: 120px 80px;
-            transform: scale(0.8) rotate(45deg);
-            animation: twinkle 6s ease-in-out infinite alternate 2s;
-        }
-
-        @keyframes twinkle {
-            0% {
-                opacity: 0.1;
-            }
-
-            100% {
-                opacity: 0.8;
-            }
         }
     </style>
     <style id="anti-fouc">
@@ -272,24 +226,18 @@
 
 <body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
 
-    <!-- Twinkling Stars Background -->
-    <div class="stars-bg">
-        <div class="star-layer star-layer-1"></div>
-        <div class="star-layer star-layer-2"></div>
-        <div class="star-layer star-layer-3"></div>
-    </div>
     <div id="mainContainer" class="max-w-screen-2xl mx-auto hidden">
         <div
-            class="mb-12 border-b border-white/10 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            class="mb-12 border-b border-slate-200 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
-                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-2">
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-800 mb-2">
                     ระบบติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD)</h1>
-                <p class="text-[15px] text-gray-400 font-light tracking-wide">ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์
+                <p class="text-[15px] text-slate-500 font-light tracking-wide">ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์
                 </p>
             </div>
             <div class="flex items-center gap-4">
                 <span id="displayUser"
-                    class="text-sm font-medium text-gray-300 bg-[#121212]/5 px-4 py-2 rounded-full">กำลังตรวจสอบ...</span>
+                    class="text-sm font-medium text-slate-600 bg-[#121212]/5 px-4 py-2 rounded-full">กำลังตรวจสอบ...</span>
                 <button onclick="handleLogout()"
                     class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">ออกจากระบบ</button>
             </div>
@@ -299,130 +247,139 @@
             <div class="grid grid-cols-1 gap-6 mb-10">
                 <!-- Card 1: Operational Metrics -->
                 <div>
-                    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
+                    <h2
+                        class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 pl-1">
                         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
                         </svg>
                         ภาพรวมสถานะการดำเนินงาน
                     </h2>
                     <div class="apple-card overflow-hidden relative group flex flex-col justify-center">
                         <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-fuchsia-900/10 opacity-50">
                         </div>
-                    <div class="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y divide-x divide-white/5 h-full">
-
-                        <!-- Total Count -->
                         <div
-                            class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            class="relative z-10 grid grid-cols-2 lg:grid-cols-4 divide-y divide-x divide-white/5 h-full">
+
+                            <!-- Total Count -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-purple-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
-                                    </path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-[11px] lg:text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider whitespace-nowrap">
-                                    รายการทั้งหมด</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-white tracking-tight" id="sum-count">0
-                                    </p>
-                                    <span class="text-xs text-gray-500 font-medium">รายการ</span>
+                                class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-purple-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-[11px] lg:text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider whitespace-nowrap">
+                                        รายการทั้งหมด</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-slate-800 tracking-tight"
+                                            id="sum-count">0
+                                        </p>
+                                        <span class="text-xs text-slate-400 font-medium">รายการ</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Pending Count -->
-                        <div
-                            class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            <!-- Pending Count -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-amber-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-[11px] lg:text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider whitespace-nowrap">
-                                    กำลังดำเนินการ</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-amber-400 tracking-tight"
-                                        id="sum-pending">0</p>
-                                    <span class="text-xs text-amber-500/50 font-medium">รายการ</span>
+                                class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-amber-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-[11px] lg:text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider whitespace-nowrap">
+                                        กำลังดำเนินการ</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-amber-400 tracking-tight"
+                                            id="sum-pending">0</p>
+                                        <span class="text-xs text-amber-500/50 font-medium">รายการ</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Completed Count -->
-                        <div
-                            class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            <!-- Completed Count -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-[11px] lg:text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider whitespace-nowrap">
-                                    ปิดรายการสำเร็จ</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-emerald-400 tracking-tight"
-                                        id="sum-completed">0</p>
-                                    <span class="text-xs text-emerald-500/50 font-medium">รายการ</span>
+                                class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-[11px] lg:text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider whitespace-nowrap">
+                                        ปิดรายการสำเร็จ</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-emerald-400 tracking-tight"
+                                            id="sum-completed">0</p>
+                                        <span class="text-xs text-emerald-500/50 font-medium">รายการ</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Cancelled Count -->
-                        <div
-                            class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            <!-- Cancelled Count -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p
-                                    class="text-[11px] lg:text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider whitespace-nowrap">
-                                    ยกเลิกรายการ</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-red-400 tracking-tight"
-                                        id="sum-cancelled">0</p>
-                                    <span class="text-xs text-red-500/50 font-medium">รายการ</span>
+                                class="p-6 lg:p-8 flex items-center gap-4 lg:gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-[11px] lg:text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider whitespace-nowrap">
+                                        ยกเลิกรายการ</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-red-400 tracking-tight"
+                                            id="sum-cancelled">0</p>
+                                        <span class="text-xs text-red-500/50 font-medium">รายการ</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Card 2: Financial Metrics -->
                 <div>
-                    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 mt-2 flex items-center gap-2 pl-1">
+                    <h2
+                        class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-3 mt-2 flex items-center gap-2 pl-1">
                         <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
                         </svg>
                         ภาพรวมการเงิน
                     </h2>
@@ -430,95 +387,96 @@
                         <div
                             class="absolute inset-0 bg-gradient-to-bl from-blue-900/20 via-sky-900/10 to-teal-900/10 opacity-50">
                         </div>
-                    <div
-                        class="relative z-10 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5 h-full">
-
-                        <!-- Total Amount -->
                         <div
-                            class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            class="relative z-10 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5 h-full">
+
+                            <!-- Total Amount -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">
-                                    ยอดเงินยืมรวม</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-blue-400 tracking-tight"
-                                        id="sum-amount">0.00</p>
-                                    <span class="text-xs text-blue-500/50 font-medium">THB</span>
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">
+                                        ยอดเงินยืมรวม</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-blue-400 tracking-tight"
+                                            id="sum-amount">0.00</p>
+                                        <span class="text-xs text-blue-500/50 font-medium">THB</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Total Used -->
-                        <div
-                            class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            <!-- Total Used -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-orange-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">
-                                    เงินที่ใช้ไปรวม</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-orange-400 tracking-tight"
-                                        id="sum-used">0.00</p>
-                                    <span class="text-xs text-orange-500/50 font-medium">THB</span>
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-orange-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">
+                                        เงินที่ใช้ไปรวม</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-orange-400 tracking-tight"
+                                            id="sum-used">0.00</p>
+                                        <span class="text-xs text-orange-500/50 font-medium">THB</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Total Balance -->
-                        <div
-                            class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                            <!-- Total Balance -->
                             <div
-                                class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
-                                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
-                                    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">
-                                    เงินที่เหลือรวม</p>
-                                <div class="flex items-baseline gap-1.5">
-                                    <p class="text-xl lg:text-2xl font-bold text-emerald-400 tracking-tight"
-                                        id="sum-balance">0.00</p>
-                                    <span class="text-xs text-emerald-500/50 font-medium">THB</span>
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                                        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">
+                                        เงินที่เหลือรวม</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-emerald-400 tracking-tight"
+                                            id="sum-balance">0.00</p>
+                                        <span class="text-xs text-emerald-500/50 font-medium">THB</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="apple-card p-8">
+            <div class="apple-card p-8">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <h2 class="text-xl font-semibold text-white">ประวัติการทำรายการ</h2>
-                    <button onclick="openCreateForm()" class="apple-btn-primary">+ สร้างรายการใหม่</button>
+                    <h2 class="text-xl font-semibold text-slate-800">ประวัติการทำรายการ</h2>
+                    <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">+ สร้างรายการใหม่</button>
                 </div>
 
                 <div
@@ -527,7 +485,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="text-gray-400">
+                                stroke-linejoin="round" class="text-slate-500">
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.3-4.3" />
                             </svg>
@@ -539,7 +497,7 @@
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                         <div class="relative">
                             <select id="statusFilter"
-                                class="apple-input py-2.5 pl-4 pr-10 bg-[#121212] shadow-sm appearance-none cursor-pointer text-sm font-medium text-gray-300"
+                                class="apple-input py-2.5 pl-4 pr-10 bg-[#121212] shadow-sm appearance-none cursor-pointer text-sm font-medium text-slate-600"
                                 onchange="applyFilters()">
                                 <option value="all">สถานะทั้งหมด</option>
                                 <option value="pending">🟢 กำลังดำเนินการ</option>
@@ -547,7 +505,7 @@
                                 <option value="ยกเลิก">🔴 ยกเลิก</option>
                             </select>
                             <div
-                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7"></path>
@@ -588,7 +546,8 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="9" class="text-center py-16 text-gray-400 font-light">กำลังโหลดข้อมูล...
+                                <td colspan="9" class="text-center py-16 text-slate-500 font-light">
+                                    กำลังโหลดข้อมูล...
                                 </td>
                             </tr>
                         </tbody>
@@ -596,11 +555,14 @@
                 </div>
 
                 <!-- Pagination Controls -->
-                <div id="paginationControls" class="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 pb-2 text-sm text-gray-400 gap-4 hidden">
+                <div id="paginationControls"
+                    class="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 pb-2 text-sm text-slate-500 gap-4 hidden">
                     <div id="paginationInfo" class="font-medium">แสดง 0 ถึง 0 จาก 0 รายการ</div>
                     <div class="flex gap-2">
-                        <button onclick="changePage(-1)" id="prevPageBtn" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-gray-300">ก่อนหน้า</button>
-                        <button onclick="changePage(1)" id="nextPageBtn" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-gray-300">ถัดไป</button>
+                        <button onclick="changePage(-1)" id="prevPageBtn"
+                            class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-slate-600">ก่อนหน้า</button>
+                        <button onclick="changePage(1)" id="nextPageBtn"
+                            class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-medium text-slate-600">ถัดไป</button>
                     </div>
                 </div>
 
@@ -619,7 +581,7 @@
             </div>
 
             <div class="apple-card p-8 sm:p-12">
-                <h2 id="formTitle" class="text-2xl font-bold mb-10 text-white border-b border-white/5 pb-4">
+                <h2 id="formTitle" class="text-2xl font-bold mb-10 text-slate-800 border-b border-white/5 pb-4">
                     กรอกข้อมูลใบยืมเหลือง (BD)
                 </h2>
 
@@ -630,7 +592,7 @@
                     <!-- Job Type Selection -->
                     <div id="jobTypeSection" class="mb-10">
                         <label
-                            class="text-[13px] font-semibold text-gray-300 mb-4 block uppercase tracking-wide">ประเภทของงาน
+                            class="text-[13px] font-semibold text-slate-600 mb-4 block uppercase tracking-wide">ประเภทของงาน
                             (เลือกอย่างใดอย่างหนึ่ง) <span class="text-red-500">*</span></label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- Card 1 -->
@@ -644,7 +606,7 @@
                                             d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                     </svg>
                                 </div>
-                                <span class="text-white font-medium">เดินทางไปปฏิบัติงาน</span>
+                                <span class="text-slate-800 font-medium">เดินทางไปปฏิบัติงาน</span>
                                 <div id="checkTravel" class="ml-auto opacity-0 text-blue-400 transition-opacity">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -664,7 +626,7 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <span class="text-white font-medium">จัดซื้อจัดจ้าง/โครงการ</span>
+                                <span class="text-slate-800 font-medium">จัดซื้อจัดจ้าง/โครงการ</span>
                                 <div id="checkProcurement"
                                     class="ml-auto opacity-0 text-emerald-400 transition-opacity">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -681,20 +643,20 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
                                         BD <span class="text-red-500">*</span></label>
                                     <input type="text" id="bdNumber" class="apple-input"
                                         onblur="checkDuplicateBD(this)">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เลขที่
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่
                                         MM / ศล.ภ. / คำสั่ง <span class="text-red-500">*</span></label>
                                     <input type="text" id="mmNumber" class="apple-input" required>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">ชื่อผู้ขอยืม
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">ชื่อผู้ขอยืม
                                         <span class="text-red-500">*</span></label>
                                     <input type="text" id="borrowerName" class="apple-input" required>
                                 </div>
@@ -703,14 +665,14 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                                 <div class="flex flex-col md:col-span-2">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">รายการ
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">รายการ
                                         <span class="text-red-500">*</span></label>
                                     <textarea id="itemName" class="apple-input resize-y" rows="3"
                                         placeholder="กรอกรายละเอียดรายการ..." required></textarea>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">จำนวนเงิน
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">จำนวนเงิน
                                         (บาท) <span class="text-red-500">*</span></label>
                                     <input type="text" id="amount" class="apple-input font-bold text-blue-400"
                                         oninput="formatCurrencyInput(this)" required placeholder="0.00">
@@ -723,14 +685,14 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">วันที่ภาคฯ
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ภาคฯ
                                         ได้รับเงินจากศูนย์</label>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
                                                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                                                 <line x1="16" x2="16" y1="2" y2="6" />
                                                 <line x1="8" x2="8" y1="2" y2="6" />
@@ -738,19 +700,19 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="receiveDate"
-                                            class="flex h-11 w-full rounded-md border border-white/10 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">วันที่ส่งเงินให้ผู้ขอยืม</label>
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ส่งเงินให้ผู้ขอยืม</label>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
                                                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                                                 <line x1="16" x2="16" y1="2" y2="6" />
                                                 <line x1="8" x2="8" y1="2" y2="6" />
@@ -758,7 +720,7 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="sendDate"
-                                            class="flex h-11 w-full rounded-md border border-white/10 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
@@ -769,17 +731,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เงินที่ใช้ไป
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เงินที่ใช้ไป
                                         (บาท)</label>
                                     <input type="text" id="usedAmount"
                                         class="apple-input font-bold text-blue-400 transition-colors"
                                         oninput="formatCurrencyInput(this)">
-                                    <p id="usedAmountError" class="text-red-500 text-xs mt-1.5 font-medium hidden">⚠️
+                                    <p id="usedAmountError" class="text-red-500 text-xs mt-1.5 font-medium hidden">
+                                        ⚠️
                                         ยอดเงินที่ใช้ไปต้องไม่เกินจำนวนเงินตั้งต้น</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เงินที่เหลือ
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เงินที่เหลือ
                                         (บาท)</label>
                                     <input type="text" id="balanceAmount"
                                         class="apple-input font-bold text-blue-400 bg-[#121212]/5" readonly>
@@ -789,24 +752,24 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เลขที่บันทึกนำส่งเงิน</label>
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่บันทึกนำส่งเงิน</label>
                                     <input type="text" id="docReturnNumber" class="apple-input">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">เลขที่งบใบสำคัญ
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่งบใบสำคัญ
                                         (PP)</label>
                                     <input type="text" id="ppNumber" class="apple-input">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-gray-300 mb-2 uppercase tracking-wide">วันที่ส่งเอกสารใช้คืนเงิน</label>
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ส่งเอกสารใช้คืนเงิน</label>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
                                                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                                                 <line x1="16" x2="16" y1="2" y2="6" />
                                                 <line x1="8" x2="8" y1="2" y2="6" />
@@ -814,7 +777,7 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="returnDate"
-                                            class="flex h-11 w-full rounded-md border border-white/10 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
@@ -839,9 +802,28 @@
     <script>
         const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                storage: window.sessionStorage // 🌟 ยกระดับความปลอดภัย: ปิดเบราว์เซอร์ = ล็อกเอาต์ทันที
+            }
+        });
+
+        // ฟังก์ชันป้องกัน XSS
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return str;
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
 
         let currentUserContext = '';
+        let currentUserRole = 'user'; // ค่าเริ่มต้นเป็น user เสมอ เพื่อความปลอดภัย
         let selectedJobTypes = [];
         let allBdData = [];
         let dataToRender = []; // สำหรับเก็บข้อมูลที่กรองแล้ว
@@ -871,8 +853,42 @@
             // Set user text if element exists
             const userSpan = document.getElementById('displayUser');
             if (userSpan && user.email) {
-                userSpan.innerText = user.email.split('@')[0];
                 currentUserContext = user.email; // กำหนดค่าให้ระบบรู้ว่าล็อกอินแล้ว
+
+                try {
+                    // ดึงข้อมูลโปรไฟล์จากตาราง user_profiles
+                    // สมมติว่าเชื่อมโยงกับ Auth ด้วย id และมีคอลัมน์ full_name, position (ปรับแก้ได้ถ้าคอลัมน์ชื่ออื่น)
+                    const { data: profile, error: profileErr } = await supabaseClient
+                        .from('user_profiles')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .single();
+
+                    if (profile) {
+                        // ลองหาชื่อจากคอลัมน์ต่างๆ เผื่อตั้งชื่อต่างกัน
+                        const name = profile.full_name || profile.name || profile.first_name || user.email.split('@')[0];
+                        const position = profile.position || '';
+                        
+                        currentUserRole = profile.role || 'user'; // กำหนด Role จากฐานข้อมูล
+
+                        // ซ่อนปุ่ม สร้างรายการใหม่ ถ้าเป็นสิทธิ์ user
+                        if (currentUserRole === 'user') {
+                            const createBtn = document.getElementById('createRecordBtn');
+                            if (createBtn) createBtn.style.display = 'none';
+                        }
+
+                        if (position) {
+                            userSpan.innerText = `${name} (${position})`;
+                        } else {
+                            userSpan.innerText = name;
+                        }
+                    } else {
+                        userSpan.innerText = user.email.split('@')[0];
+                    }
+                } catch (err) {
+                    console.log('No user profile found or table not accessible yet:', err);
+                    userSpan.innerText = user.email.split('@')[0];
+                }
             }
 
             // Start fetching data after auth
@@ -898,7 +914,7 @@
 
         async function fetchDashboardData() {
             const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-gray-400 font-light">กำลังโหลดข้อมูล...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-slate-500 font-light">กำลังโหลดข้อมูล...</td></tr>';
 
             try {
                 const { data, error } = await supabaseClient
@@ -907,7 +923,7 @@
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
-                
+
                 allBdData = data || [];
                 renderTable(); // ย้ายการประมวลผลทั้งหมดไปที่ renderTable
             } catch (err) {
@@ -918,7 +934,7 @@
 
         function renderTable() {
             const tbody = document.getElementById('tableBody');
-            
+
             // Also check for filters
             const searchInput = document.getElementById('searchInput');
             const statusFilter = document.getElementById('statusFilter');
@@ -926,158 +942,162 @@
 
             dataToRender = allBdData;
 
-                // --- 🚀 ระบบ Archive อัตโนมัติ (Soft Archive) ---
-                if (yearFilter && allBdData.length > 0) {
-                    // ดึงปีงบประมาณทั้งหมดที่มีในระบบออกมาเป็น Array และเรียงจากมากไปน้อย
-                    const fiscalYears = [...new Set(allBdData.map(item => getFiscalYear(item.created_at)).filter(Boolean))].sort((a, b) => b - a);
-                    
-                    // อัปเดตตัวเลือกใน Dropdown ครั้งแรกครั้งเดียว
-                    if (yearFilter.getAttribute('data-initialized') !== 'true') {
-                        const currentFY = getFiscalYear(new Date().toISOString());
-                        let optionsHtml = '';
-                        fiscalYears.forEach(fy => {
-                            optionsHtml += `<option value="${fy}">ปีงบประมาณ ${fy}</option>`;
-                        });
-                        optionsHtml += `<option value="all">ดูทุกปีงบประมาณ</option>`;
-                        yearFilter.innerHTML = optionsHtml;
-                        
-                        // ตั้งค่าเริ่มต้นเป็น "ปีงบประมาณปัจจุบัน" (เพื่อซ่อนข้อมูลเก่าอัตโนมัติ)
-                        if (fiscalYears.includes(currentFY)) {
-                            yearFilter.value = currentFY.toString();
-                        } else if (fiscalYears.length > 0) {
-                            yearFilter.value = fiscalYears[0].toString();
-                        } else {
-                            yearFilter.value = 'all';
-                        }
-                        yearFilter.setAttribute('data-initialized', 'true');
-                    }
-                }
+            // --- 🚀 ระบบ Archive อัตโนมัติ (Soft Archive) ---
+            if (yearFilter && allBdData.length > 0) {
+                // ดึงปีงบประมาณทั้งหมดที่มีในระบบออกมาเป็น Array และเรียงจากมากไปน้อย
+                const fiscalYears = [...new Set(allBdData.map(item => getFiscalYear(item.created_at)).filter(Boolean))].sort((a, b) => b - a);
 
-                if (searchInput && searchInput.value) {
-                    const searchLower = searchInput.value.toLowerCase();
-                    dataToRender = dataToRender.filter(item =>
-                        (item.bd_number && item.bd_number.toLowerCase().includes(searchLower)) ||
-                        (item.borrower_name && item.borrower_name.toLowerCase().includes(searchLower)) ||
-                        (item.item_name && item.item_name.toLowerCase().includes(searchLower))
-                    );
-                }
-                if (statusFilter && statusFilter.value && statusFilter.value !== 'all') {
-                    if (statusFilter.value === 'completed') {
-                        dataToRender = dataToRender.filter(item =>
-                            item.status === 'ปิดรายการสมบูรณ์'
-                        );
-                    } else if (statusFilter.value === 'pending') {
-                        dataToRender = dataToRender.filter(item =>
-                            item.status !== 'ปิดรายการสมบูรณ์' &&
-                            item.status !== 'ยกเลิก'
-                        );
-                    } else {
-                        dataToRender = dataToRender.filter(item => item.status === statusFilter.value);
-                    }
-                }
-                if (yearFilter && yearFilter.value && yearFilter.value !== 'all') {
-                    dataToRender = dataToRender.filter(item => {
-                        const itemFY = getFiscalYear(item.created_at);
-                        return itemFY && itemFY.toString() === yearFilter.value;
+                // อัปเดตตัวเลือกใน Dropdown ครั้งแรกครั้งเดียว
+                if (yearFilter.getAttribute('data-initialized') !== 'true') {
+                    const currentFY = getFiscalYear(new Date().toISOString());
+                    let optionsHtml = '';
+                    fiscalYears.forEach(fy => {
+                        optionsHtml += `<option value="${fy}">ปีงบประมาณ ${fy}</option>`;
                     });
-                }
+                    optionsHtml += `<option value="all">ดูทุกปีงบประมาณ</option>`;
+                    yearFilter.innerHTML = optionsHtml;
 
-                if (dataToRender.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-gray-400 font-light">ไม่พบข้อมูล</td></tr>';
-                    document.getElementById('paginationControls').classList.add('hidden');
+                    // ตั้งค่าเริ่มต้นเป็น "ปีงบประมาณปัจจุบัน" (เพื่อซ่อนข้อมูลเก่าอัตโนมัติ)
+                    if (fiscalYears.includes(currentFY)) {
+                        yearFilter.value = currentFY.toString();
+                    } else if (fiscalYears.length > 0) {
+                        yearFilter.value = fiscalYears[0].toString();
+                    } else {
+                        yearFilter.value = 'all';
+                    }
+                    yearFilter.setAttribute('data-initialized', 'true');
+                }
+            }
+
+            if (searchInput && searchInput.value) {
+                const searchLower = searchInput.value.toLowerCase();
+                dataToRender = dataToRender.filter(item =>
+                    (item.bd_number && item.bd_number.toLowerCase().includes(searchLower)) ||
+                    (item.borrower_name && item.borrower_name.toLowerCase().includes(searchLower)) ||
+                    (item.item_name && item.item_name.toLowerCase().includes(searchLower))
+                );
+            }
+            if (statusFilter && statusFilter.value && statusFilter.value !== 'all') {
+                if (statusFilter.value === 'completed') {
+                    dataToRender = dataToRender.filter(item =>
+                        item.status === 'ปิดรายการสมบูรณ์'
+                    );
+                } else if (statusFilter.value === 'pending') {
+                    dataToRender = dataToRender.filter(item =>
+                        item.status !== 'ปิดรายการสมบูรณ์' &&
+                        item.status !== 'ยกเลิก'
+                    );
                 } else {
-                    tbody.innerHTML = '';
-                    document.getElementById('paginationControls').classList.remove('hidden');
+                    dataToRender = dataToRender.filter(item => item.status === statusFilter.value);
+                }
+            }
+            if (yearFilter && yearFilter.value && yearFilter.value !== 'all') {
+                dataToRender = dataToRender.filter(item => {
+                    const itemFY = getFiscalYear(item.created_at);
+                    return itemFY && itemFY.toString() === yearFilter.value;
+                });
+            }
+
+            if (dataToRender.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-slate-500 font-light">ไม่พบข้อมูล</td></tr>';
+                document.getElementById('paginationControls').classList.add('hidden');
+            } else {
+                tbody.innerHTML = '';
+                document.getElementById('paginationControls').classList.remove('hidden');
+            }
+
+            let totalPending = 0;
+            let totalCompleted = 0;
+            let totalCancelled = 0;
+            let totalAmount = 0;
+            let totalUsed = 0;
+            let totalBalance = 0;
+
+            // 1. คำนวณสรุปยอด (Dashboards) จากข้อมูลที่กรองทั้งหมด (ไม่จำกัดหน้า)
+            dataToRender.forEach(item => {
+                const itemAmount = item.amount || 0;
+                const itemUsed = item.used_amount || 0;
+                const itemBalanceValue = itemAmount - itemUsed;
+
+                totalAmount += itemAmount;
+                totalUsed += itemUsed;
+
+                if (item.status === 'ยกเลิก') {
+                    totalCancelled++;
+                } else {
+                    if (item.status === 'ปิดรายการสมบูรณ์') {
+                        totalCompleted++;
+                    } else {
+                        totalPending++;
+                    }
+                    if (itemUsed > 0 || item.status === 'ปิดรายการสมบูรณ์') {
+                        totalBalance += itemBalanceValue;
+                    }
+                }
+            });
+
+            // อัปเดต UI สรุปยอด
+            const sumCount = document.getElementById('sum-count');
+            if (sumCount) sumCount.innerText = dataToRender.length;
+            const sumPending = document.getElementById('sum-pending');
+            if (sumPending) sumPending.innerText = totalPending;
+            const sumCompleted = document.getElementById('sum-completed');
+            if (sumCompleted) sumCompleted.innerText = totalCompleted;
+            const sumCancelled = document.getElementById('sum-cancelled');
+            if (sumCancelled) sumCancelled.innerText = totalCancelled;
+            const sumAmount = document.getElementById('sum-amount');
+            if (sumAmount) sumAmount.innerText = totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            const sumUsed = document.getElementById('sum-used');
+            if (sumUsed) sumUsed.innerText = totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            const sumBalance = document.getElementById('sum-balance');
+            if (sumBalance) sumBalance.innerText = totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+
+            // 2. Pagination: ตัด Array เพื่อแสดงเฉพาะหน้าปัจจุบัน
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = dataToRender.slice(startIndex, endIndex);
+
+            // 3. วาดตารางเฉพาะข้อมูลหน้าปัจจุบัน
+            pageData.forEach(item => {
+                const itemAmount = item.amount || 0;
+                const itemUsed = item.used_amount || 0;
+                const itemBalanceValue = itemAmount - itemUsed;
+
+                let statusBadge = '';
+                let displayBalance = '-';
+
+                if (item.status === 'ยกเลิก') {
+                    statusBadge = `<span class="inline-block whitespace-nowrap bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
+                } else {
+                    switch (item.status) {
+                        case 'รอเงินจากศูนย์': statusBadge = `<span class="inline-block whitespace-nowrap bg-slate-500/20 text-slate-300 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`; break;
+                        case 'รอจ่ายเงิน': statusBadge = `<span class="inline-block whitespace-nowrap bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอจ่ายเงิน</span>`; break;
+                        case 'รอเคลียร์เอกสาร': statusBadge = `<span class="inline-block whitespace-nowrap bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`; break;
+                        case 'เคลียร์เรียบร้อย':
+                        case 'เคลียร์':
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
+                            break;
+                        case 'ปิดรายการสมบูรณ์':
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
+                            break;
+                        default:
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${item.status || 'กำลังดำเนินการ'}</span>`;
+                    }
+
+                    if (itemUsed > 0 || item.status === 'ปิดรายการสมบูรณ์') {
+                        displayBalance = itemBalanceValue.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+                    }
                 }
 
-                let totalPending = 0;
-                let totalCompleted = 0;
-                let totalCancelled = 0;
-                let totalAmount = 0;
-                let totalUsed = 0;
-                let totalBalance = 0;
+                const safeBdNumber = escapeHTML(item.bd_number || '');
+                const safeBorrowerName = escapeHTML(item.borrower_name || '');
+                const safeItemName = escapeHTML(item.item_name || '');
 
-                // 1. คำนวณสรุปยอด (Dashboards) จากข้อมูลที่กรองทั้งหมด (ไม่จำกัดหน้า)
-                dataToRender.forEach(item => {
-                    const itemAmount = item.amount || 0;
-                    const itemUsed = item.used_amount || 0;
-                    const itemBalanceValue = itemAmount - itemUsed;
-
-                    totalAmount += itemAmount;
-                    totalUsed += itemUsed;
-
-                    if (item.status === 'ยกเลิก') {
-                        totalCancelled++;
-                    } else {
-                        if (item.status === 'ปิดรายการสมบูรณ์') {
-                            totalCompleted++;
-                        } else {
-                            totalPending++;
-                        }
-                        if (itemUsed > 0 || item.status === 'ปิดรายการสมบูรณ์') {
-                            totalBalance += itemBalanceValue;
-                        }
-                    }
-                });
-
-                // อัปเดต UI สรุปยอด
-                const sumCount = document.getElementById('sum-count');
-                if (sumCount) sumCount.innerText = dataToRender.length;
-                const sumPending = document.getElementById('sum-pending');
-                if (sumPending) sumPending.innerText = totalPending;
-                const sumCompleted = document.getElementById('sum-completed');
-                if (sumCompleted) sumCompleted.innerText = totalCompleted;
-                const sumCancelled = document.getElementById('sum-cancelled');
-                if (sumCancelled) sumCancelled.innerText = totalCancelled;
-                const sumAmount = document.getElementById('sum-amount');
-                if (sumAmount) sumAmount.innerText = totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 });
-                const sumUsed = document.getElementById('sum-used');
-                if (sumUsed) sumUsed.innerText = totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 });
-                const sumBalance = document.getElementById('sum-balance');
-                if (sumBalance) sumBalance.innerText = totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 });
-
-                // 2. Pagination: ตัด Array เพื่อแสดงเฉพาะหน้าปัจจุบัน
-                const startIndex = (currentPage - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                const pageData = dataToRender.slice(startIndex, endIndex);
-
-                // 3. วาดตารางเฉพาะข้อมูลหน้าปัจจุบัน
-                pageData.forEach(item => {
-                    const itemAmount = item.amount || 0;
-                    const itemUsed = item.used_amount || 0;
-                    const itemBalanceValue = itemAmount - itemUsed;
-
-                    let statusBadge = '';
-                    let displayBalance = '-';
-
-                    if (item.status === 'ยกเลิก') {
-                        statusBadge = `<span class="inline-block whitespace-nowrap bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
-                    } else {
-                        switch (item.status) {
-                            case 'รอเงินจากศูนย์': statusBadge = `<span class="inline-block whitespace-nowrap bg-slate-500/20 text-slate-300 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`; break;
-                            case 'รอจ่ายเงิน': statusBadge = `<span class="inline-block whitespace-nowrap bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอจ่ายเงิน</span>`; break;
-                            case 'รอเคลียร์เอกสาร': statusBadge = `<span class="inline-block whitespace-nowrap bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`; break;
-                            case 'เคลียร์เรียบร้อย':
-                            case 'เคลียร์':
-                                statusBadge = `<span class="inline-block whitespace-nowrap bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
-                                break;
-                            case 'ปิดรายการสมบูรณ์':
-                                statusBadge = `<span class="inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
-                                break;
-                            default:
-                                statusBadge = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-gray-300 px-3 py-1 rounded-full text-xs font-semibold">${item.status || 'กำลังดำเนินการ'}</span>`;
-                        }
-
-                        if (itemUsed > 0 || item.status === 'ปิดรายการสมบูรณ์') {
-                            displayBalance = itemBalanceValue.toLocaleString('th-TH', { minimumFractionDigits: 2 });
-                        }
-                    }
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="text-center pl-4 font-medium text-white whitespace-nowrap">${item.bd_number || ''}</td>
-                        <td class="whitespace-nowrap">${item.borrower_name || ''}</td>
-                        <td class="text-gray-400 w-full max-w-0 truncate" title="${item.item_name || ''}">${item.item_name || ''}</td>
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td class="text-center pl-4 font-medium text-slate-800 whitespace-nowrap">${safeBdNumber}</td>
+                        <td class="whitespace-nowrap">${safeBorrowerName}</td>
+                        <td class="text-slate-500 w-full max-w-0 truncate" title="${safeItemName}">${safeItemName}</td>
                         <td class="text-center font-medium">${itemAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
                         <td class="text-center text-orange-400 font-medium">${itemUsed > 0 ? itemUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 }) : '-'}</td>
                         <td class="text-center text-emerald-400 font-medium">${displayBalance}</td>
@@ -1087,16 +1107,15 @@
                                 <button onclick="viewRecord('${item.id}')" class="btn-view" title="ดูรายละเอียด">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                                 </button>
-                                ${item.status === 'ปิดรายการสมบูรณ์' || item.status === 'ยกเลิก' ? '' : `<button onclick="editRecord('${item.id}')" class="btn-edit h-[32px]">แก้ไข</button>`}
+                                ${(item.status === 'ปิดรายการสมบูรณ์' || item.status === 'ยกเลิก' || currentUserRole === 'user') ? '' : `<button onclick="editRecord('${item.id}')" class="btn-edit h-[32px]">แก้ไข</button>`}
                             </div>
                         </td>
                     `;
-                    tbody.appendChild(tr);
-                    tbody.appendChild(tr);
-                });
+                tbody.appendChild(tr);
+            });
 
-                // อัปเดตข้อมูล Pagination
-                renderPagination(dataToRender.length);
+            // อัปเดตข้อมูล Pagination
+            renderPagination(dataToRender.length);
         }
 
         function renderPagination(totalItems) {
@@ -1112,7 +1131,7 @@
 
             paginationControls.classList.remove('hidden');
             const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-            
+
             // ป้องกันหน้าที่เกินขอบเขต (เผื่อลบข้อมูล/กรองจนหาย)
             if (currentPage > totalPages) {
                 currentPage = totalPages;
@@ -1371,7 +1390,7 @@
             if (!confirmResult.isConfirmed) return;
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${actionText}`;
+            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-800 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${actionText}`;
             submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
 
             try {
@@ -1443,18 +1462,24 @@
             let statusHtml = '';
             let watermarkHtml = '';
 
+            const safeCancelReason = escapeHTML(record.cancel_reason || 'ไม่ได้ระบุเหตุผล');
+            const safeBdNumber = escapeHTML(record.bd_number || '');
+            const safeMmNumber = escapeHTML(record.mm_number || '-');
+            const safeBorrowerName = escapeHTML(record.borrower_name || '');
+            const safeItemName = escapeHTML(record.item_name || '');
+            const safeDocReturnNumber = escapeHTML(record.doc_return_number || '-');
+            const safePpNumber = escapeHTML(record.pp_number || '-');
+
             if (record.status === 'ยกเลิก') {
-                statusHtml = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
                 watermarkHtml = `
                     <div class="absolute z-50 pointer-events-none flex flex-col items-center justify-center overflow-hidden select-none" style="top: -80px; bottom: -40px; left: -40px; right: -40px;">
                         <div class="rotate-[-25deg] flex flex-col items-center w-full px-12">
                             <span class="text-[5rem] font-black text-red-500/20 drop-shadow-xl whitespace-nowrap">ยกเลิกรายการ</span>
-                            <span class="text-3xl font-bold text-red-500/30 mt-6 text-center whitespace-pre-wrap leading-snug drop-shadow-lg max-w-full break-words">เหตุผล ${record.cancel_reason || 'ไม่ได้ระบุเหตุผล'}</span>
+                            <span class="text-3xl font-bold text-red-500/30 mt-6 text-center whitespace-pre-wrap leading-snug drop-shadow-lg max-w-full break-words">เหตุผล ${safeCancelReason}</span>
                         </div>
                     </div>
                 `;
             } else if (record.status === 'ปิดรายการสมบูรณ์') {
-                statusHtml = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
                 watermarkHtml = `
                     <div class="absolute z-50 pointer-events-none flex flex-col items-center justify-center overflow-hidden select-none" style="top: -80px; bottom: -40px; left: -40px; right: -40px;">
                         <div class="rotate-[-25deg] flex flex-col items-center w-full px-12">
@@ -1462,8 +1487,29 @@
                         </div>
                     </div>
                 `;
-            } else {
-                statusHtml = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">${record.status || 'กำลังดำเนินการ'}</span>`;
+            }
+
+            switch (record.status) {
+                case 'ยกเลิก':
+                    statusHtml = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
+                    break;
+                case 'รอเงินจากศูนย์':
+                    statusHtml = `<span class="bg-slate-500/20 text-slate-300 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`;
+                    break;
+                case 'รอโอนเงิน':
+                    statusHtml = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอโอนเงิน</span>`;
+                    break;
+                case 'รับเงินแล้ว':
+                    statusHtml = `<span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รับเงินแล้ว</span>`;
+                    break;
+                case 'เคลียร์เอกสาร':
+                    statusHtml = `<span class="bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">เคลียร์เอกสาร</span>`;
+                    break;
+                case 'ปิดรายการสมบูรณ์':
+                    statusHtml = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
+                    break;
+                default:
+                    statusHtml = `<span class="bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(record.status) || 'กำลังดำเนินการ'}</span>`;
             }
 
             Swal.fire({
@@ -1471,39 +1517,39 @@
                 html: `
                     ${watermarkHtml}
                     <div class="text-left space-y-4 text-sm mt-4 relative z-10">
-                        <div class="grid grid-cols-2 gap-4 border-b border-white/10 pb-4">
-                            <div class="text-gray-400">เลขที่ BD:</div>
-                            <div class="font-bold text-white text-base">${record.bd_number}</div>
-                            <div class="text-gray-400">เลขที่ MM/คำสั่ง:</div>
-                            <div class="font-medium text-white">${record.mm_number || '-'}</div>
-                            <div class="text-gray-400">ผู้ขอยืม:</div>
-                            <div class="font-medium text-white">${record.borrower_name}</div>
-                            <div class="text-gray-400">สถานะ:</div>
+                        <div class="grid grid-cols-2 gap-4 border-b border-slate-200 pb-4">
+                            <div class="text-slate-500">เลขที่ BD:</div>
+                            <div class="font-bold text-slate-800 text-base">${safeBdNumber}</div>
+                            <div class="text-slate-500">เลขที่ MM/คำสั่ง:</div>
+                            <div class="font-medium text-slate-800">${safeMmNumber}</div>
+                            <div class="text-slate-500">ผู้ขอยืม:</div>
+                            <div class="font-medium text-slate-800">${safeBorrowerName}</div>
+                            <div class="text-slate-500">สถานะ:</div>
                             <div>${statusHtml}</div>
                         </div>
-                        <div class="border-b border-white/10 pb-4">
-                            <div class="text-gray-400 mb-2">รายการ:</div>
-                            <div class="font-medium text-gray-200 bg-[#121212] p-4 rounded-lg border border-white/5 whitespace-pre-wrap">${record.item_name}</div>
+                        <div class="border-b border-slate-200 pb-4">
+                            <div class="text-slate-500 mb-2">รายการ:</div>
+                            <div class="font-medium text-gray-200 bg-[#121212] p-4 rounded-lg border border-white/5 whitespace-pre-wrap">${safeItemName}</div>
                         </div>
-                        <div class="grid grid-cols-2 gap-4 border-b border-white/10 pb-4">
-                            <div class="text-gray-400">เงินตั้งต้น:</div>
+                        <div class="grid grid-cols-2 gap-4 border-b border-slate-200 pb-4">
+                            <div class="text-slate-500">เงินตั้งต้น:</div>
                             <div class="font-bold text-blue-400 text-base">${parseFloat(record.amount).toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท</div>
-                            <div class="text-gray-400">เงินที่ใช้ไป:</div>
+                            <div class="text-slate-500">เงินที่ใช้ไป:</div>
                             <div class="font-bold text-amber-400 text-base">${parseFloat(record.used_amount || 0) > 0 ? parseFloat(record.used_amount).toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' บาท' : '-'}</div>
-                            <div class="text-gray-400">เงินคงเหลือ:</div>
+                            <div class="text-slate-500">เงินคงเหลือ:</div>
                             <div class="font-bold text-emerald-400 text-base">${(parseFloat(record.used_amount || 0) > 0 || record.status === 'ปิดรายการสมบูรณ์') ? parseFloat(record.balance_amount || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' บาท' : '-'}</div>
                         </div>
                         <div class="grid grid-cols-2 gap-y-2 gap-x-4">
-                            <div class="text-gray-400 text-xs">วันที่รับเงินจากศูนย์:</div>
-                            <div class="text-gray-300 text-xs">${record.receive_date ? new Date(record.receive_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
-                            <div class="text-gray-400 text-xs">วันที่ส่งเงินให้ผู้ขอยืม:</div>
-                            <div class="text-gray-300 text-xs">${record.send_date ? new Date(record.send_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
-                            <div class="text-gray-400 text-xs">เลขที่นำส่งเงิน:</div>
-                            <div class="text-gray-300 text-xs font-medium">${record.doc_return_number || '-'}</div>
-                            <div class="text-gray-400 text-xs">เลขที่ PP:</div>
-                            <div class="text-gray-300 text-xs font-medium">${record.pp_number || '-'}</div>
-                            <div class="text-gray-400 text-xs">วันที่คืนเอกสาร:</div>
-                            <div class="text-gray-300 text-xs">${record.return_date ? new Date(record.return_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
+                            <div class="text-slate-500 text-xs">วันที่รับเงินจากศูนย์:</div>
+                            <div class="text-slate-600 text-xs">${record.receive_date ? new Date(record.receive_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
+                            <div class="text-slate-500 text-xs">วันที่ส่งเงินให้ผู้ขอยืม:</div>
+                            <div class="text-slate-600 text-xs">${record.send_date ? new Date(record.send_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
+                            <div class="text-slate-500 text-xs">เลขที่นำส่งเงิน:</div>
+                            <div class="text-slate-600 text-xs font-medium">${safeDocReturnNumber}</div>
+                            <div class="text-slate-500 text-xs">เลขที่ PP:</div>
+                            <div class="text-slate-600 text-xs font-medium">${safePpNumber}</div>
+                            <div class="text-slate-500 text-xs">วันที่คืนเอกสาร:</div>
+                            <div class="text-slate-600 text-xs">${record.return_date ? new Date(record.return_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
                         </div>
                     </div>
                 `,
@@ -1548,7 +1594,7 @@
 
                 if (data.used_amount !== null && data.used_amount !== undefined) {
                     const rawUsedAmount = parseFloat(data.used_amount) || 0;
-                    document.getElementById('usedAmount').value = rawUsedAmount.toLocaleString('en-US');
+                    document.getElementById('usedAmount').value = rawUsedAmount === 0 ? '' : rawUsedAmount.toLocaleString('en-US');
                 } else {
                     document.getElementById('usedAmount').value = '';
                 }
@@ -1616,7 +1662,7 @@
                 cancelButtonColor: '#64748b',
                 confirmButtonText: 'ยืนยันการยกเลิก',
                 cancelButtonText: 'ย้อนกลับ',
-                customClass: { 
+                customClass: {
                     popup: 'rounded-[20px]',
                     validationMessage: 'text-red-400 text-sm mt-4 font-medium flex items-center gap-2 before:hidden bg-transparent'
                 },

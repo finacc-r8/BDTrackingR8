@@ -1,147 +1,290 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             font-family: 'Prompt', sans-serif;
-            background-color: #030514;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(91, 33, 182, 0.2), transparent 40%), 
-                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.15), transparent 40%);
-            color: #ededed;
-            background-attachment: fixed;
+            color: #1e293b;
+            /* ย้ายสีพื้นหลังไปไว้ที่ .rainbow-bg หมดแล้ว จึงลบโค้ดส่วนนี้ออกเพื่อไม่ให้ซ้ำซ้อน */
         }
+
         .apple-card {
-            background: rgba(10, 15, 30, 0.25);
-            backdrop-filter: blur(16px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.5s ease;
+            background: rgba(255, 255, 255, 0.45); /* โปร่งแสงมากขึ้นเพื่อให้เห็นสีรุ้งด้านหลังชัดๆ */
+            backdrop-filter: blur(40px) saturate(150%); /* เบลอหนักขึ้น สีสดขึ้น */
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border-radius: 24px;
+            /* เงาสะท้อนสีรุ้งอ่อนๆ และขอบกระจกให้กลืนกับตีม */
+            box-shadow: 
+                0 25px 50px -12px rgba(168, 85, 247, 0.15),
+                0 0 30px rgba(147, 197, 253, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .apple-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.1);
+            box-shadow: 
+                0 30px 60px -15px rgba(253, 186, 116, 0.25),
+                0 0 40px rgba(134, 239, 172, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+            transform: translateY(-5px);
         }
+
         .apple-input {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 12px;
-            padding: 14px 16px;
-            width: 100%;
-            transition: all 0.2s ease;
-            color: #ffffff !important;
-        }
-        .apple-input:focus {
-            background: rgba(0, 0, 0, 0.5) !important;
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2) !important;
-            outline: none;
-        }
-        .apple-btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
-            color: #ffffff;
-            border-radius: 12px;
-            padding: 12px 28px;
-            font-weight: 500;
+            background: rgba(255, 255, 255, 0.55) !important;
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+            border-radius: 14px;
+            padding: 14px 18px;
             width: 100%;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            color: #1e293b !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
+
+        .apple-input:focus {
+            background: #ffffff !important;
+            border-color: #c4b5fd !important; /* เส้นขอบสีม่วงพาสเทลตอนพิมพ์ */
+            box-shadow: 0 0 0 4px rgba(196, 181, 253, 0.3), inset 0 2px 4px rgba(0,0,0,0.02) !important;
+            outline: none;
+        }
+
+        .apple-btn-primary {
+            /* สีปุ่มไล่เฉดให้เข้ากับรุ้งด้านล่าง */
+            background: linear-gradient(135deg, #f43f5e, #a855f7, #3b82f6);
+            background-size: 200% 200%;
+            animation: btnRainbow 5s ease infinite;
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 14px 28px;
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes btnRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .apple-btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-            transform: translateY(-1px);
-            filter: brightness(1.1);
+            box-shadow: 0 15px 30px -5px rgba(168, 85, 247, 0.6), inset 0 1px 0 rgba(255,255,255,0.5);
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.15);
         }
-        /* SweetAlert dark mode */
-        .swal2-popup { background: #0b1120 !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #ededed !important; }
-        .swal2-title, .swal2-html-container { color: #ededed !important; }
-        /* Twinkling Stars */
-        .stars-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
-        .star-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='40' r='1' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='120' cy='80' r='1.5' fill='rgba(255,255,255,1)'/%3E%3Ccircle cx='80' cy='150' r='0.5' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='180' cy='20' r='2' fill='rgba(255,255,255,0.9)'/%3E%3Ccircle cx='160' cy='140' r='1' fill='rgba(255,255,255,0.7)'/%3E%3C/svg%3E"); }
-        .star-layer-1 { animation: twinkle 4s ease-in-out infinite alternate; }
-        .star-layer-2 { background-position: 50px 50px; transform: scale(1.2); animation: twinkle 5s ease-in-out infinite alternate-reverse; }
-        .star-layer-3 { background-position: 120px 80px; transform: scale(0.8) rotate(45deg); animation: twinkle 6s ease-in-out infinite alternate 2s; }
-        @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: 0.8; } }
-        /* Masterpiece Rotating Rings */
-        .rings-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; overflow: hidden; z-index: -1; perspective: 1200px; display: flex; justify-content: center; align-items: center; pointer-events: none; }
-        .ring { position: absolute; border-radius: 50%; transform-style: preserve-3d; }
-        .ring-1 { width: 120vmin; height: 120vmin; border: 1px solid rgba(14, 165, 233, 0.15); border-top: 2px solid rgba(14, 165, 233, 0.8); box-shadow: 0 0 30px rgba(14, 165, 233, 0.2), inset 0 0 30px rgba(14, 165, 233, 0.2); animation: rotate1 30s linear infinite; }
-        .ring-2 { width: 95vmin; height: 95vmin; border: 2px dashed rgba(91, 33, 182, 0.4); animation: rotate2 45s linear infinite; }
-        .ring-3 { width: 70vmin; height: 70vmin; border: 1px solid rgba(255, 255, 255, 0.05); border-right: 2px solid rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); animation: rotate3 20s linear infinite; }
-        .orb-1 { position: absolute; width: 45vmin; height: 45vmin; background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, transparent 70%); border-radius: 50%; filter: blur(25px); animation: floatOrb1 15s ease-in-out infinite alternate; }
-        .orb-2 { position: absolute; width: 60vmin; height: 60vmin; background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%); border-radius: 50%; filter: blur(30px); animation: floatOrb2 20s ease-in-out infinite alternate-reverse; }
-        @keyframes rotate1 { 0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg); } 100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg); } }
-        @keyframes rotate2 { 0% { transform: rotateX(75deg) rotateY(-10deg) rotateZ(360deg); } 100% { transform: rotateX(75deg) rotateY(-10deg) rotateZ(0deg); } }
-        @keyframes rotate3 { 0% { transform: rotateX(55deg) rotateY(25deg) rotateZ(0deg); } 100% { transform: rotateX(55deg) rotateY(25deg) rotateZ(360deg); } }
-        @keyframes floatOrb1 { 0% { transform: translate(-40vw, -30vh) scale(0.8); opacity: 0.5; } 100% { transform: translate(40vw, 30vh) scale(1.2); opacity: 1; } }
-        @keyframes floatOrb2 { 0% { transform: translate(30vw, -40vh) scale(1.2); opacity: 1; } 100% { transform: translate(-30vw, 40vh) scale(0.8); opacity: 0.6; } }
-        
-        /* Success Overlay Planet */
-        .success-overlay { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(3, 5, 20, 0.85); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
-        .success-overlay.active { opacity: 1; pointer-events: auto; }
-        .planet-container { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; perspective: 1000px; transform-style: preserve-3d; }
-        .planet { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, rgba(15, 5, 35, 0.95) 0%, rgba(60, 20, 110, 0.85) 60%, rgba(200, 100, 255, 0.9) 100%); box-shadow: 0 0 50px rgba(147, 51, 234, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.5), inset 10px 0 40px rgba(216, 180, 254, 0.8), inset -10px 0 40px rgba(168, 85, 247, 0.8); backdrop-filter: blur(8px); animation: pulsePlanet 4s infinite alternate ease-in-out, spinPlanet 12s linear infinite; transform: translateZ(0); }
-        @keyframes pulsePlanet { 0% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.4), inset 10px 0 30px rgba(216, 180, 254, 0.6), inset -10px 0 30px rgba(168, 85, 247, 0.6); } 100% { box-shadow: 0 0 80px rgba(168, 85, 247, 0.9), inset 0 0 25px rgba(255, 255, 255, 0.7), inset 10px 0 50px rgba(216, 180, 254, 0.9), inset -10px 0 50px rgba(168, 85, 247, 0.9); } }
-        @keyframes spinPlanet { 0% { transform: translateZ(0) rotate(0deg); } 100% { transform: translateZ(0) rotate(360deg); } }
-        .orbit-wrapper { position: absolute; width: 280px; height: 280px; transform-style: preserve-3d; }
-        .ow-1 { transform: rotateZ(20deg) rotateX(70deg); }
-        .ow-2 { transform: rotateZ(-40deg) rotateX(70deg); }
-        .ow-3 { transform: rotateZ(70deg) rotateX(70deg); }
-        .orbit-path-inner { width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); border-top: 2px solid rgba(255,255,255,0.5); position: absolute; transform-style: preserve-3d; }
-        .op-1 { animation: orbitSpinInner 5s linear infinite; }
-        .op-2 { animation: orbitSpinInner 8s linear infinite reverse; }
-        .op-3 { animation: orbitSpinInner 6s linear infinite; }
-        .moon-inner { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); border-radius: 50%; box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; background: currentColor; }
-        .moon-inner-1 { width: 12px; height: 12px; color: #d8b4fe; }
-        .moon-inner-2 { width: 8px; height: 8px; color: #38bdf8; }
-        .moon-inner-3 { width: 14px; height: 14px; color: #fb923c; }
-        @keyframes orbitSpinInner { 0% { transform: rotateZ(0deg); } 100% { transform: rotateZ(360deg); } }
+
+        /* SweetAlert light mode */
+        .swal2-popup {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 1) !important;
+            color: #1e293b !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .swal2-title,
+        .swal2-html-container {
+            color: #1e293b !important;
+        }
+
+        .swal2-container.swal2-backdrop-show {
+            background: rgba(248, 250, 252, 0.8) !important;
+            backdrop-filter: blur(8px) !important;
+        }
+
+        /* Elegant Aurora Rainbow Background */
+        .rainbow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-color: #f8fafc;
+            /* สีพื้นเรียบหรู (Slate 50) */
+        }
+
+        /* สร้างแถบสีรุ้งแนวนอนด้านล่าง และทำอนิเมชันให้พริ้วเหมือนธงสะบัด (Waving Flag) */
+        .rainbow-bg::after {
+            content: '';
+            position: absolute;
+            /* ขยายขนาดให้ล้นขอบจอลงไปด้านล่าง เพื่อไม่ให้เห็นขอบขาวเวลาธงยกตัว */
+            bottom: -15vh; /* ปรับให้แสงรุ้งต่ำลงมาอีกนิด */
+            left: -5vw;
+            width: 110vw; /* เผื่อขอบไว้เวลาธงเอียง (Skew) */
+            height: 45vh; /* เพิ่มความสูงชดเชยส่วนที่ล้นลงไปด้านล่าง */
+            
+            background-image: 
+                /* 1. เลเยอร์เงาและแสงสะท้อน (สร้างรอยพับของธงให้เนียนละมุนขึ้น ไร้รอยต่อขอบ) */
+                linear-gradient(to right, 
+                    rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 12.5%, rgba(255,255,255,0) 25%, rgba(0,0,0,0.05) 37.5%, 
+                    rgba(255,255,255,0) 50%, rgba(255,255,255,0.2) 62.5%, rgba(255,255,255,0) 75%, rgba(0,0,0,0.05) 87.5%, rgba(255,255,255,0) 100%
+                ),
+                /* 2. เลเยอร์สีรุ้ง (2 รอบเต็มๆ ใน 1 ชุด เพื่อหลีกเลี่ยงขอบเส้นแข็งจาก repeating) */
+                linear-gradient(to right, 
+                    #fca5a5 0%, #fdba74 8.3%, #fcd34d 16.6%, #86efac 25%, #93c5fd 33.3%, #c4b5fd 41.6%,
+                    #fca5a5 50%, #fdba74 58.3%, #fcd34d 66.6%, #86efac 75%, #93c5fd 83.3%, #c4b5fd 91.6%,
+                    #fca5a5 100%
+                );
+            
+            /* กำหนดให้ภาพกว้าง 2 เท่าของหน้าจอ (200vw) เพื่อให้เลื่อนได้ */
+            background-size: 200vw 100%;
+            
+            /* แอนิเมชัน 2 ตัว: เลื่อนสี+เงา (flowWave) และ โยกขึ้นลง (flap) */
+            animation: 
+                flagFlow 15s linear infinite,
+                flagFlap 4s ease-in-out infinite alternate;
+            
+            /* ใช้เทคนิค Mask เฟดสีให้กลืนไปกับพื้นหลังด้านบน */
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            transform-origin: bottom center;
+        }
+
+        /* อนิเมชันเลื่อนเนื้อธงและรอยพับไปทางซ้าย ด้วยความเร็วที่ต่างกัน (Parallax Effect) */
+        @keyframes flagFlow {
+            0% {
+                background-position: 0vw 0, 0vw 0;
+            }
+
+            /* 150 = เลื่อนเงา 3 ลอน, 200 = เลื่อนสีรุ้ง 1 รอบ */
+            100% {
+                background-position: -150vw 0, -200vw 0;
+            }
+        }
+
+        /* อนิเมชันโยกตัวผ้า (สะบัดขึ้นลง+เอียงเล็กน้อย เหมือนโดนลมพัด) */
+        @keyframes flagFlap {
+            0% {
+                transform: scaleY(1) skewY(1deg) translateY(0);
+            }
+
+            100% {
+                transform: scaleY(1.15) skewY(-1.5deg) translateY(-10px);
+            }
+        }
+
+        /* Success Overlay */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* ปรับให้ใสมองทะลุเห็นรุ้งได้ชัดขึ้น (จาก 0.85 เหลือ 0.55) */
+            background: rgba(255, 255, 255, 0.55);
+            /* เพิ่มความเบลอและดึงสีรุ้งให้สดขึ้น เพื่อไม่ให้รุ้งดูจืดหรือหม่น */
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 2rem;
+            animation: spin 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .petal-wrapper {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            transform: rotate(var(--deg));
+        }
+
+        .petal {
+            position: absolute;
+            width: 30px;
+            height: 60px;
+            border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
+            top: 5px;
+            left: 65px;
+            background: linear-gradient(135deg, var(--c1), var(--c2));
+            box-shadow: 0 0 15px var(--c1);
+            transform-origin: center;
+            opacity: 0.9;
+            animation: expand 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes expand {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.1) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) scale(1) rotate(360deg);
+            }
+        }
     </style>
     <style id="anti-fouc">
-        body { display: none !important; }
+        body {
+            display: none !important;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" onload="document.getElementById('anti-fouc').remove()">
 
-    <!-- Twinkling Stars Background -->
-    <div class="stars-bg">
-        <div class="star-layer star-layer-1"></div>
-        <div class="star-layer star-layer-2"></div>
-        <div class="star-layer star-layer-3"></div>
-    </div>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+    onload="document.getElementById('anti-fouc').remove()">
 
-    <!-- Masterpiece Rings Animation -->
-    <div class="rings-container">
-        <div class="orb-1"></div>
-        <div class="orb-2"></div>
-        <div class="ring ring-1"></div>
-        <div class="ring ring-2"></div>
-        <div class="ring ring-3"></div>
-    </div>
+
+
+    <!-- Static Rainbow Background -->
+    <div class="rainbow-bg"></div>
 
     <div class="apple-card p-8 sm:p-12 w-full max-w-md relative z-10">
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-white mb-2">เข้าสู่ระบบ</h1>
-            <p class="text-sm text-gray-400">BD Tracking System R8</p>
+            <h1 class="text-2xl font-bold text-slate-800 mb-2">เข้าสู่ระบบ</h1>
+            <p class="text-sm text-slate-500">BD Tracking System R8</p>
         </div>
 
         <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();" class="space-y-6">
             <div>
-                <label class="text-[13px] font-semibold text-gray-300 mb-2 block uppercase tracking-wide">ชื่อผู้ใช้งาน (Username)</label>
+                <label class="block text-sm font-medium text-slate-600 mb-2">ชื่อผู้ใช้งาน (Username)</label>
                 <input type="text" id="username" class="apple-input">
             </div>
             <div>
-                <label class="text-[13px] font-semibold text-gray-300 mb-2 block uppercase tracking-wide">รหัสผ่าน (Password)</label>
+                <label class="block text-sm font-medium text-slate-600 mb-2">รหัสผ่าน (Password)</label>
                 <input type="password" id="password" class="apple-input">
             </div>
             <button type="submit" id="loginBtn" class="apple-btn-primary mt-4">
@@ -150,16 +293,36 @@
         </form>
     </div>
 
-    <!-- Success Landing Animation Overlay -->
+    <!-- Success Overlay -->
     <div id="successOverlay" class="success-overlay">
-        <div class="planet-container">
-            <div class="planet"></div>
-            <div class="orbit-wrapper ow-1"><div class="orbit-path-inner op-1"><div class="moon-inner moon-inner-1"></div></div></div>
-            <div class="orbit-wrapper ow-2"><div class="orbit-path-inner op-2"><div class="moon-inner moon-inner-2"></div></div></div>
-            <div class="orbit-wrapper ow-3"><div class="orbit-path-inner op-3"><div class="moon-inner moon-inner-3"></div></div></div>
+        <div class="spinner">
+            <div class="petal-wrapper" style="--deg: 0deg;">
+                <div class="petal" style="--c1: #ff4b2b; --c2: #ff416c;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 45deg;">
+                <div class="petal" style="--c1: #ff416c; --c2: #d8367c;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 90deg;">
+                <div class="petal" style="--c1: #d8367c; --c2: #a855f7;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 135deg;">
+                <div class="petal" style="--c1: #a855f7; --c2: #8b5cf6;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 180deg;">
+                <div class="petal" style="--c1: #8b5cf6; --c2: #6366f1;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 225deg;">
+                <div class="petal" style="--c1: #6366f1; --c2: #3b82f6;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 270deg;">
+                <div class="petal" style="--c1: #3b82f6; --c2: #0ea5e9;"></div>
+            </div>
+            <div class="petal-wrapper" style="--deg: 315deg;">
+                <div class="petal" style="--c1: #0ea5e9; --c2: #ff4b2b;"></div>
+            </div>
         </div>
-        <h2 class="text-3xl font-bold text-white mb-3 tracking-wider animate-pulse">เข้าสู่ระบบสำเร็จ</h2>
-        <p class="text-sky-300 text-lg">ระบบกำลังนำท่านเข้าสู่หน้าหลัก กรุณารอสักครู่...</p>
+        <h2 class="text-3xl font-bold text-slate-800 mb-3 tracking-wider">เข้าสู่ระบบสำเร็จ</h2>
+        <p class="text-slate-500 text-lg">ระบบกำลังนำท่านเข้าสู่หน้าหลัก กรุณารอสักครู่...</p>
     </div>
 
     <script>
@@ -167,9 +330,13 @@
         // (อย่าลืมแก้ไข 2 บรรทัดนี้ให้เป็น API Key ของโปรเจกต์คุณ)
         const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
-        
+
         // *แก้ไขตัวแปรเป็น supabaseClient เพื่อป้องกัน Error การประกาศชื่อซ้ำ
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                storage: window.sessionStorage // 🌟 ยกระดับความปลอดภัย: ปิดเบราว์เซอร์ = ล็อกเอาต์ทันที
+            }
+        });
 
         // โดเมนจำลองสำหรับระบบภายในองค์กร
         const INTERNAL_DOMAIN = '@r8.local';
@@ -185,7 +352,7 @@
 
             // เปลี่ยนสถานะปุ่มตอนกำลังโหลด (Loading State)
             btn.disabled = true;
-            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> กำลังตรวจสอบ...`;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-800 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> กำลังตรวจสอบ...`;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
 
             // ส่งข้อมูลไปตรวจสอบที่ Supabase Auth โดยใช้ supabaseClient
@@ -196,9 +363,9 @@
 
             if (error) {
                 // กรณีล็อกอินไม่ผ่าน
-                Swal.fire({ 
-                    icon: 'error', 
-                    title: 'เข้าสู่ระบบไม่สำเร็จ', 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เข้าสู่ระบบไม่สำเร็จ',
                     text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
                     confirmButtonColor: '#1e3c72',
                     customClass: { popup: 'rounded-[20px]' }
@@ -211,16 +378,17 @@
                 document.querySelector('.apple-card').style.opacity = '0';
                 document.querySelector('.apple-card').style.transform = 'scale(0.9)';
                 document.querySelector('.apple-card').style.pointerEvents = 'none';
-                
+
                 const overlay = document.getElementById('successOverlay');
                 overlay.classList.add('active');
-                
+
                 setTimeout(() => {
                     // Redirect ไปยังหน้าหลัก
-                    window.location.href = 'index.html'; 
+                    window.location.href = 'index.html';
                 }, 3000);
             }
         }
     </script>
 </body>
+
 </html>
