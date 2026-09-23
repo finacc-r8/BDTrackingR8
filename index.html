@@ -18,12 +18,8 @@
         body {
             font-family: 'Prompt', sans-serif;
             background-color: #f8fafc;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(91, 33, 182, 0.05), transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08), transparent 40%);
             color: #1e293b;
             -webkit-font-smoothing: antialiased;
-            background-attachment: fixed;
         }
 
         .apple-card {
@@ -58,21 +54,24 @@
         }
 
         .apple-btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            background: #0ea5e9;
             color: #ffffff;
-            border-radius: 12px;
-            padding: 12px 28px;
+            border-radius: 9999px;
+            padding: 10px 24px;
             font-weight: 500;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .apple-btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
             transform: translateY(-1px);
-            filter: brightness(1.1);
+            background: #0284c7;
         }
 
         .apple-btn-secondary {
@@ -224,9 +223,16 @@
     </style>
 </head>
 
-<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
+<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
 
-    <div id="mainContainer" class="max-w-screen-2xl mx-auto hidden">
+    <!-- Parallax Background Elements -->
+    <div class="fixed inset-0 pointer-events-none z-[0]" id="parallax-bg">
+        <div class="parallax-blob bg-purple-600/10 w-[600px] h-[600px] rounded-full blur-[100px] absolute top-[-10%] left-[-10%] transition-transform duration-75 ease-out" data-speed="0.15"></div>
+        <div class="parallax-blob bg-sky-500/10 w-[700px] h-[700px] rounded-full blur-[120px] absolute top-[40%] right-[-15%] transition-transform duration-75 ease-out" data-speed="-0.1"></div>
+        <div class="parallax-blob bg-amber-500/10 w-[500px] h-[500px] rounded-full blur-[100px] absolute bottom-[-20%] left-[20%] transition-transform duration-75 ease-out" data-speed="0.2"></div>
+    </div>
+
+    <div id="mainContainer" class="max-w-screen-2xl mx-auto hidden relative z-10">
         <div
             class="mb-12 border-b border-slate-200 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
@@ -388,11 +394,11 @@
                             class="absolute inset-0 bg-gradient-to-bl from-blue-900/20 via-sky-900/10 to-teal-900/10 opacity-50">
                         </div>
                         <div
-                            class="relative z-10 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5 h-full">
+                            class="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 h-full">
 
                             <!-- Total Amount -->
                             <div
-                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden sm:border-b sm:border-r lg:border-b-0 border-white/5">
                                 <div
                                     class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                 </div>
@@ -418,7 +424,7 @@
 
                             <!-- Total Used -->
                             <div
-                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden sm:border-b lg:border-r lg:border-b-0 border-white/5">
                                 <div
                                     class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-orange-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                 </div>
@@ -443,7 +449,7 @@
 
                             <!-- Total Balance -->
                             <div
-                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden sm:border-r border-white/5">
                                 <div
                                     class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                 </div>
@@ -468,6 +474,32 @@
                                 </div>
                             </div>
 
+                            <!-- Total Cancelled Amount -->
+                            <div
+                                class="p-6 lg:p-8 flex items-center gap-5 hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+                                <div
+                                    class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">
+                                        เงินที่ถูกยกเลิก</p>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <p class="text-xl lg:text-2xl font-bold text-red-400 tracking-tight"
+                                            id="sum-cancelled-amount">0.00</p>
+                                        <span class="text-xs text-red-500/50 font-medium">THB</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -476,11 +508,14 @@
             <div class="apple-card p-8">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <h2 class="text-xl font-semibold text-slate-800">ประวัติการทำรายการ</h2>
-                    <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">+ สร้างรายการใหม่</button>
+                    <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        สร้างรายการใหม่
+                    </button>
                 </div>
 
                 <div
-                    class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 bg-[#121212]/5 p-4 rounded-xl border border-white/5">
+                    class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 bg-[#121212]/5 p-4 rounded-xl border border-slate-200">
                     <div class="relative w-full md:w-2/5">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -581,7 +616,7 @@
             </div>
 
             <div class="apple-card p-8 sm:p-12">
-                <h2 id="formTitle" class="text-2xl font-bold mb-10 text-slate-800 border-b border-white/5 pb-4">
+                <h2 id="formTitle" class="text-2xl font-bold mb-10 text-slate-800 border-b border-slate-200 pb-4">
                     กรอกข้อมูลใบยืมเหลือง (BD)
                 </h2>
 
@@ -594,7 +629,7 @@
                         <label
                             class="text-[13px] font-semibold text-slate-600 mb-4 block uppercase tracking-wide">ประเภทของงาน
                             (เลือกอย่างใดอย่างหนึ่ง) <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- Card 1 -->
                             <div id="typeTravel"
                                 class="apple-card p-5 cursor-pointer border-2 border-transparent transition-all flex items-center gap-4 group"
@@ -603,7 +638,7 @@
                                     class="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-lg group-hover:bg-blue-500/20 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
                                 <span class="text-slate-800 font-medium">เดินทางไปปฏิบัติงาน</span>
@@ -617,18 +652,38 @@
                             <!-- Card 2 -->
                             <div id="typeProcurement"
                                 class="apple-card p-5 cursor-pointer border-2 border-transparent transition-all flex items-center gap-4 group"
-                                onclick="toggleJobType('จัดซื้อจัดจ้าง/โครงการ')">
+                                onclick="toggleJobType('จัดซื้อจัดจ้าง')">
                                 <div
                                     class="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg group-hover:bg-emerald-500/20 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z">
                                         </path>
                                     </svg>
                                 </div>
-                                <span class="text-slate-800 font-medium">จัดซื้อจัดจ้าง/โครงการ</span>
+                                <span class="text-slate-800 font-medium">จัดซื้อจัดจ้าง</span>
                                 <div id="checkProcurement"
                                     class="ml-auto opacity-0 text-emerald-400 transition-opacity">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <!-- Card 3 -->
+                            <div id="typeProject"
+                                class="apple-card p-5 cursor-pointer border-2 border-transparent transition-all flex items-center gap-4 group"
+                                onclick="toggleJobType('โครงการ')">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-lg group-hover:bg-purple-500/20 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span class="text-slate-800 font-medium">โครงการ</span>
+                                <div id="checkProject" class="ml-auto opacity-0 text-purple-400 transition-opacity">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7"></path>
@@ -681,7 +736,7 @@
                         </div>
 
                         <div id="step2-container"
-                            class="hidden bg-[#121212]/5 p-6 rounded-xl border border-white/5 transition-all duration-300">
+                            class="hidden bg-[#121212]/5 p-6 rounded-xl border border-slate-200 transition-all duration-300">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="flex flex-col">
                                     <label
@@ -700,7 +755,7 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="receiveDate"
-                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
@@ -720,7 +775,7 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="sendDate"
-                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
@@ -777,16 +832,16 @@
                                             </svg>
                                         </div>
                                         <input type="text" id="returnDate"
-                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-[#121212] pl-10 pr-3 py-2 text-sm text-gray-200 transition-colors placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="pt-8 mt-4 flex justify-between sm:justify-end gap-3 border-t border-white/5">
+                        <div class="pt-8 mt-4 flex justify-between sm:justify-end gap-3 border-t border-slate-200">
                             <button type="button" id="cancelRecordBtn" onclick="cancelCurrentRecord()"
-                                class="hidden px-6 py-2.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-[14px] text-sm font-semibold hover:bg-red-500/20 transition-all shadow-sm">
+                                class="hidden px-6 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-sm font-semibold hover:bg-red-100 hover:text-red-700 transition-all shadow-sm">
                                 ยกเลิกรายการ
                             </button>
                             <button type="submit" id="submitBtn" class="apple-btn-primary w-full sm:w-auto shadow-sm">
@@ -924,7 +979,14 @@
 
                 if (error) throw error;
 
-                allBdData = data || [];
+                // 🌟 Force status to 'ยกเลิก' if cancel_reason exists
+                // This bypasses any potential DB triggers that might overwrite the status back to pending
+                allBdData = (data || []).map(item => {
+                    if (item.cancel_reason) {
+                        item.status = 'ยกเลิก';
+                    }
+                    return item;
+                });
                 renderTable(); // ย้ายการประมวลผลทั้งหมดไปที่ renderTable
             } catch (err) {
                 console.error(err);
@@ -1012,6 +1074,7 @@
             let totalAmount = 0;
             let totalUsed = 0;
             let totalBalance = 0;
+            let totalCancelledAmount = 0;
 
             // 1. คำนวณสรุปยอด (Dashboards) จากข้อมูลที่กรองทั้งหมด (ไม่จำกัดหน้า)
             dataToRender.forEach(item => {
@@ -1019,12 +1082,13 @@
                 const itemUsed = item.used_amount || 0;
                 const itemBalanceValue = itemAmount - itemUsed;
 
-                totalAmount += itemAmount;
-                totalUsed += itemUsed;
-
                 if (item.status === 'ยกเลิก') {
                     totalCancelled++;
+                    totalCancelledAmount += itemAmount;
                 } else {
+                    totalAmount += itemAmount;
+                    totalUsed += itemUsed;
+
                     if (item.status === 'ปิดรายการสมบูรณ์') {
                         totalCompleted++;
                     } else {
@@ -1051,6 +1115,8 @@
             if (sumUsed) sumUsed.innerText = totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 });
             const sumBalance = document.getElementById('sum-balance');
             if (sumBalance) sumBalance.innerText = totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            const sumCancelledAmount = document.getElementById('sum-cancelled-amount');
+            if (sumCancelledAmount) sumCancelledAmount.innerText = totalCancelledAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 });
 
             // 2. Pagination: ตัด Array เพื่อแสดงเฉพาะหน้าปัจจุบัน
             const startIndex = (currentPage - 1) * itemsPerPage;
@@ -1070,7 +1136,7 @@
                     statusBadge = `<span class="inline-block whitespace-nowrap bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
                 } else {
                     switch (item.status) {
-                        case 'รอเงินจากศูนย์': statusBadge = `<span class="inline-block whitespace-nowrap bg-slate-500/20 text-slate-300 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`; break;
+                        case 'รอเงินจากศูนย์': statusBadge = `<span class="inline-block whitespace-nowrap bg-slate-500/20 text-slate-800 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`; break;
                         case 'รอจ่ายเงิน': statusBadge = `<span class="inline-block whitespace-nowrap bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอจ่ายเงิน</span>`; break;
                         case 'รอเคลียร์เอกสาร': statusBadge = `<span class="inline-block whitespace-nowrap bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`; break;
                         case 'เคลียร์เรียบร้อย':
@@ -1184,6 +1250,7 @@
         function updateJobTypeUI() {
             const travelCard = document.getElementById('typeTravel');
             const procCard = document.getElementById('typeProcurement');
+            const projectCard = document.getElementById('typeProject');
 
             const currentRecordId = document.getElementById('currentRecordId').value;
             const isEditMode = currentRecordId !== "";
@@ -1191,16 +1258,21 @@
             if (isEditMode) {
                 travelCard.classList.add('opacity-60', 'cursor-not-allowed');
                 procCard.classList.add('opacity-60', 'cursor-not-allowed');
+                projectCard.classList.add('opacity-60', 'cursor-not-allowed');
                 travelCard.classList.remove('cursor-pointer');
                 procCard.classList.remove('cursor-pointer');
+                projectCard.classList.remove('cursor-pointer');
             } else {
                 travelCard.classList.remove('opacity-60', 'cursor-not-allowed');
                 procCard.classList.remove('opacity-60', 'cursor-not-allowed');
+                projectCard.classList.remove('opacity-60', 'cursor-not-allowed');
                 travelCard.classList.add('cursor-pointer');
                 procCard.classList.add('cursor-pointer');
+                projectCard.classList.add('cursor-pointer');
             }
             const checkTravel = document.getElementById('checkTravel');
             const checkProcurement = document.getElementById('checkProcurement');
+            const checkProject = document.getElementById('checkProject');
 
             if (selectedJobTypes.includes('เดินทางไปปฏิบัติงาน')) {
                 travelCard.classList.add('border-blue-500', 'bg-blue-500/10');
@@ -1210,12 +1282,20 @@
                 checkTravel.classList.add('opacity-0');
             }
 
-            if (selectedJobTypes.includes('จัดซื้อจัดจ้าง/โครงการ')) {
+            if (selectedJobTypes.includes('จัดซื้อจัดจ้าง')) {
                 procCard.classList.add('border-emerald-500', 'bg-emerald-500/10');
                 checkProcurement.classList.remove('opacity-0');
             } else {
                 procCard.classList.remove('border-emerald-500', 'bg-emerald-500/10');
                 checkProcurement.classList.add('opacity-0');
+            }
+
+            if (selectedJobTypes.includes('โครงการ')) {
+                projectCard.classList.add('border-purple-500', 'bg-purple-500/10');
+                checkProject.classList.remove('opacity-0');
+            } else {
+                projectCard.classList.remove('border-purple-500', 'bg-purple-500/10');
+                checkProject.classList.add('opacity-0');
             }
 
             const formFields = document.getElementById('formFieldsSection');
@@ -1227,7 +1307,14 @@
         }
 
         function openCreateForm() {
+            document.getElementById('currentRecordId').value = '';
             selectedJobTypes = [];
+            
+            // Ensure all cards are visible when creating a new record
+            document.getElementById('typeTravel').classList.remove('hidden');
+            document.getElementById('typeProcurement').classList.remove('hidden');
+            document.getElementById('typeProject').classList.remove('hidden');
+
             updateJobTypeUI();
             document.getElementById('jobTypeSection').classList.remove('hidden');
             document.getElementById('bdForm').reset();
@@ -1236,7 +1323,7 @@
                 bdNumberInput.readOnly = false;
                 bdNumberInput.classList.remove('opacity-60', 'cursor-not-allowed');
             }
-            document.getElementById('currentRecordId').value = '';
+            
             document.getElementById('formTitle').innerText = 'สร้างข้อมูลใบยืมเหลือง (BD) ใหม่';
             document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลใหม่';
             document.getElementById('cancelRecordBtn').classList.add('hidden');
@@ -1369,8 +1456,12 @@
                     icon: 'warning',
                     title: 'ข้อมูลไม่ถูกต้อง',
                     text: 'ไม่สามารถบันทึกได้ เนื่องจากเงินที่ใช้ไปเกินกว่าจำนวนเงินตั้งต้น',
-                    confirmButtonColor: '#eab308',
-                    customClass: { popup: 'rounded-[20px]' }
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: { 
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
+                    }
                 });
                 return;
             }
@@ -1380,11 +1471,14 @@
                 text: 'คุณตรวจสอบความถูกต้องของข้อมูลครบถ้วนแล้วใช่หรือไม่',
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3b82f6',
-                cancelButtonColor: '#64748b',
+                buttonsStyling: false,
                 confirmButtonText: 'ยืนยันการบันทึก',
                 cancelButtonText: 'ยกเลิก',
-                customClass: { popup: 'rounded-[20px]' }
+                customClass: { 
+                    popup: 'rounded-[20px]',
+                    confirmButton: 'bg-[#0ea5e9] text-white hover:bg-[#0284c7] px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm mx-2',
+                    cancelButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mx-2'
+                }
             });
 
             if (!confirmResult.isConfirmed) return;
@@ -1422,8 +1516,11 @@
                     title: 'สำเร็จ',
                     text: successMessage,
                     confirmButtonText: 'รับทราบ',
-                    confirmButtonColor: '#1e3c72',
-                    customClass: { popup: 'rounded-[20px]' }
+                    buttonsStyling: false,
+                    customClass: { 
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-emerald-200 shadow-sm mx-2'
+                    }
                 }).then(() => {
                     selectedJobTypes = [];
                     updateJobTypeUI();
@@ -1443,8 +1540,12 @@
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด',
                     text: error.message || 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
-                    confirmButtonColor: '#ef4444',
-                    customClass: { popup: 'rounded-[20px]' }
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: { 
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
+                    }
                 });
             } finally {
                 submitBtn.disabled = false;
@@ -1491,25 +1592,26 @@
 
             switch (record.status) {
                 case 'ยกเลิก':
-                    statusHtml = `<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-semibold">ยกเลิก</span>`;
                     break;
                 case 'รอเงินจากศูนย์':
-                    statusHtml = `<span class="bg-slate-500/20 text-slate-300 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`;
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-slate-500/20 text-slate-800 border border-slate-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเงินจากศูนย์</span>`;
                     break;
-                case 'รอโอนเงิน':
-                    statusHtml = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอโอนเงิน</span>`;
+                case 'รอจ่ายเงิน':
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอจ่ายเงิน</span>`;
                     break;
-                case 'รับเงินแล้ว':
-                    statusHtml = `<span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รับเงินแล้ว</span>`;
+                case 'รอเคลียร์เอกสาร':
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`;
                     break;
-                case 'เคลียร์เอกสาร':
-                    statusHtml = `<span class="bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">เคลียร์เอกสาร</span>`;
+                case 'เคลียร์เรียบร้อย':
+                case 'เคลียร์':
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(record.status)}</span>`;
                     break;
                 case 'ปิดรายการสมบูรณ์':
-                    statusHtml = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">ปิดรายการสมบูรณ์</span>`;
                     break;
                 default:
-                    statusHtml = `<span class="bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(record.status) || 'กำลังดำเนินการ'}</span>`;
+                    statusHtml = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(record.status) || 'กำลังดำเนินการ'}</span>`;
             }
 
             Swal.fire({
@@ -1529,7 +1631,7 @@
                         </div>
                         <div class="border-b border-slate-200 pb-4">
                             <div class="text-slate-500 mb-2">รายการ:</div>
-                            <div class="font-medium text-gray-200 bg-[#121212] p-4 rounded-lg border border-white/5 whitespace-pre-wrap">${safeItemName}</div>
+                            <div class="font-medium text-slate-800 bg-slate-50 p-4 rounded-lg border border-slate-200 whitespace-pre-wrap leading-relaxed">${safeItemName}</div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 border-b border-slate-200 pb-4">
                             <div class="text-slate-500">เงินตั้งต้น:</div>
@@ -1555,8 +1657,12 @@
                 `,
                 width: '600px',
                 confirmButtonText: 'ปิดหน้าต่าง',
-                confirmButtonColor: '#334155',
-                customClass: { popup: 'rounded-[20px]', htmlContainer: 'text-left text-sm' }
+                buttonsStyling: false,
+                customClass: { 
+                    popup: 'rounded-[20px]', 
+                    htmlContainer: 'text-left text-sm',
+                    confirmButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mt-4'
+                }
             });
         }
 
@@ -1582,8 +1688,16 @@
                 bdNumberInput.value = data.bd_number || '';
                 bdNumberInput.readOnly = true;
                 bdNumberInput.classList.add('opacity-60', 'cursor-not-allowed');
-                selectedJobTypes = data.job_type ? data.job_type.split(',') : [];
+                
+                // Map legacy 'จัดซื้อจัดจ้าง/โครงการ' to new 'จัดซื้อจัดจ้าง' for UI backwards compatibility
+                selectedJobTypes = data.job_type ? data.job_type.split(',').map(type => type.trim() === 'จัดซื้อจัดจ้าง/โครงการ' ? 'จัดซื้อจัดจ้าง' : type.trim()) : [];
                 updateJobTypeUI();
+
+                // Hide unselected cards in edit mode to prevent confusion and accidental changes
+                document.getElementById('typeTravel').classList.toggle('hidden', !selectedJobTypes.includes('เดินทางไปปฏิบัติงาน'));
+                document.getElementById('typeProcurement').classList.toggle('hidden', !selectedJobTypes.includes('จัดซื้อจัดจ้าง'));
+                document.getElementById('typeProject').classList.toggle('hidden', !selectedJobTypes.includes('โครงการ'));
+
                 document.getElementById('jobTypeSection').classList.remove('hidden');
                 document.getElementById('mmNumber').value = data.mm_number || '';
                 document.getElementById('borrowerName').value = data.borrower_name || '';
@@ -1639,8 +1753,12 @@
                     icon: 'error',
                     title: 'ผิดพลาด',
                     text: 'ไม่สามารถดึงข้อมูลได้: ' + error.message,
-                    confirmButtonColor: '#1e3c72',
-                    customClass: { popup: 'rounded-[20px]' }
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: { 
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
+                    }
                 });
             }
         }
@@ -1658,12 +1776,13 @@
                     'aria-label': 'เหตุผลการยกเลิก'
                 },
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
+                buttonsStyling: false,
                 confirmButtonText: 'ยืนยันการยกเลิก',
                 cancelButtonText: 'ย้อนกลับ',
                 customClass: {
                     popup: 'rounded-[20px]',
+                    confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2',
+                    cancelButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mx-2',
                     validationMessage: 'text-red-400 text-sm mt-4 font-medium flex items-center gap-2 before:hidden bg-transparent'
                 },
                 inputValidator: (value) => {
@@ -1682,22 +1801,31 @@
                         customClass: { popup: 'rounded-[20px]' }
                     });
 
-                    const { error } = await supabaseClient
+                    const { data, error } = await supabaseClient
                         .from('bd_data')
                         .update({
                             status: 'ยกเลิก',
                             cancel_reason: cancelReason.trim()
                         })
-                        .eq('id', currentRecordId);
+                        .eq('id', currentRecordId)
+                        .select();
 
                     if (error) throw error;
+                    
+                    if (!data || data.length === 0) {
+                        throw new Error("ไม่สามารถอัปเดตข้อมูลได้ (อาจถูกจำกัดสิทธิ์)");
+                    }
 
                     await Swal.fire({
                         icon: 'success',
                         title: 'ยกเลิกรายการสำเร็จ',
                         text: 'รายการนี้ถูกยกเลิกแล้ว',
-                        confirmButtonColor: '#1e3c72',
-                        customClass: { popup: 'rounded-[20px]' }
+                        confirmButtonText: 'ตกลง',
+                        buttonsStyling: false,
+                        customClass: { 
+                            popup: 'rounded-[20px]',
+                            confirmButton: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-emerald-200 shadow-sm mx-2'
+                        }
                     });
 
                     switchView('dashboard');
@@ -1707,8 +1835,12 @@
                         icon: 'error',
                         title: 'ผิดพลาด',
                         text: 'ไม่สามารถยกเลิกรายการได้: ' + error.message,
-                        confirmButtonColor: '#ef4444',
-                        customClass: { popup: 'rounded-[20px]' }
+                        confirmButtonText: 'ตกลง',
+                        buttonsStyling: false,
+                        customClass: { 
+                            popup: 'rounded-[20px]',
+                            confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
+                        }
                     });
                 }
             }
@@ -1802,6 +1934,19 @@
         setupActivityListeners();
         startIdleMonitor();
         initDatePickers();
+
+        // Parallax Effect Listener
+        window.addEventListener('scroll', () => {
+            requestAnimationFrame(() => {
+                const scrolled = window.scrollY;
+                const blobs = document.querySelectorAll('.parallax-blob');
+                blobs.forEach(blob => {
+                    const speed = parseFloat(blob.getAttribute('data-speed') || 0);
+                    // Use translate3d for better performance (GPU acceleration)
+                    blob.style.transform = `translate3d(0, ${scrolled * speed}px, 0)`;
+                });
+            });
+        });
     </script>
 </body>
 
