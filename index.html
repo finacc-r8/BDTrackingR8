@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -227,9 +228,12 @@
 
     <!-- Parallax Background Elements -->
     <div class="fixed inset-0 pointer-events-none z-[0]" id="parallax-bg">
-        <div class="parallax-blob bg-purple-600/10 w-[600px] h-[600px] rounded-full blur-[100px] absolute top-[-10%] left-[-10%] transition-transform duration-75 ease-out" data-speed="0.15"></div>
-        <div class="parallax-blob bg-sky-500/10 w-[700px] h-[700px] rounded-full blur-[120px] absolute top-[40%] right-[-15%] transition-transform duration-75 ease-out" data-speed="-0.1"></div>
-        <div class="parallax-blob bg-amber-500/10 w-[500px] h-[500px] rounded-full blur-[100px] absolute bottom-[-20%] left-[20%] transition-transform duration-75 ease-out" data-speed="0.2"></div>
+        <div class="parallax-blob bg-purple-600/10 w-[600px] h-[600px] rounded-full blur-[100px] absolute top-[-10%] left-[-10%] transition-transform duration-75 ease-out"
+            data-speed="0.15"></div>
+        <div class="parallax-blob bg-sky-500/10 w-[700px] h-[700px] rounded-full blur-[120px] absolute top-[40%] right-[-15%] transition-transform duration-75 ease-out"
+            data-speed="-0.1"></div>
+        <div class="parallax-blob bg-amber-500/10 w-[500px] h-[500px] rounded-full blur-[100px] absolute bottom-[-20%] left-[20%] transition-transform duration-75 ease-out"
+            data-speed="0.2"></div>
     </div>
 
     <div id="mainContainer" class="max-w-screen-2xl mx-auto hidden relative z-10">
@@ -509,7 +513,11 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <h2 class="text-xl font-semibold text-slate-800">ประวัติการทำรายการ</h2>
                     <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
                         สร้างรายการใหม่
                     </button>
                 </div>
@@ -530,37 +538,58 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <div class="relative">
-                            <select id="statusFilter"
-                                class="apple-input py-2.5 pl-4 pr-10 bg-[#121212] shadow-sm appearance-none cursor-pointer text-sm font-medium text-slate-600"
-                                onchange="applyFilters()">
-                                <option value="all">สถานะทั้งหมด</option>
-                                <option value="pending">🟢 กำลังดำเนินการ</option>
-                                <option value="completed">⚪️ ปิดรายการสมบูรณ์</option>
-                                <option value="ยกเลิก">🔴 ยกเลิก</option>
-                            </select>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                        <!-- Custom Status Dropdown -->
+                        <div class="relative" id="statusFilterWrapper">
+                            <button type="button" onclick="toggleDropdown('statusDropdown')" id="statusBtn"
+                                class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between min-w-[160px] outline-none hover:border-blue-400 transition-colors">
+                                <span id="statusLabel" class="flex items-center gap-2">สถานะทั้งหมด</span>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                            <div id="statusDropdown"
+                                class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                                <div onclick="selectStatus('all', 'สถานะทั้งหมด')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    สถานะทั้งหมด</div>
+                                <div onclick="selectStatus('pending', 'กำลังดำเนินการ', 'bg-blue-400')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>กำลังดำเนินการ
+                                </div>
+                                <div onclick="selectStatus('completed', 'ปิดรายการสมบูรณ์', 'bg-emerald-400')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>ปิดรายการสมบูรณ์
+                                </div>
+                                <div onclick="selectStatus('ยกเลิก', 'ยกเลิก', 'bg-red-400')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-400"></span>ยกเลิก
+                                </div>
                             </div>
+                            <input type="hidden" id="statusFilter" value="all">
                         </div>
 
-                        <div class="relative">
-                            <select id="yearFilter"
-                                class="apple-input py-2.5 pl-4 pr-10 bg-[#121212] shadow-sm appearance-none cursor-pointer text-sm font-bold text-blue-400"
-                                onchange="applyFilters()">
-                                <option value="all">กำลังโหลด...</option>
-                            </select>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                        <!-- Custom Year Dropdown -->
+                        <div class="relative" id="yearFilterWrapper">
+                            <button type="button" onclick="toggleDropdown('yearDropdown')" id="yearBtn"
+                                class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-bold text-blue-500 flex items-center justify-between min-w-[140px] outline-none hover:border-blue-400 transition-colors">
+                                <span id="yearLabel">กำลังโหลด...</span>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                            <div id="yearDropdown"
+                                class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                                <!-- injected by JS -->
                             </div>
+                            <input type="hidden" id="yearFilter" value="all">
                         </div>
                     </div>
                 </div>
@@ -638,7 +667,8 @@
                                     class="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-lg group-hover:bg-blue-500/20 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
                                     </svg>
                                 </div>
                                 <span class="text-slate-800 font-medium">เดินทางไปปฏิบัติงาน</span>
@@ -848,6 +878,21 @@
                                 บันทึกข้อมูล
                             </button>
                         </div>
+
+                        <!-- Audit Footer in Edit Form -->
+                        <div id="auditFooter"
+                            class="hidden mt-6 pt-4 border-t border-slate-100 flex items-center justify-start">
+                            <!-- View Timeline Button in Edit Form footer -->
+                            <button type="button"
+                                onclick="showAuditTimeline(document.getElementById('currentRecordId').value)"
+                                class="text-slate-400 hover:text-blue-600 text-[12px] font-medium transition-colors flex items-center gap-1.5 focus:outline-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>ดูประวัติการแก้ไขทั้งหมด</span>
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -866,7 +911,7 @@
         // ฟังก์ชันป้องกัน XSS
         function escapeHTML(str) {
             if (typeof str !== 'string') return str;
-            return str.replace(/[&<>'"]/g, 
+            return str.replace(/[&<>'"]/g,
                 tag => ({
                     '&': '&amp;',
                     '<': '&lt;',
@@ -923,7 +968,7 @@
                         // ลองหาชื่อจากคอลัมน์ต่างๆ เผื่อตั้งชื่อต่างกัน
                         const name = profile.full_name || profile.name || profile.first_name || user.email.split('@')[0];
                         const position = profile.position || '';
-                        
+
                         currentUserRole = profile.role || 'user'; // กำหนด Role จากฐานข้อมูล
 
                         // ซ่อนปุ่ม สร้างรายการใหม่ ถ้าเป็นสิทธิ์ user
@@ -937,12 +982,19 @@
                         } else {
                             userSpan.innerText = name;
                         }
+                        
+                        // ใช้ชื่อจากโปรไฟล์เป็น Context สำหรับบันทึกประวัติ (Enterprise Grade)
+                        currentUserContext = name;
                     } else {
-                        userSpan.innerText = user.email.split('@')[0];
+                        const emailName = user.email.split('@')[0];
+                        userSpan.innerText = emailName;
+                        currentUserContext = emailName;
                     }
                 } catch (err) {
                     console.log('No user profile found or table not accessible yet:', err);
-                    userSpan.innerText = user.email.split('@')[0];
+                    const emailName = user.email.split('@')[0];
+                    userSpan.innerText = emailName;
+                    currentUserContext = emailName;
                 }
             }
 
@@ -1014,18 +1066,18 @@
                     const currentFY = getFiscalYear(new Date().toISOString());
                     let optionsHtml = '';
                     fiscalYears.forEach(fy => {
-                        optionsHtml += `<option value="${fy}">ปีงบประมาณ ${fy}</option>`;
+                        optionsHtml += `<div onclick="selectYear('${fy}', 'ปีงบประมาณ ${fy}')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">ปีงบประมาณ ${fy}</div>`;
                     });
-                    optionsHtml += `<option value="all">ดูทุกปีงบประมาณ</option>`;
-                    yearFilter.innerHTML = optionsHtml;
+                    optionsHtml += `<div onclick="selectYear('all', 'ดูทุกปีงบประมาณ')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors border-t border-slate-50 mt-1 flex items-center gap-2">ดูทุกปีงบประมาณ</div>`;
 
-                    // ตั้งค่าเริ่มต้นเป็น "ปีงบประมาณปัจจุบัน" (เพื่อซ่อนข้อมูลเก่าอัตโนมัติ)
+                    document.getElementById('yearDropdown').innerHTML = optionsHtml;
+
                     if (fiscalYears.includes(currentFY)) {
-                        yearFilter.value = currentFY.toString();
+                        selectYear(currentFY.toString(), `ปีงบประมาณ ${currentFY}`, false);
                     } else if (fiscalYears.length > 0) {
-                        yearFilter.value = fiscalYears[0].toString();
+                        selectYear(fiscalYears[0].toString(), `ปีงบประมาณ ${fiscalYears[0]}`, false);
                     } else {
-                        yearFilter.value = 'all';
+                        selectYear('all', 'ดูทุกปีงบประมาณ', false);
                     }
                     yearFilter.setAttribute('data-initialized', 'true');
                 }
@@ -1309,7 +1361,7 @@
         function openCreateForm() {
             document.getElementById('currentRecordId').value = '';
             selectedJobTypes = [];
-            
+
             // Ensure all cards are visible when creating a new record
             document.getElementById('typeTravel').classList.remove('hidden');
             document.getElementById('typeProcurement').classList.remove('hidden');
@@ -1323,10 +1375,16 @@
                 bdNumberInput.readOnly = false;
                 bdNumberInput.classList.remove('opacity-60', 'cursor-not-allowed');
             }
-            
+
             document.getElementById('formTitle').innerText = 'สร้างข้อมูลใบยืมเหลือง (BD) ใหม่';
             document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลใหม่';
             document.getElementById('cancelRecordBtn').classList.add('hidden');
+
+            const auditFooter = document.getElementById('auditFooter');
+            if (auditFooter) {
+                auditFooter.classList.add('hidden');
+                auditFooter.classList.remove('flex');
+            }
 
             if (document.getElementById('receiveDate')._flatpickr) {
                 document.getElementById('receiveDate')._flatpickr.clear();
@@ -1411,8 +1469,11 @@
                         title: 'พบข้อมูลซ้ำซ้อน',
                         text: `เลขที่ใบยืมเหลือง BD "${bdValue}" มีการใช้งานไปแล้ว กรุณาระบุเลขอื่น`,
                         confirmButtonText: 'รับทราบ',
-                        confirmButtonColor: '#eab308',
-                        customClass: { popup: 'rounded-[20px]' }
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'rounded-[20px]',
+                            confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
+                        }
                     });
                     inputElement.value = '';
                     setTimeout(() => inputElement.focus(), 100);
@@ -1458,7 +1519,7 @@
                     text: 'ไม่สามารถบันทึกได้ เนื่องจากเงินที่ใช้ไปเกินกว่าจำนวนเงินตั้งต้น',
                     confirmButtonText: 'ตกลง',
                     buttonsStyling: false,
-                    customClass: { 
+                    customClass: {
                         popup: 'rounded-[20px]',
                         confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
                     }
@@ -1474,7 +1535,7 @@
                 buttonsStyling: false,
                 confirmButtonText: 'ยืนยันการบันทึก',
                 cancelButtonText: 'ยกเลิก',
-                customClass: { 
+                customClass: {
                     popup: 'rounded-[20px]',
                     confirmButton: 'bg-[#0ea5e9] text-white hover:bg-[#0284c7] px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm mx-2',
                     cancelButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mx-2'
@@ -1489,18 +1550,90 @@
 
             try {
                 if (isEditMode) {
-                    const { error: updateErr } = await supabaseClient
+                    // Fetch old data for diffing
+                    const { data: oldData, error: fetchErr } = await supabaseClient
+                        .from('bd_data')
+                        .select('*')
+                        .eq('id', currentRecordId)
+                        .single();
+
+                    if (fetchErr) throw fetchErr;
+
+                    payload.updated_by = currentUserContext;
+                    payload.updated_at = new Date().toISOString();
+
+                    const { data: updateData, error: updateErr } = await supabaseClient
                         .from('bd_data')
                         .update(payload)
-                        .eq('id', currentRecordId);
+                        .eq('id', currentRecordId)
+                        .select();
 
                     if (updateErr) throw updateErr;
 
                     const isCompleted = payload.doc_return_number && payload.pp_number && payload.return_date;
                     var successMessage = isCompleted ? "บันทึกและปิดรายการสมบูรณ์เรียบร้อยแล้ว" : "อัปเดตข้อมูลเรียบร้อยแล้ว";
+
+                    // Generate diff
+                    let changes = [];
+                    const fieldNames = {
+                        bd_number: 'เลขที่ BD',
+                        mm_number: 'เลขที่ MM/คำสั่ง',
+                        borrower_name: 'ชื่อผู้ขอยืม',
+                        job_type: 'ประเภทงาน',
+                        item_name: 'รายการ',
+                        amount: 'จำนวนเงินตั้งต้น',
+                        receive_date: 'วันที่ได้รับเงินจากศูนย์',
+                        send_date: 'วันที่ส่งเงินให้ผู้ขอยืม',
+                        used_amount: 'เงินที่ใช้ไป',
+                        balance_amount: 'เงินคงเหลือ',
+                        doc_return_number: 'เลขที่นำส่งเงิน',
+                        pp_number: 'เลขที่ PP',
+                        return_date: 'วันที่คืนเอกสาร'
+                    };
+
+                    const formatValue = (key, val) => {
+                        if (!val || val === 'null' || val === 'undefined') return 'ว่างเปล่า';
+                        if (['amount', 'used_amount', 'balance_amount'].includes(key) && !isNaN(val)) {
+                            return Number(val).toLocaleString('th-TH') + ' บาท';
+                        }
+                        // Format dates YYYY-MM-DD
+                        if (['receive_date', 'send_date', 'return_date'].includes(key) && val.includes('-')) {
+                            const [year, month, day] = val.split('-');
+                            if (year && month && day) return `${day}/${month}/${parseInt(year) + 543}`;
+                        }
+                        return `"${val}"`;
+                    };
+
+                    for (const key in payload) {
+                        if (['updated_by', 'updated_at', 'created_by', 'created_at'].includes(key)) continue;
+                        const oldVal = (oldData[key] !== null && oldData[key] !== undefined) ? String(oldData[key]).trim() : '';
+                        const newVal = (payload[key] !== null && payload[key] !== undefined) ? String(payload[key]).trim() : '';
+
+                        if (oldVal !== newVal) {
+                            const friendlyName = fieldNames[key] || key;
+                            const displayOld = formatValue(key, oldVal);
+                            const displayNew = formatValue(key, newVal);
+                            
+                            if (!oldVal) {
+                                changes.push(`+ เพิ่ม${friendlyName}: ${displayNew}`);
+                            } else if (!newVal) {
+                                changes.push(`- ลบ${friendlyName} (เคยเป็น: ${displayOld})`);
+                            } else {
+                                changes.push(`• เปลี่ยน${friendlyName}: ${displayOld} ➔ ${displayNew}`);
+                            }
+                        }
+                    }
+
+                    let actionDetails = changes.length > 0 ? changes.join('\n') : 'อัปเดตข้อมูลทั่วไป (ไม่พบการเปลี่ยนแปลงในฟิลด์หลัก)';
+                    if (isCompleted && (!oldData.doc_return_number || !oldData.pp_number || !oldData.return_date)) {
+                        actionDetails = "บันทึกและปิดรายการสมบูรณ์\n" + actionDetails;
+                    }
+
+                    // Audit Log
+                    await logAudit(currentRecordId, isCompleted ? 'COMPLETE' : 'UPDATE', actionDetails);
                 } else {
                     payload.created_by = currentUserContext;
-                    const { error: insertErr } = await supabaseClient.from('bd_data').insert([payload]);
+                    const { data: insertData, error: insertErr } = await supabaseClient.from('bd_data').insert([payload]).select();
 
                     if (insertErr) {
                         if (insertErr.code === '23505') {
@@ -1509,6 +1642,11 @@
                         throw insertErr;
                     }
                     var successMessage = "บันทึกข้อมูลรายการใหม่เรียบร้อยแล้ว";
+
+                    // Audit Log
+                    if (insertData && insertData.length > 0) {
+                        await logAudit(insertData[0].id, 'CREATE', 'สร้างรายการใหม่');
+                    }
                 }
 
                 Swal.fire({
@@ -1517,7 +1655,7 @@
                     text: successMessage,
                     confirmButtonText: 'รับทราบ',
                     buttonsStyling: false,
-                    customClass: { 
+                    customClass: {
                         popup: 'rounded-[20px]',
                         confirmButton: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-emerald-200 shadow-sm mx-2'
                     }
@@ -1542,7 +1680,7 @@
                     text: error.message || 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
                     confirmButtonText: 'ตกลง',
                     buttonsStyling: false,
-                    customClass: { 
+                    customClass: {
                         popup: 'rounded-[20px]',
                         confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
                     }
@@ -1614,6 +1752,37 @@
                     statusHtml = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(record.status) || 'กำลังดำเนินการ'}</span>`;
             }
 
+            let footerHtml = '';
+            if (record.status === 'ยกเลิก' || record.status === 'ปิดรายการสมบูรณ์') {
+                footerHtml = `
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-start">
+                        <button type="button"
+                            onclick="showAuditTimeline('${id}')"
+                            class="text-slate-400 hover:text-blue-600 text-[12px] font-medium transition-colors flex items-center gap-1.5 focus:outline-none">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>ดูประวัติการแก้ไขทั้งหมด</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                footerHtml = `
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-1 text-[11px] text-slate-400">
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>สร้างเมื่อ: ${record.created_at ? new Date(record.created_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : '-'} | โดย: ${escapeHTML(record.created_by || '-')}</span>
+                        </div>
+                        ${record.updated_at ? `
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <span>แก้ไขล่าสุด: ${new Date(record.updated_at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })} | โดย: ${escapeHTML(record.updated_by || '-')}</span>
+                        </div>` : ''}
+                    </div>
+                `;
+            }
+
             Swal.fire({
                 title: 'รายละเอียดใบยืมเหลือง (BD)',
                 html: `
@@ -1654,12 +1823,14 @@
                             <div class="text-slate-600 text-xs">${record.return_date ? new Date(record.return_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
                         </div>
                     </div>
+                    
+                    ${footerHtml}
                 `,
                 width: '600px',
                 confirmButtonText: 'ปิดหน้าต่าง',
                 buttonsStyling: false,
-                customClass: { 
-                    popup: 'rounded-[20px]', 
+                customClass: {
+                    popup: 'rounded-[20px]',
                     htmlContainer: 'text-left text-sm',
                     confirmButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mt-4'
                 }
@@ -1688,7 +1859,7 @@
                 bdNumberInput.value = data.bd_number || '';
                 bdNumberInput.readOnly = true;
                 bdNumberInput.classList.add('opacity-60', 'cursor-not-allowed');
-                
+
                 // Map legacy 'จัดซื้อจัดจ้าง/โครงการ' to new 'จัดซื้อจัดจ้าง' for UI backwards compatibility
                 selectedJobTypes = data.job_type ? data.job_type.split(',').map(type => type.trim() === 'จัดซื้อจัดจ้าง/โครงการ' ? 'จัดซื้อจัดจ้าง' : type.trim()) : [];
                 updateJobTypeUI();
@@ -1745,6 +1916,13 @@
                     document.getElementById('step3-container').classList.add('hidden');
                 }
 
+                // Audit Trail Data Population
+                const auditFooter = document.getElementById('auditFooter');
+                if (auditFooter) {
+                    auditFooter.classList.remove('hidden');
+                    auditFooter.classList.add('flex');
+                }
+
                 Swal.close();
                 switchView('form');
 
@@ -1755,7 +1933,7 @@
                     text: 'ไม่สามารถดึงข้อมูลได้: ' + error.message,
                     confirmButtonText: 'ตกลง',
                     buttonsStyling: false,
-                    customClass: { 
+                    customClass: {
                         popup: 'rounded-[20px]',
                         confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
                     }
@@ -1805,16 +1983,21 @@
                         .from('bd_data')
                         .update({
                             status: 'ยกเลิก',
-                            cancel_reason: cancelReason.trim()
+                            cancel_reason: cancelReason.trim(),
+                            updated_by: currentUserContext,
+                            updated_at: new Date().toISOString()
                         })
                         .eq('id', currentRecordId)
                         .select();
 
                     if (error) throw error;
-                    
+
                     if (!data || data.length === 0) {
                         throw new Error("ไม่สามารถอัปเดตข้อมูลได้ (อาจถูกจำกัดสิทธิ์)");
                     }
+
+                    // Audit Log
+                    await logAudit(currentRecordId, 'CANCEL', `ยกเลิกรายการ: ${cancelReason.trim()}`);
 
                     await Swal.fire({
                         icon: 'success',
@@ -1822,7 +2005,7 @@
                         text: 'รายการนี้ถูกยกเลิกแล้ว',
                         confirmButtonText: 'ตกลง',
                         buttonsStyling: false,
-                        customClass: { 
+                        customClass: {
                             popup: 'rounded-[20px]',
                             confirmButton: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-emerald-200 shadow-sm mx-2'
                         }
@@ -1837,7 +2020,7 @@
                         text: 'ไม่สามารถยกเลิกรายการได้: ' + error.message,
                         confirmButtonText: 'ตกลง',
                         buttonsStyling: false,
-                        customClass: { 
+                        customClass: {
                             popup: 'rounded-[20px]',
                             confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
                         }
@@ -1947,6 +2130,177 @@
                 });
             });
         });
+
+        // --- Custom Dropdown Logic ---
+        function toggleDropdown(id) {
+            // Close other dropdowns
+            if (id !== 'statusDropdown') document.getElementById('statusDropdown').classList.add('hidden');
+            if (id !== 'yearDropdown') document.getElementById('yearDropdown').classList.add('hidden');
+
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('hidden');
+        }
+
+        function selectStatus(val, label, colorClass = null) {
+            document.getElementById('statusFilter').value = val;
+            let labelHtml = label;
+            if (colorClass) {
+                labelHtml = `<span class="w-2 h-2 rounded-full ${colorClass}"></span>${label}`;
+            }
+            document.getElementById('statusLabel').innerHTML = labelHtml;
+            document.getElementById('statusDropdown').classList.add('hidden');
+            applyFilters();
+        }
+
+        function selectYear(val, label, triggerFilter = true) {
+            document.getElementById('yearFilter').value = val;
+            document.getElementById('yearLabel').innerHTML = label;
+            document.getElementById('yearDropdown').classList.add('hidden');
+            if (triggerFilter) applyFilters();
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('#statusFilterWrapper')) {
+                const sd = document.getElementById('statusDropdown');
+                if (sd) sd.classList.add('hidden');
+            }
+            if (!event.target.closest('#yearFilterWrapper')) {
+                const yd = document.getElementById('yearDropdown');
+                if (yd) yd.classList.add('hidden');
+            }
+        });
+
+        // --- Audit Log Logic ---
+        async function logAudit(recordId, actionType, actionDetails) {
+            if (!recordId) return;
+            try {
+                const { error } = await supabaseClient.from('bd_audit_logs').insert([{
+                    record_id: recordId,
+                    action_type: actionType,
+                    action_details: actionDetails,
+                    performed_by: currentUserContext || 'System'
+                }]);
+                if (error) {
+                    console.error("Failed to insert audit log", error);
+                }
+            } catch (e) {
+                console.error("Audit log error", e);
+            }
+        }
+
+        async function showAuditTimeline(recordId) {
+            if (!recordId) return;
+            Swal.fire({
+                title: 'กำลังดึงประวัติ...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); },
+                customClass: { popup: 'rounded-[20px]' }
+            });
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('bd_audit_logs')
+                    .select('*')
+                    .eq('record_id', recordId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    Swal.fire({
+                        title: 'ประวัติการแก้ไข',
+                        text: 'ไม่พบประวัติการแก้ไขสำหรับรายการนี้ (อาจเป็นรายการที่สร้างก่อนมีระบบ Timeline)',
+                        icon: 'info',
+                        confirmButtonText: 'ปิดหน้าต่าง',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'rounded-[20px]',
+                            confirmButton: 'bg-slate-100 text-slate-700 hover:bg-slate-200 px-6 py-2.5 rounded-full font-medium transition-colors border border-slate-200 shadow-sm mt-4'
+                        }
+                    });
+                    return;
+                }
+
+                let timelineHtml = '<div class="relative border-l-2 border-slate-200 ml-4 space-y-6 mt-6 pb-4">';
+
+                data.forEach((log, index) => {
+                    const isLatest = index === 0;
+                    const dateObj = new Date(log.created_at);
+                    const formattedDate = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    const formattedTime = dateObj.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+
+                    let iconBg = 'bg-slate-100 text-slate-500';
+                    let iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>';
+                    let actionLabel = 'อัปเดตข้อมูล';
+
+                    if (log.action_type === 'CREATE') {
+                        iconBg = 'bg-emerald-100 text-emerald-600 ring-emerald-50';
+                        iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>';
+                        actionLabel = 'สร้างรายการ';
+                    } else if (log.action_type === 'CANCEL') {
+                        iconBg = 'bg-red-100 text-red-600 ring-red-50';
+                        iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                        actionLabel = 'ยกเลิกรายการ';
+                    } else if (log.action_type === 'COMPLETE') {
+                        iconBg = 'bg-teal-100 text-teal-600 ring-teal-50';
+                        iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                        actionLabel = 'ปิดรายการสมบูรณ์';
+                    } else if (log.action_type === 'UPDATE') {
+                        iconBg = 'bg-blue-100 text-blue-600 ring-blue-50';
+                    }
+
+                    timelineHtml += `
+                        <div class="relative pl-8">
+                            <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full ${iconBg} ring-4 flex items-center justify-center shadow-sm">
+                                ${iconSvg}
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border ${isLatest ? 'border-blue-200 shadow-md ring-1 ring-blue-50' : 'border-slate-100 shadow-sm'} text-left relative transition-all hover:shadow-md">
+                                ${isLatest ? '<div class="absolute -top-3 right-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">ล่าสุด</div>' : ''}
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-slate-800 text-sm">${actionLabel}</span>
+                                    <span class="text-[11px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md font-medium border border-slate-100">${formattedDate} ${formattedTime} น.</span>
+                                </div>
+                                <div class="text-[13px] text-slate-600 mb-2 mt-2 font-medium whitespace-pre-line leading-relaxed">${escapeHTML(log.action_details || '-')}</div>
+                                <div class="text-xs text-slate-500 flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-50">
+                                    <div class="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                                        ${log.performed_by ? log.performed_by.charAt(0).toUpperCase() : '?'}
+                                    </div>
+                                    ทำรายการโดย: <span class="font-semibold text-slate-700">${escapeHTML(log.performed_by || 'Unknown')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                timelineHtml += '</div>';
+
+                Swal.fire({
+                    title: 'ประวัติการแก้ไข',
+                    html: timelineHtml,
+                    width: '550px',
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'rounded-[24px] max-h-[85vh] overflow-y-auto',
+                        htmlContainer: 'text-left overflow-visible px-2',
+                        title: 'text-xl font-bold text-slate-800 border-b border-slate-100 pb-4 mb-2'
+                    }
+                });
+
+            } catch (error) {
+                console.error("Timeline error:", error);
+                let errorMsg = error.message || JSON.stringify(error) || 'Unknown error';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ข้อผิดพลาด',
+                    text: 'ไม่สามารถดึงข้อมูลประวัติได้: ' + errorMsg,
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: { popup: 'rounded-[20px]', confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2' }
+                });
+            }
+        }
     </script>
 </body>
 
