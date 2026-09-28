@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co https://script.google.com https://script.googleusercontent.com; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -813,11 +813,17 @@
                                         MM / ศล.ภ. / คำสั่ง <span class="text-red-500">*</span></label>
                                     <input type="text" id="mmNumber" class="apple-input" required>
                                 </div>
-                                <div class="flex flex-col">
+                                <div class="flex flex-col relative">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">ชื่อผู้ขอยืม
                                         <span class="text-red-500">*</span></label>
-                                    <input type="text" id="borrowerName" class="apple-input" required>
+                                    <input type="text" id="borrowerName" class="apple-input" required autocomplete="off"
+                                        placeholder="พิมพ์ชื่อ หรือรหัสพนักงาน...">
+                                    <input type="hidden" id="borrowerEmpId">
+                                    <ul id="borrowerAutocompleteList"
+                                        class="absolute z-10 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
+                                        style="top: 100%;">
+                                    </ul>
                                 </div>
                             </div>
 
@@ -1010,6 +1016,8 @@
     <script>
         const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
+        const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzaLIyD7YDWgp3puaGe2WWr9H-KhTNvB5WX1Sb4QmyOvOvT0oLpRSd8Z6QdA5iwxY2jWQ/exec';
+
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             auth: {
                 storage: window.sessionStorage // 🌟 ยกระดับความปลอดภัย: ปิดเบราว์เซอร์ = ล็อกเอาต์ทันที
@@ -1657,6 +1665,150 @@
                 console.error("เกิดข้อผิดพลาดในการตรวจสอบ BD:", error);
             }
         }
+        // Autocomplete Logic for Borrower Name (Enterprise Grade)
+        let autocompleteDebounceTimer;
+        const borrowerNameInput = document.getElementById('borrowerName');
+        const borrowerEmpIdInput = document.getElementById('borrowerEmpId');
+        const autocompleteList = document.getElementById('borrowerAutocompleteList');
+        let currentFocus = -1;
+
+        if (borrowerNameInput) {
+            borrowerNameInput.addEventListener('input', function () {
+                clearTimeout(autocompleteDebounceTimer);
+                const val = this.value.trim();
+                currentFocus = -1;
+
+                if (!val) {
+                    autocompleteList.classList.add('hidden');
+                    autocompleteList.innerHTML = '';
+                    borrowerEmpIdInput.value = '';
+                    return;
+                }
+
+                autocompleteList.classList.remove('hidden');
+                autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">กำลังค้นหา...</li>';
+
+                autocompleteDebounceTimer = setTimeout(async () => {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('employees')
+                            .select('emp_id, emp_name, department')
+                            .or(`emp_id.ilike.%${val}%,emp_name.ilike.%${val}%`)
+                            .limit(10);
+
+                        if (error) throw error;
+
+                        autocompleteList.innerHTML = '';
+                        if (!data || data.length === 0) {
+                            autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">ไม่พบข้อมูลพนักงาน</li>';
+                            return;
+                        }
+
+                        data.forEach((emp, index) => {
+                            const li = document.createElement('li');
+                            li.className = 'autocomplete-item px-4 py-2 text-sm text-slate-700 hover:bg-sky-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors';
+                            li.innerHTML = `<span class="font-medium">${emp.emp_name}</span> <span class="text-xs text-slate-400">รหัส: ${emp.emp_id} ${emp.department ? '(' + emp.department + ')' : ''}</span>`;
+
+                            // Store data attributes
+                            li.dataset.empName = emp.emp_name;
+                            li.dataset.empId = emp.emp_id;
+
+                            li.addEventListener('click', () => {
+                                selectAutocompleteItem(li);
+                            });
+                            autocompleteList.appendChild(li);
+                        });
+                    } catch (err) {
+                        console.error('Autocomplete Error:', err);
+                        autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-red-500">เกิดข้อผิดพลาดในการค้นหา</li>';
+                    }
+                }, 300);
+            });
+
+            // Keyboard Navigation (Arrow Keys & Enter)
+            borrowerNameInput.addEventListener('keydown', function (e) {
+                let items = autocompleteList.getElementsByClassName('autocomplete-item');
+                if (items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    currentFocus++;
+                    addActive(items);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowUp') {
+                    currentFocus--;
+                    addActive(items);
+                    e.preventDefault();
+                } else if (e.key === 'Enter') {
+                    if (currentFocus > -1) {
+                        e.preventDefault();
+                        items[currentFocus].click();
+                    } else if (!autocompleteList.classList.contains('hidden') && items.length > 0) {
+                        // Select first item if user hits enter without arrow keys
+                        e.preventDefault();
+                        items[0].click();
+                    }
+                }
+            });
+
+            function addActive(items) {
+                if (!items) return false;
+                removeActive(items);
+                if (currentFocus >= items.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (items.length - 1);
+                items[currentFocus].classList.add('bg-sky-50', 'text-sky-700'); // Highlight active
+                items[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function removeActive(items) {
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.remove('bg-sky-50', 'text-sky-700');
+                }
+            }
+
+            function selectAutocompleteItem(li) {
+                borrowerNameInput.value = li.dataset.empName;
+                borrowerEmpIdInput.value = li.dataset.empId;
+                autocompleteList.classList.add('hidden');
+                currentFocus = -1;
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (e.target !== borrowerNameInput && e.target !== autocompleteList) {
+                    autocompleteList.classList.add('hidden');
+                }
+            });
+        }
+
+        // ==========================================
+        // 🚀 Enterprise Grade: ยิงแจ้งเตือน LINE ทันทีที่บันทึกข้อมูลสำเร็จ
+        // ==========================================
+        async function notifyBDAction(action, data) {
+            if (GAS_WEBHOOK_URL === 'YOUR_GAS_WEB_APP_URL') return; // ยังไม่ได้ตั้งค่า URL
+            
+            try {
+                console.log(`🚀 กำลังส่ง Webhook ไปที่ GAS (${action})...`);
+                fetch(GAS_WEBHOOK_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // บังคับ no-cors เพราะ GAS อาจติดเรื่อง Cross-Origin
+                    headers: { 
+                        // เปลี่ยนเป็น text/plain เพื่อหลีกเลี่ยง CORS Preflight (OPTIONS request) ที่มักจะทำให้ GAS พัง
+                        'Content-Type': 'text/plain;charset=utf-8' 
+                    },
+                    body: JSON.stringify({
+                        system: "BD_TRACKING",
+                        action: action,  // 'CREATE' หรือ 'SEND_MONEY'
+                        data: data
+                    })
+                }).then(() => {
+                    console.log("✅ ส่ง Webhook สำเร็จ (โหมด no-cors จะไม่เห็น Response กลับมาถือว่าปกติครับ)");
+                }).catch(err => {
+                    console.error("❌ Failed to trigger webhook:", err);
+                });
+            } catch (err) {
+                console.error("❌ Failed to trigger webhook:", err);
+            }
+        }
 
         async function handleFormSubmit() {
             const submitBtn = document.getElementById('submitBtn');
@@ -1676,6 +1828,7 @@
                 bd_number: bdNumberInput || null,
                 mm_number: document.getElementById('mmNumber').value.trim(),
                 borrower_name: document.getElementById('borrowerName').value.trim(),
+                borrower_emp_id: document.getElementById('borrowerEmpId').value || null,
                 job_type: selectedJobTypes.join(','),
                 item_name: document.getElementById('itemName').value.trim(),
                 amount: parseCurrency(document.getElementById('amount').value),
@@ -1739,7 +1892,7 @@
             if (!confirmResult.isConfirmed) return;
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-800 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ${actionText}`;
+            submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span id="submitBtnText">${actionText}</span>`;
             submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
 
             try {
@@ -1830,6 +1983,11 @@
 
                     // Audit Log
                     await logAudit(currentRecordId, isCompleted ? 'COMPLETE' : 'UPDATE', actionDetails);
+
+                    // 🚀 Trigger Notification for "SEND_MONEY"
+                    if (!oldData.send_date && payload.send_date) {
+                        notifyBDAction('SEND_MONEY', payload);
+                    }
                 } else {
                     payload.created_by = currentUserContext;
                     const { data: insertData, error: insertErr } = await supabaseClient.from('bd_data').insert([payload]).select();
@@ -1845,6 +2003,9 @@
                     // Audit Log
                     if (insertData && insertData.length > 0) {
                         await logAudit(insertData[0].id, 'CREATE', 'สร้างรายการใหม่');
+
+                        // 🚀 Trigger Notification for "CREATE"
+                        notifyBDAction('CREATE', insertData[0]);
                     }
                 }
 
@@ -1882,7 +2043,7 @@
                 });
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = actionText;
+                submitBtn.innerHTML = `<span id="submitBtnText">${isEditMode ? 'บันทึกการแก้ไข' : 'บันทึกข้อมูล'}</span>`;
                 submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
             }
         }
@@ -1990,6 +2151,8 @@
                             <div class="font-medium text-slate-800">${safeMmNumber}</div>
                             <div class="text-slate-500">ผู้ขอยืม:</div>
                             <div class="font-medium text-slate-800">${safeBorrowerName}</div>
+                            <div class="text-slate-500">ประเภทงาน:</div>
+                            <div class="font-medium text-slate-800">${escapeHTML(record.job_type || '-')}</div>
                             <div class="text-slate-500">สถานะ:</div>
                             <div>${statusHtml}</div>
                         </div>
@@ -2065,6 +2228,7 @@
                 document.getElementById('jobTypeSection').classList.remove('hidden');
                 document.getElementById('mmNumber').value = data.mm_number || '';
                 document.getElementById('borrowerName').value = data.borrower_name || '';
+                document.getElementById('borrowerEmpId').value = data.borrower_emp_id || '';
                 document.getElementById('itemName').value = data.item_name || '';
 
                 const rawAmount = parseFloat(data.amount) || 0;
