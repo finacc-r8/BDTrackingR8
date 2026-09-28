@@ -79,15 +79,38 @@
             background: rgba(0, 0, 0, 0.03);
             color: #475569;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 12px;
-            padding: 10px 20px;
-            font-weight: 500;
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-weight: 600;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .apple-btn-secondary:hover {
             background: rgba(0, 0, 0, 0.06);
             color: #1e293b;
+        }
+
+        .apple-btn-danger {
+            background: rgba(239, 68, 68, 0.05);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 9999px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .apple-btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
         }
 
         .btn-edit {
@@ -538,6 +561,54 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <!-- Custom Job Type Dropdown -->
+                        <div class="relative" id="jobTypeFilterWrapper">
+                            <button type="button" onclick="toggleDropdown('jobTypeDropdown')" id="jobTypeBtn"
+                                class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between min-w-[140px] outline-none hover:border-blue-400 transition-colors">
+                                <span id="jobTypeLabel" class="flex items-center gap-2">ประเภทงาน</span>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                            <div id="jobTypeDropdown"
+                                class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                                <div onclick="selectDashboardJobType('all')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    ประเภทงาน</div>
+                                <div onclick="selectDashboardJobType('เดินทางไปปฏิบัติงาน')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg> เดินทาง
+                                </div>
+                                <div onclick="selectDashboardJobType('จัดซื้อจัดจ้าง')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                    </svg> จัดซื้อจัดจ้าง
+                                </div>
+                                <div onclick="selectDashboardJobType('โครงการ')"
+                                    class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                        </path>
+                                    </svg> โครงการ
+                                </div>
+                            </div>
+                            <input type="hidden" id="jobTypeFilter" value="all">
+                        </div>
+
                         <!-- Custom Status Dropdown -->
                         <div class="relative" id="statusFilterWrapper">
                             <button type="button" onclick="toggleDropdown('statusDropdown')" id="statusBtn"
@@ -599,8 +670,9 @@
                         <thead>
                             <tr>
                                 <th class="text-center pl-4 whitespace-nowrap">เลขที่ BD</th>
-                                <th class="whitespace-nowrap">ชื่อผู้ขอยืม</th>
-                                <th class="min-w-[200px]">รายการ</th>
+                                <th class="text-center whitespace-nowrap">ชื่อผู้ขอยืม</th>
+                                <th class="text-center whitespace-nowrap">ประเภท</th>
+                                <th class="text-center min-w-[200px]">รายการ</th>
                                 <th class="text-center whitespace-nowrap min-w-[120px]">เงินตั้งต้น</th>
                                 <th class="text-center whitespace-nowrap min-w-[120px]">เงินใช้ไป</th>
                                 <th class="text-center whitespace-nowrap min-w-[120px]">เงินคงเหลือ</th>
@@ -634,11 +706,13 @@
         </div>
 
         <div id="formView" class="hidden animate-view">
-            <div class="mb-8 flex justify-end">
-                <button onclick="switchView('dashboard')" class="apple-btn-secondary flex items-center gap-2">
+            <!-- Breadcrumb style back button top left -->
+            <div class="mb-6 flex justify-start">
+                <button onclick="switchView('dashboard')"
+                    class="text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-2 font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m15 18-6-6 6-6" />
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                     กลับหน้าหลัก
                 </button>
@@ -729,7 +803,7 @@
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
-                                        BD <span class="text-red-500">*</span></label>
+                                        BD</label>
                                     <input type="text" id="bdNumber" class="apple-input"
                                         onblur="checkDuplicateBD(this)">
                                 </div>
@@ -809,6 +883,28 @@
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
+
+                                <!-- Dynamic Activity End Date (SLA Trigger) -->
+                                <div id="activityEndDateWrapper" class="flex flex-col hidden">
+                                    <label id="activityEndDateLabel"
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่สิ้นสุด</label>
+                                    <div class="relative">
+                                        <div
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
+                                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                                <line x1="16" x2="16" y1="2" y2="6" />
+                                                <line x1="8" x2="8" y1="2" y2="6" />
+                                                <line x1="3" x2="21" y1="10" y2="10" />
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="activityEndDate"
+                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                            placeholder="เลือกวันที่..." readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -869,14 +965,24 @@
                             </div>
                         </div>
 
-                        <div class="pt-8 mt-4 flex justify-between sm:justify-end gap-3 border-t border-slate-200">
-                            <button type="button" id="cancelRecordBtn" onclick="cancelCurrentRecord()"
-                                class="hidden px-6 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-sm font-semibold hover:bg-red-100 hover:text-red-700 transition-all shadow-sm">
-                                ยกเลิกรายการ
-                            </button>
-                            <button type="submit" id="submitBtn" class="apple-btn-primary w-full sm:w-auto shadow-sm">
-                                บันทึกข้อมูล
-                            </button>
+                        <div
+                            class="pt-8 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-200">
+                            <div class="w-full sm:w-auto">
+                                <button type="button" id="cancelRecordBtn" onclick="cancelCurrentRecord()"
+                                    class="hidden apple-btn-danger w-full sm:w-auto shadow-sm">
+                                    ยกเลิกรายการ
+                                </button>
+                            </div>
+                            <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
+                                <button type="button" id="formBottomBackBtn" onclick="switchView('dashboard')"
+                                    class="apple-btn-secondary w-full sm:w-auto shadow-sm">
+                                    กลับหน้าหลัก
+                                </button>
+                                <button type="submit" id="submitBtn"
+                                    class="apple-btn-primary w-full sm:w-auto shadow-sm flex items-center justify-center gap-2">
+                                    <span id="submitBtnText">บันทึกข้อมูล</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Audit Footer in Edit Form -->
@@ -896,6 +1002,8 @@
                     </div>
                 </form>
             </div>
+
+
         </div>
     </div>
 
@@ -982,7 +1090,7 @@
                         } else {
                             userSpan.innerText = name;
                         }
-                        
+
                         // ใช้ชื่อจากโปรไฟล์เป็น Context สำหรับบันทึกประวัติ (Enterprise Grade)
                         currentUserContext = name;
                     } else {
@@ -1053,6 +1161,7 @@
             const searchInput = document.getElementById('searchInput');
             const statusFilter = document.getElementById('statusFilter');
             const yearFilter = document.getElementById('yearFilter');
+            const jobTypeFilter = document.getElementById('jobTypeFilter');
 
             dataToRender = allBdData;
 
@@ -1104,6 +1213,16 @@
                 } else {
                     dataToRender = dataToRender.filter(item => item.status === statusFilter.value);
                 }
+            }
+            if (jobTypeFilter && jobTypeFilter.value && jobTypeFilter.value !== 'all') {
+                dataToRender = dataToRender.filter(item => {
+                    if (!item.job_type) return false;
+                    const types = item.job_type.split(',').map(t => t.trim());
+                    if (jobTypeFilter.value === 'จัดซื้อจัดจ้าง') {
+                        return types.includes('จัดซื้อจัดจ้าง') || types.includes('จัดซื้อจัดจ้าง/โครงการ');
+                    }
+                    return types.includes(jobTypeFilter.value);
+                });
             }
             if (yearFilter && yearFilter.value && yearFilter.value !== 'all') {
                 dataToRender = dataToRender.filter(item => {
@@ -1211,10 +1330,21 @@
                 const safeBorrowerName = escapeHTML(item.borrower_name || '');
                 const safeItemName = escapeHTML(item.item_name || '');
 
+                // Generate job type icons
+                let jobTypeIconsHtml = '';
+                if (item.job_type) {
+                    const types = item.job_type.split(',').map(t => t.trim());
+                    if (types.includes('เดินทางไปปฏิบัติงาน')) jobTypeIconsHtml += `<div class="relative group inline-block cursor-help mx-0.5"><svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-800 text-white text-[12px] font-medium rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">เดินทางไปปฏิบัติงาน<div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div></div></div>`;
+                    if (types.includes('จัดซื้อจัดจ้าง') || types.includes('จัดซื้อจัดจ้าง/โครงการ')) jobTypeIconsHtml += `<div class="relative group inline-block cursor-help mx-0.5"><svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-800 text-white text-[12px] font-medium rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">จัดซื้อจัดจ้าง<div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div></div></div>`;
+                    if (types.includes('โครงการ')) jobTypeIconsHtml += `<div class="relative group inline-block cursor-help mx-0.5"><svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg><div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-800 text-white text-[12px] font-medium rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">โครงการ<div class="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-slate-800"></div></div></div>`;
+                }
+                if (!jobTypeIconsHtml) jobTypeIconsHtml = '<span class="text-slate-300">-</span>';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                         <td class="text-center pl-4 font-medium text-slate-800 whitespace-nowrap">${safeBdNumber}</td>
-                        <td class="whitespace-nowrap">${safeBorrowerName}</td>
+                        <td class="text-center whitespace-nowrap">${safeBorrowerName}</td>
+                        <td class="text-center whitespace-nowrap text-[16px]">${jobTypeIconsHtml}</td>
                         <td class="text-slate-500 w-full max-w-0 truncate" title="${safeItemName}">${safeItemName}</td>
                         <td class="text-center font-medium">${itemAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
                         <td class="text-center text-orange-400 font-medium">${itemUsed > 0 ? itemUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 }) : '-'}</td>
@@ -1285,6 +1415,20 @@
                 document.getElementById('dashboardView').classList.remove('hidden');
                 fetchDashboardData();
             }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const jobTypeIconsMap = {
+            'เดินทางไปปฏิบัติงาน': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> เดินทาง</span>',
+            'จัดซื้อจัดจ้าง': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> จัดซื้อ</span>',
+            'โครงการ': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg> โครงการ</span>'
+        };
+
+        function selectDashboardJobType(value) {
+            document.getElementById('jobTypeLabel').innerHTML = value === 'all' ? 'ประเภทงาน' : jobTypeIconsMap[value];
+            document.getElementById('jobTypeFilter').value = value;
+            document.getElementById('jobTypeDropdown').classList.add('hidden');
+            applyFilters();
         }
 
         function toggleJobType(type) {
@@ -1350,12 +1494,43 @@
                 checkProject.classList.add('opacity-0');
             }
 
+            // Handle activityEndDate dynamic UI
+            const activityEndDateWrapper = document.getElementById('activityEndDateWrapper');
+            const activityEndDateLabel = document.getElementById('activityEndDateLabel');
+
+            if (activityEndDateWrapper && activityEndDateLabel) {
+                if (selectedJobTypes.includes('เดินทางไปปฏิบัติงาน')) {
+                    activityEndDateWrapper.classList.remove('hidden');
+                    activityEndDateLabel.innerText = 'วันที่เดินทางกลับ';
+                } else if (selectedJobTypes.includes('โครงการ')) {
+                    activityEndDateWrapper.classList.remove('hidden');
+                    activityEndDateLabel.innerText = 'วันที่โครงการแล้วเสร็จ';
+                } else {
+                    activityEndDateWrapper.classList.add('hidden');
+                }
+            }
+
             const formFields = document.getElementById('formFieldsSection');
             if (selectedJobTypes.length > 0) {
                 formFields.classList.remove('hidden');
             } else {
                 formFields.classList.add('hidden');
             }
+        }
+
+        function setFieldsLockState(isLocked) {
+            const fieldsToLock = ['bdNumber', 'mmNumber', 'borrowerName', 'itemName', 'amount'];
+            fieldsToLock.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.readOnly = isLocked;
+                    if (isLocked) {
+                        el.classList.add('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+                    } else {
+                        el.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+                    }
+                }
+            });
         }
 
         function openCreateForm() {
@@ -1370,15 +1545,12 @@
             updateJobTypeUI();
             document.getElementById('jobTypeSection').classList.remove('hidden');
             document.getElementById('bdForm').reset();
-            const bdNumberInput = document.getElementById('bdNumber');
-            if (bdNumberInput) {
-                bdNumberInput.readOnly = false;
-                bdNumberInput.classList.remove('opacity-60', 'cursor-not-allowed');
-            }
+            setFieldsLockState(false);
 
             document.getElementById('formTitle').innerText = 'สร้างข้อมูลใบยืมเหลือง (BD) ใหม่';
-            document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลใหม่';
+            document.getElementById('submitBtnText').innerText = 'บันทึกข้อมูลใหม่';
             document.getElementById('cancelRecordBtn').classList.add('hidden');
+            document.getElementById('formBottomBackBtn').classList.add('hidden');
 
             const auditFooter = document.getElementById('auditFooter');
             if (auditFooter) {
@@ -1390,6 +1562,9 @@
                 document.getElementById('receiveDate')._flatpickr.clear();
                 document.getElementById('sendDate')._flatpickr.clear();
                 document.getElementById('returnDate')._flatpickr.clear();
+                if (document.getElementById('activityEndDate')._flatpickr) {
+                    document.getElementById('activityEndDate')._flatpickr.clear();
+                }
             }
 
             document.getElementById('step2-container').classList.add('hidden');
@@ -1488,16 +1663,17 @@
             const currentRecordId = document.getElementById('currentRecordId').value;
             const bdNumberInput = document.getElementById('bdNumber').value.trim();
 
-            if (!bdNumberInput) {
-                Swal.fire({ icon: 'warning', title: 'แจ้งเตือน', text: 'กรุณาระบุเลขที่ใบยืมเหลือง BD' });
-                return;
-            }
-
             const isEditMode = currentRecordId !== "";
             const actionText = isEditMode ? 'กำลังอัปเดตข้อมูล...' : 'กำลังบันทึกข้อมูลใหม่...';
 
+            let activityEndDateValue = document.getElementById('activityEndDate').value || null;
+            if (!selectedJobTypes.includes('เดินทางไปปฏิบัติงาน') && !selectedJobTypes.includes('โครงการ')) {
+                // If only Procurement, auto-map from sendDate
+                activityEndDateValue = document.getElementById('sendDate').value || null;
+            }
+
             const payload = {
-                bd_number: bdNumberInput,
+                bd_number: bdNumberInput || null,
                 mm_number: document.getElementById('mmNumber').value.trim(),
                 borrower_name: document.getElementById('borrowerName').value.trim(),
                 job_type: selectedJobTypes.join(','),
@@ -1509,8 +1685,26 @@
                 balance_amount: parseCurrency(document.getElementById('balanceAmount').value),
                 doc_return_number: document.getElementById('docReturnNumber').value.trim() || null,
                 pp_number: document.getElementById('ppNumber').value.trim() || null,
-                return_date: document.getElementById('returnDate').value || null
+                return_date: document.getElementById('returnDate').value || null,
+                activity_end_date: activityEndDateValue
             };
+
+            if (payload.receive_date) {
+                if (!payload.bd_number || !payload.mm_number || !payload.borrower_name || !payload.item_name || !payload.amount) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'ข้อมูลไม่ครบถ้วน',
+                        text: 'กรุณาตรวจสอบข้อมูล เลขที่ใบยืมเหลือง BD, เลขที่ MM / ศล.ภ. / คำสั่ง, ชื่อผู้ขอยืม, รายการ และจำนวนเงิน (บาท) ให้ครบถ้วน ก่อนทำการบันทึก "วันที่ภาคฯ ได้รับเงินจากศูนย์"',
+                        confirmButtonText: 'ตกลง',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'rounded-[20px]',
+                            confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
+                        }
+                    });
+                    return;
+                }
+            }
 
             if (payload.used_amount > payload.amount) {
                 Swal.fire({
@@ -1568,7 +1762,12 @@
                         .eq('id', currentRecordId)
                         .select();
 
-                    if (updateErr) throw updateErr;
+                    if (updateErr) {
+                        if (updateErr.code === '23505') {
+                            throw new Error(`เลขที่ใบยืมเหลือง BD '${payload.bd_number}' มีการใช้งานไปแล้วในระบบ`);
+                        }
+                        throw updateErr;
+                    }
 
                     const isCompleted = payload.doc_return_number && payload.pp_number && payload.return_date;
                     var successMessage = isCompleted ? "บันทึกและปิดรายการสมบูรณ์เรียบร้อยแล้ว" : "อัปเดตข้อมูลเรียบร้อยแล้ว";
@@ -1613,11 +1812,11 @@
                             const friendlyName = fieldNames[key] || key;
                             const displayOld = formatValue(key, oldVal);
                             const displayNew = formatValue(key, newVal);
-                            
+
                             if (!oldVal) {
                                 changes.push(`+ เพิ่ม${friendlyName}: ${displayNew}`);
                             } else if (!newVal) {
-                                changes.push(`- ลบ${friendlyName} (เคยเป็น: ${displayOld})`);
+                                changes.push(`- ลบ${friendlyName} (จากเดิม: ${displayOld})`);
                             } else {
                                 changes.push(`• เปลี่ยน${friendlyName}: ${displayOld} ➔ ${displayNew}`);
                             }
@@ -1664,11 +1863,7 @@
                     updateJobTypeUI();
                     document.getElementById('jobTypeSection').classList.remove('hidden');
                     document.getElementById('bdForm').reset();
-                    const bdNumInput = document.getElementById('bdNumber');
-                    if (bdNumInput) {
-                        bdNumInput.readOnly = false;
-                        bdNumInput.classList.remove('opacity-60', 'cursor-not-allowed');
-                    }
+                    setFieldsLockState(false);
                     switchView('dashboard');
                 });
 
@@ -1857,8 +2052,6 @@
                 document.getElementById('currentRecordId').value = data.id;
                 const bdNumberInput = document.getElementById('bdNumber');
                 bdNumberInput.value = data.bd_number || '';
-                bdNumberInput.readOnly = true;
-                bdNumberInput.classList.add('opacity-60', 'cursor-not-allowed');
 
                 // Map legacy 'จัดซื้อจัดจ้าง/โครงการ' to new 'จัดซื้อจัดจ้าง' for UI backwards compatibility
                 selectedJobTypes = data.job_type ? data.job_type.split(',').map(type => type.trim() === 'จัดซื้อจัดจ้าง/โครงการ' ? 'จัดซื้อจัดจ้าง' : type.trim()) : [];
@@ -1894,19 +2087,30 @@
                 const fpReceive = document.getElementById('receiveDate')._flatpickr;
                 const fpSend = document.getElementById('sendDate')._flatpickr;
                 const fpReturn = document.getElementById('returnDate')._flatpickr;
+                const fpActivityEnd = document.getElementById('activityEndDate')._flatpickr;
 
                 if (fpReceive) {
                     data.receive_date ? fpReceive.setDate(data.receive_date) : fpReceive.clear();
                     data.send_date ? fpSend.setDate(data.send_date) : fpSend.clear();
                     data.return_date ? fpReturn.setDate(data.return_date) : fpReturn.clear();
+                    if (fpActivityEnd) {
+                        data.activity_end_date ? fpActivityEnd.setDate(data.activity_end_date) : fpActivityEnd.clear();
+                    }
                 }
 
                 document.getElementById('docReturnNumber').value = data.doc_return_number || '';
                 document.getElementById('ppNumber').value = data.pp_number || '';
 
+                if (data.receive_date) {
+                    setFieldsLockState(true);
+                } else {
+                    setFieldsLockState(false);
+                }
+
                 document.getElementById('formTitle').innerText = 'แก้ไขข้อมูลใบยืมเหลือง (BD)';
-                document.getElementById('submitBtn').innerText = 'บันทึกการแก้ไข';
+                document.getElementById('submitBtnText').innerText = 'บันทึกการแก้ไข';
                 document.getElementById('cancelRecordBtn').classList.remove('hidden');
+                document.getElementById('formBottomBackBtn').classList.remove('hidden');
 
                 document.getElementById('step2-container').classList.remove('hidden');
 
@@ -2041,6 +2245,7 @@
             flatpickr("#receiveDate", config);
             flatpickr("#sendDate", config);
             flatpickr("#returnDate", config);
+            flatpickr("#activityEndDate", config);
         }
 
         // 🌟 ฟังก์ชันเริ่มต้นระบบตรวจจับการเคลื่อนไหวของผู้ใช้ (Start Idle Monitor)
@@ -2165,6 +2370,10 @@
                 const sd = document.getElementById('statusDropdown');
                 if (sd) sd.classList.add('hidden');
             }
+            if (!event.target.closest('#jobTypeFilterWrapper')) {
+                const jd = document.getElementById('jobTypeDropdown');
+                if (jd) jd.classList.add('hidden');
+            }
             if (!event.target.closest('#yearFilterWrapper')) {
                 const yd = document.getElementById('yearDropdown');
                 if (yd) yd.classList.add('hidden');
@@ -2263,8 +2472,8 @@
                                 </div>
                                 <div class="text-[13px] text-slate-600 mb-2 mt-2 font-medium whitespace-pre-line leading-relaxed">${escapeHTML(log.action_details || '-')}</div>
                                 <div class="text-xs text-slate-500 flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-50">
-                                    <div class="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
-                                        ${log.performed_by ? log.performed_by.charAt(0).toUpperCase() : '?'}
+                                    <div class="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                                     </div>
                                     ทำรายการโดย: <span class="font-semibold text-slate-700">${escapeHTML(log.performed_by || 'Unknown')}</span>
                                 </div>
