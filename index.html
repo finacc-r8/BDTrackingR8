@@ -799,7 +799,7 @@
 
                     <div id="formFieldsSection" class="hidden space-y-8 animate-view">
                         <div id="step1-container" class="space-y-8">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
@@ -813,17 +813,41 @@
                                         MM / ศล.ภ. / คำสั่ง <span class="text-red-500">*</span></label>
                                     <input type="text" id="mmNumber" class="apple-input" required>
                                 </div>
-                                <div class="flex flex-col relative">
-                                    <label
-                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">ชื่อผู้ขอยืม
-                                        <span class="text-red-500">*</span></label>
+                                <div id="borrowerDiv"
+                                    class="flex flex-col relative md:col-span-2 transition-all duration-300">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="text-[13px] font-semibold text-slate-600 uppercase tracking-wide">
+                                            ชื่อผู้ขอยืม <span class="text-red-500">*</span>
+                                        </label>
+                                        <label
+                                            class="flex items-center space-x-1.5 text-[12px] text-slate-500 hover:text-slate-700 cursor-pointer transition-colors"
+                                            title="ใช้ในกรณีตั้งเรื่องแทนผู้อื่น">
+                                            <input type="checkbox" id="hasActualBorrower"
+                                                class="form-checkbox text-sky-500 rounded border-slate-300 focus:ring-sky-500 w-3.5 h-3.5 transition-colors"
+                                                onchange="toggleActualBorrower(this.checked)">
+                                            <span>ระบุผู้รับผิดชอบจริง</span>
+                                        </label>
+                                    </div>
                                     <input type="text" id="borrowerName" class="apple-input" required autocomplete="off"
-                                        placeholder="พิมพ์ชื่อ หรือรหัสพนักงาน...">
+                                        placeholder="พิมพ์ชื่อ หรือรหัสเจ้าหน้าที่...">
                                     <input type="hidden" id="borrowerEmpId">
                                     <ul id="borrowerAutocompleteList"
-                                        class="absolute z-10 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
+                                        class="absolute z-20 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
                                         style="top: 100%;">
                                     </ul>
+                                </div>
+
+                                <div id="actualBorrowerSection"
+                                    class="hidden flex-col relative bg-sky-50/50 border border-sky-100 rounded-xl p-3 md:col-span-1">
+                                    <label
+                                        class="text-[11px] font-semibold text-sky-700 mb-1.5 uppercase tracking-wide">ผู้รับผิดชอบการยืมจริง<span
+                                            class="text-red-500">*</span></label>
+                                    <input type="text" id="actualBorrowerName" class="apple-input bg-white text-sm py-2"
+                                        autocomplete="off" placeholder="พิมพ์ชื่อ หรือรหัสเจ้าหน้าที่...">
+                                    <input type="hidden" id="actualBorrowerEmpId">
+                                    <ul id="actualBorrowerAutocompleteList"
+                                        class="absolute z-30 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
+                                        style="top: 100%;"></ul>
                                 </div>
                             </div>
 
@@ -915,7 +939,26 @@
                         </div>
 
                         <div id="step3-container" class="hidden space-y-8 transition-all duration-300">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div class="flex flex-col">
+                                    <label
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่เคลียร์เงิน</label>
+                                    <div class="relative">
+                                        <div
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
+                                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                                <line x1="16" x2="16" y1="2" y2="6" />
+                                                <line x1="8" x2="8" y1="2" y2="6" />
+                                                <line x1="3" x2="21" y1="10" y2="10" />
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="clearedDate" class="apple-input cursor-pointer pl-10"
+                                            placeholder="เลือกวันที่..." readonly>
+                                    </div>
+                                </div>
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เงินที่ใช้ไป
@@ -963,8 +1006,7 @@
                                                 <line x1="3" x2="21" y1="10" y2="10" />
                                             </svg>
                                         </div>
-                                        <input type="text" id="returnDate"
-                                            class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
+                                        <input type="text" id="returnDate" class="apple-input cursor-pointer pl-10"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
                                 </div>
@@ -1351,7 +1393,10 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                         <td class="text-center pl-4 font-medium text-slate-800 whitespace-nowrap">${safeBdNumber}</td>
-                        <td class="text-center whitespace-nowrap">${safeBorrowerName}</td>
+                        <td class="text-center whitespace-nowrap">
+                            ${safeBorrowerName}
+                            ${item.actual_borrower_name ? `<br><span class="text-[10px] bg-blue-100 text-blue-700 px-1 py-0.5 rounded flex items-center justify-center gap-1 w-max mx-auto mt-0.5"><i class="fas fa-user-tag text-[9px]"></i> ${escapeHTML(item.actual_borrower_name)}</span>` : ''}
+                        </td>
                         <td class="text-center whitespace-nowrap text-[16px]">${jobTypeIconsHtml}</td>
                         <td class="text-slate-500 w-full max-w-0 truncate" title="${safeItemName}">${safeItemName}</td>
                         <td class="text-center font-medium">${itemAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
@@ -1555,6 +1600,25 @@
             document.getElementById('bdForm').reset();
             setFieldsLockState(false);
 
+            // Unlock borrower name when creating a new record
+            const borrowerNameInput = document.getElementById('borrowerName');
+            if (borrowerNameInput) {
+                borrowerNameInput.readOnly = false;
+                borrowerNameInput.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+            }
+
+            // Reset Actual Borrower
+            document.getElementById('hasActualBorrower').checked = false;
+            toggleActualBorrower(false);
+            document.getElementById('actualBorrowerName').value = '';
+            document.getElementById('actualBorrowerEmpId').value = '';
+            document.getElementById('hasActualBorrower').disabled = false;
+            const actualBorrowerInput = document.getElementById('actualBorrowerName');
+            if (actualBorrowerInput) {
+                actualBorrowerInput.readOnly = false;
+                actualBorrowerInput.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+            }
+
             document.getElementById('formTitle').innerText = 'สร้างข้อมูลใบยืมเหลือง (BD) ใหม่';
             document.getElementById('submitBtnText').innerText = 'บันทึกข้อมูลใหม่';
             document.getElementById('cancelRecordBtn').classList.add('hidden');
@@ -1569,6 +1633,7 @@
             if (document.getElementById('receiveDate')._flatpickr) {
                 document.getElementById('receiveDate')._flatpickr.clear();
                 document.getElementById('sendDate')._flatpickr.clear();
+                document.getElementById('clearedDate')._flatpickr.clear();
                 document.getElementById('returnDate')._flatpickr.clear();
                 if (document.getElementById('activityEndDate')._flatpickr) {
                     document.getElementById('activityEndDate')._flatpickr.clear();
@@ -1601,6 +1666,20 @@
             const cleanValue = value.toString().replace(/,/g, '');
             const parsed = parseFloat(cleanValue);
             return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function toggleActualBorrower(show) {
+            const section = document.getElementById('actualBorrowerSection');
+            const borrowerDiv = document.getElementById('borrowerDiv');
+            if (show) {
+                section.classList.remove('hidden');
+                section.classList.add('flex');
+                borrowerDiv.classList.remove('md:col-span-2');
+            } else {
+                section.classList.add('hidden');
+                section.classList.remove('flex');
+                borrowerDiv.classList.add('md:col-span-2');
+            }
         }
 
         function calculateBalance() {
@@ -1665,135 +1744,126 @@
                 console.error("เกิดข้อผิดพลาดในการตรวจสอบ BD:", error);
             }
         }
-        // Autocomplete Logic for Borrower Name (Enterprise Grade)
-        let autocompleteDebounceTimer;
-        const borrowerNameInput = document.getElementById('borrowerName');
-        const borrowerEmpIdInput = document.getElementById('borrowerEmpId');
-        const autocompleteList = document.getElementById('borrowerAutocompleteList');
-        let currentFocus = -1;
 
-        if (borrowerNameInput) {
-            borrowerNameInput.addEventListener('input', function () {
-                clearTimeout(autocompleteDebounceTimer);
-                const val = this.value.trim();
-                currentFocus = -1;
+        function setupAutocomplete(nameInputId, empIdInputId, listId) {
+            let debounceTimer;
+            const nameInput = document.getElementById(nameInputId);
+            const empIdInput = document.getElementById(empIdInputId);
+            const listEl = document.getElementById(listId);
+            let currentFocus = -1;
 
-                if (!val) {
-                    autocompleteList.classList.add('hidden');
-                    autocompleteList.innerHTML = '';
-                    borrowerEmpIdInput.value = '';
-                    return;
-                }
+            if (nameInput) {
+                nameInput.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+                    const val = this.value.trim();
+                    currentFocus = -1;
 
-                autocompleteList.classList.remove('hidden');
-                autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">กำลังค้นหา...</li>';
+                    if (!val) {
+                        listEl.classList.add('hidden');
+                        listEl.innerHTML = '';
+                        empIdInput.value = '';
+                        return;
+                    }
 
-                autocompleteDebounceTimer = setTimeout(async () => {
-                    try {
-                        const { data, error } = await supabaseClient
-                            .from('employees')
-                            .select('emp_id, emp_name, department')
-                            .or(`emp_id.ilike.%${val}%,emp_name.ilike.%${val}%`)
-                            .limit(10);
+                    listEl.classList.remove('hidden');
+                    listEl.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">กำลังค้นหา...</li>';
 
-                        if (error) throw error;
+                    debounceTimer = setTimeout(async () => {
+                        try {
+                            const { data, error } = await supabaseClient
+                                .from('employees')
+                                .select('emp_id, emp_name, department')
+                                .or(`emp_id.ilike.%${val}%,emp_name.ilike.%${val}%`)
+                                .limit(10);
 
-                        autocompleteList.innerHTML = '';
-                        if (!data || data.length === 0) {
-                            autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">ไม่พบข้อมูลพนักงาน</li>';
-                            return;
-                        }
+                            if (error) throw error;
 
-                        data.forEach((emp, index) => {
-                            const li = document.createElement('li');
-                            li.className = 'autocomplete-item px-4 py-2 text-sm text-slate-700 hover:bg-sky-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors';
-                            li.innerHTML = `<span class="font-medium">${emp.emp_name}</span> <span class="text-xs text-slate-400">รหัส: ${emp.emp_id} ${emp.department ? '(' + emp.department + ')' : ''}</span>`;
+                            listEl.innerHTML = '';
+                            if (!data || data.length === 0) {
+                                listEl.innerHTML = '<li class="px-4 py-2 text-sm text-slate-500">ไม่พบข้อมูลพนักงาน</li>';
+                                return;
+                            }
 
-                            // Store data attributes
-                            li.dataset.empName = emp.emp_name;
-                            li.dataset.empId = emp.emp_id;
+                            data.forEach((emp) => {
+                                const li = document.createElement('li');
+                                li.className = 'autocomplete-item px-4 py-2 text-sm text-slate-700 hover:bg-sky-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors';
+                                li.innerHTML = `<span class="font-medium">${emp.emp_name}</span> <span class="text-xs text-slate-400">รหัส: ${emp.emp_id} ${emp.department ? '(' + emp.department + ')' : ''}</span>`;
+                                li.dataset.empName = emp.emp_name;
+                                li.dataset.empId = emp.emp_id;
 
-                            li.addEventListener('click', () => {
-                                selectAutocompleteItem(li);
+                                li.addEventListener('click', () => {
+                                    nameInput.value = li.dataset.empName;
+                                    empIdInput.value = li.dataset.empId;
+                                    listEl.classList.add('hidden');
+                                    currentFocus = -1;
+                                });
+                                listEl.appendChild(li);
                             });
-                            autocompleteList.appendChild(li);
-                        });
-                    } catch (err) {
-                        console.error('Autocomplete Error:', err);
-                        autocompleteList.innerHTML = '<li class="px-4 py-2 text-sm text-red-500">เกิดข้อผิดพลาดในการค้นหา</li>';
-                    }
-                }, 300);
-            });
+                        } catch (err) {
+                            console.error('Autocomplete Error:', err);
+                            listEl.innerHTML = '<li class="px-4 py-2 text-sm text-red-500">เกิดข้อผิดพลาดในการค้นหา</li>';
+                        }
+                    }, 300);
+                });
 
-            // Keyboard Navigation (Arrow Keys & Enter)
-            borrowerNameInput.addEventListener('keydown', function (e) {
-                let items = autocompleteList.getElementsByClassName('autocomplete-item');
-                if (items.length === 0) return;
+                nameInput.addEventListener('keydown', function (e) {
+                    let items = listEl.getElementsByClassName('autocomplete-item');
+                    if (items.length === 0) return;
 
-                if (e.key === 'ArrowDown') {
-                    currentFocus++;
-                    addActive(items);
-                    e.preventDefault();
-                } else if (e.key === 'ArrowUp') {
-                    currentFocus--;
-                    addActive(items);
-                    e.preventDefault();
-                } else if (e.key === 'Enter') {
-                    if (currentFocus > -1) {
+                    if (e.key === 'ArrowDown') {
+                        currentFocus++;
+                        addActive(items);
                         e.preventDefault();
-                        items[currentFocus].click();
-                    } else if (!autocompleteList.classList.contains('hidden') && items.length > 0) {
-                        // Select first item if user hits enter without arrow keys
+                    } else if (e.key === 'ArrowUp') {
+                        currentFocus--;
+                        addActive(items);
                         e.preventDefault();
-                        items[0].click();
+                    } else if (e.key === 'Enter') {
+                        if (currentFocus > -1) {
+                            e.preventDefault();
+                            items[currentFocus].click();
+                        } else if (!listEl.classList.contains('hidden') && items.length > 0) {
+                            e.preventDefault();
+                            items[0].click();
+                        }
                     }
+                });
+
+                function addActive(items) {
+                    if (!items) return false;
+                    for (let i = 0; i < items.length; i++) items[i].classList.remove('bg-sky-50', 'text-sky-700');
+                    if (currentFocus >= items.length) currentFocus = 0;
+                    if (currentFocus < 0) currentFocus = (items.length - 1);
+                    items[currentFocus].classList.add('bg-sky-50', 'text-sky-700');
+                    items[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
-            });
 
-            function addActive(items) {
-                if (!items) return false;
-                removeActive(items);
-                if (currentFocus >= items.length) currentFocus = 0;
-                if (currentFocus < 0) currentFocus = (items.length - 1);
-                items[currentFocus].classList.add('bg-sky-50', 'text-sky-700'); // Highlight active
-                items[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                document.addEventListener('click', function (e) {
+                    if (e.target !== nameInput && e.target !== listEl) {
+                        listEl.classList.add('hidden');
+                    }
+                });
             }
-
-            function removeActive(items) {
-                for (let i = 0; i < items.length; i++) {
-                    items[i].classList.remove('bg-sky-50', 'text-sky-700');
-                }
-            }
-
-            function selectAutocompleteItem(li) {
-                borrowerNameInput.value = li.dataset.empName;
-                borrowerEmpIdInput.value = li.dataset.empId;
-                autocompleteList.classList.add('hidden');
-                currentFocus = -1;
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (e.target !== borrowerNameInput && e.target !== autocompleteList) {
-                    autocompleteList.classList.add('hidden');
-                }
-            });
         }
+
+        // Setup Autocomplete for both inputs
+        setupAutocomplete('borrowerName', 'borrowerEmpId', 'borrowerAutocompleteList');
+        setupAutocomplete('actualBorrowerName', 'actualBorrowerEmpId', 'actualBorrowerAutocompleteList');
 
         // ==========================================
         // 🚀 Enterprise Grade: ยิงแจ้งเตือน LINE ทันทีที่บันทึกข้อมูลสำเร็จ
         // ==========================================
         async function notifyBDAction(action, data) {
             if (GAS_WEBHOOK_URL === 'YOUR_GAS_WEB_APP_URL') return; // ยังไม่ได้ตั้งค่า URL
-            
+
             try {
                 console.log(`🚀 กำลังส่ง Webhook ไปที่ GAS (${action})...`);
                 fetch(GAS_WEBHOOK_URL, {
                     method: 'POST',
                     mode: 'no-cors', // บังคับ no-cors เพราะ GAS อาจติดเรื่อง Cross-Origin
-                    headers: { 
+                    headers: {
                         // เปลี่ยนเป็น text/plain เพื่อหลีกเลี่ยง CORS Preflight (OPTIONS request) ที่มักจะทำให้ GAS พัง
-                        'Content-Type': 'text/plain;charset=utf-8' 
+                        'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify({
                         system: "BD_TRACKING",
@@ -1829,6 +1899,8 @@
                 mm_number: document.getElementById('mmNumber').value.trim(),
                 borrower_name: document.getElementById('borrowerName').value.trim(),
                 borrower_emp_id: document.getElementById('borrowerEmpId').value || null,
+                actual_borrower_name: document.getElementById('hasActualBorrower').checked ? document.getElementById('actualBorrowerName').value.trim() || null : null,
+                actual_borrower_emp_id: document.getElementById('hasActualBorrower').checked ? document.getElementById('actualBorrowerEmpId').value || null : null,
                 job_type: selectedJobTypes.join(','),
                 item_name: document.getElementById('itemName').value.trim(),
                 amount: parseCurrency(document.getElementById('amount').value),
@@ -1839,6 +1911,7 @@
                 doc_return_number: document.getElementById('docReturnNumber').value.trim() || null,
                 pp_number: document.getElementById('ppNumber').value.trim() || null,
                 return_date: document.getElementById('returnDate').value || null,
+                cleared_date: document.getElementById('clearedDate').value || null,
                 activity_end_date: activityEndDateValue
             };
 
@@ -1940,7 +2013,8 @@
                         balance_amount: 'เงินคงเหลือ',
                         doc_return_number: 'เลขที่นำส่งเงิน',
                         pp_number: 'เลขที่ PP',
-                        return_date: 'วันที่คืนเอกสาร'
+                        return_date: 'วันที่คืนเอกสาร',
+                        cleared_date: 'วันที่เคลียร์เงิน'
                     };
 
                     const formatValue = (key, val) => {
@@ -1949,7 +2023,7 @@
                             return Number(val).toLocaleString('th-TH') + ' บาท';
                         }
                         // Format dates YYYY-MM-DD
-                        if (['receive_date', 'send_date', 'return_date'].includes(key) && val.includes('-')) {
+                        if (['receive_date', 'send_date', 'return_date', 'cleared_date', 'activity_end_date'].includes(key) && val.includes('-')) {
                             const [year, month, day] = val.split('-');
                             if (year && month && day) return `${day}/${month}/${parseInt(year) + 543}`;
                         }
@@ -2150,7 +2224,10 @@
                             <div class="text-slate-500">เลขที่ MM/คำสั่ง:</div>
                             <div class="font-medium text-slate-800">${safeMmNumber}</div>
                             <div class="text-slate-500">ผู้ขอยืม:</div>
-                            <div class="font-medium text-slate-800">${safeBorrowerName}</div>
+                            <div class="font-medium text-slate-800">
+                                ${safeBorrowerName}
+                                ${record.actual_borrower_name ? `<div class="text-xs text-blue-600 mt-1 flex items-center gap-1"><i class="fas fa-user-tag"></i> ผู้รับผิดชอบการยืมจริง: ${escapeHTML(record.actual_borrower_name)}</div>` : ''}
+                            </div>
                             <div class="text-slate-500">ประเภทงาน:</div>
                             <div class="font-medium text-slate-800">${escapeHTML(record.job_type || '-')}</div>
                             <div class="text-slate-500">สถานะ:</div>
@@ -2173,6 +2250,8 @@
                             <div class="text-slate-600 text-xs">${record.receive_date ? new Date(record.receive_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
                             <div class="text-slate-500 text-xs">วันที่ส่งเงินให้ผู้ขอยืม:</div>
                             <div class="text-slate-600 text-xs">${record.send_date ? new Date(record.send_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
+                            <div class="text-slate-500 text-xs">วันที่เคลียร์เงิน:</div>
+                            <div class="text-slate-600 text-xs">${record.cleared_date ? new Date(record.cleared_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
                             <div class="text-slate-500 text-xs">เลขที่นำส่งเงิน:</div>
                             <div class="text-slate-600 text-xs font-medium">${safeDocReturnNumber}</div>
                             <div class="text-slate-500 text-xs">เลขที่ PP:</div>
@@ -2229,6 +2308,14 @@
                 document.getElementById('mmNumber').value = data.mm_number || '';
                 document.getElementById('borrowerName').value = data.borrower_name || '';
                 document.getElementById('borrowerEmpId').value = data.borrower_emp_id || '';
+
+                // Actual Borrower
+                const hasActual = !!data.actual_borrower_name;
+                document.getElementById('hasActualBorrower').checked = hasActual;
+                toggleActualBorrower(hasActual);
+                document.getElementById('actualBorrowerName').value = data.actual_borrower_name || '';
+                document.getElementById('actualBorrowerEmpId').value = data.actual_borrower_emp_id || '';
+
                 document.getElementById('itemName').value = data.item_name || '';
 
                 const rawAmount = parseFloat(data.amount) || 0;
@@ -2250,12 +2337,14 @@
 
                 const fpReceive = document.getElementById('receiveDate')._flatpickr;
                 const fpSend = document.getElementById('sendDate')._flatpickr;
+                const fpCleared = document.getElementById('clearedDate')._flatpickr;
                 const fpReturn = document.getElementById('returnDate')._flatpickr;
                 const fpActivityEnd = document.getElementById('activityEndDate')._flatpickr;
 
                 if (fpReceive) {
                     data.receive_date ? fpReceive.setDate(data.receive_date) : fpReceive.clear();
                     data.send_date ? fpSend.setDate(data.send_date) : fpSend.clear();
+                    data.cleared_date ? fpCleared.setDate(data.cleared_date) : fpCleared.clear();
                     data.return_date ? fpReturn.setDate(data.return_date) : fpReturn.clear();
                     if (fpActivityEnd) {
                         data.activity_end_date ? fpActivityEnd.setDate(data.activity_end_date) : fpActivityEnd.clear();
@@ -2271,9 +2360,30 @@
                     setFieldsLockState(false);
                 }
 
+                // Lock borrower name in edit mode to prevent changing user after notification
+                const bNameInput = document.getElementById('borrowerName');
+                if (bNameInput) {
+                    bNameInput.readOnly = true;
+                    bNameInput.classList.add('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+                }
+
+                // Also lock actual borrower checkbox and input in edit mode
+                document.getElementById('hasActualBorrower').disabled = true;
+                const actualBNameInput = document.getElementById('actualBorrowerName');
+                if (actualBNameInput) {
+                    actualBNameInput.readOnly = true;
+                    actualBNameInput.classList.add('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80');
+                }
+
                 document.getElementById('formTitle').innerText = 'แก้ไขข้อมูลใบยืมเหลือง (BD)';
                 document.getElementById('submitBtnText').innerText = 'บันทึกการแก้ไข';
-                document.getElementById('cancelRecordBtn').classList.remove('hidden');
+                
+                // Hide cancel button if money has already been disbursed or already cancelled
+                if (data.send_date || data.cancel_reason) {
+                    document.getElementById('cancelRecordBtn').classList.add('hidden');
+                } else {
+                    document.getElementById('cancelRecordBtn').classList.remove('hidden');
+                }
                 document.getElementById('formBottomBackBtn').classList.remove('hidden');
 
                 document.getElementById('step2-container').classList.remove('hidden');
@@ -2408,6 +2518,7 @@
 
             flatpickr("#receiveDate", config);
             flatpickr("#sendDate", config);
+            flatpickr("#clearedDate", config);
             flatpickr("#returnDate", config);
             flatpickr("#activityEndDate", config);
         }
