@@ -411,8 +411,11 @@
                     icon: 'error',
                     title: 'เข้าสู่ระบบไม่สำเร็จ',
                     text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
-                    confirmButtonColor: '#1e3c72',
-                    customClass: { popup: 'rounded-[20px]' }
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2'
+                    }
                 });
                 btn.disabled = false;
                 btn.innerHTML = 'ลงชื่อเข้าใช้';
