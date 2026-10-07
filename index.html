@@ -531,7 +531,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">
-                                        จำนวนเงินที่เหลือ</p>
+                                        จำนวนเงินคงเหลือ</p>
                                     <div class="flex items-baseline gap-1.5">
                                         <p class="text-xl lg:text-2xl font-bold text-emerald-400 tracking-tight"
                                             id="sum-balance">0.00</p>
@@ -843,14 +843,15 @@
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
                                         BD</label>
-                                    <input type="text" id="bdNumber" class="apple-input"
-                                        onblur="checkDuplicateBD(this)">
+                                    <input type="text" id="bdNumber" class="apple-input" oninput="formatBDNumber(this)"
+                                        onblur="checkDuplicateBD(this)" maxlength="13" placeholder="BDXXXXXXXXXXX">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่
                                         MM / ศล.ภ. / คำสั่ง <span class="text-red-500">*</span></label>
-                                    <input type="text" id="mmNumber" class="apple-input" required>
+                                    <input type="text" id="mmNumber" class="apple-input" oninput="formatMMNumber(this)"
+                                        required>
                                 </div>
                                 <div id="borrowerDiv"
                                     class="flex flex-col relative md:col-span-2 transition-all duration-300">
@@ -956,7 +957,8 @@
                                 <!-- Dynamic Activity End Date (SLA Trigger) -->
                                 <div id="activityEndDateWrapper" class="flex flex-col hidden">
                                     <label id="activityEndDateLabel"
-                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่สิ้นสุด</label>
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่สิ้นสุด
+                                        <span id="activityEndDateAsterisk" class="text-red-500 hidden">*</span></label>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -973,6 +975,9 @@
                                             class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
+                                    <p id="activityEndDateError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        กรุณาระบุวันที่ตามประเภทงานให้ครบถ้วน</p>
                                 </div>
                             </div>
                         </div>
@@ -1007,11 +1012,11 @@
                                         oninput="formatCurrencyInput(this)">
                                     <p id="usedAmountError" class="text-red-500 text-xs mt-1.5 font-medium hidden">
                                         ⚠️
-                                        จำนวนเงินที่ใช้ไปต้องไม่เกินจำนวนเงินตั้งต้น</p>
+                                        จำนวนเงินที่ใช้ไปต้องไม่เกินจำนวนเงินที่ยืม</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เงินที่เหลือ
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">จำนวนเงินคงเหลือ
                                         (บาท)</label>
                                     <input type="text" id="balanceAmount"
                                         class="apple-input font-bold text-blue-400 bg-[#121212]/5" readonly>
@@ -1028,7 +1033,8 @@
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่งบใบสำคัญ
                                         (PP)</label>
-                                    <input type="text" id="ppNumber" class="apple-input">
+                                    <input type="text" id="ppNumber" class="apple-input" oninput="formatPPNumber(this)"
+                                        maxlength="13" placeholder="PPXXXXXXXXXXX">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
@@ -1097,7 +1103,7 @@
     <script>
         const SUPABASE_URL = 'https://bixfhtemapsrahdrkaze.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpeGZodGVtYXBzcmFoZHJrYXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzM4MzUsImV4cCI6MjA5ODc0OTgzNX0.JNt7w7LXfBJlmDp0POy-UvolL-Rrk0yI-zne6iYc_P0';
-        const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzaLIyD7YDWgp3puaGe2WWr9H-KhTNvB5WX1Sb4QmyOvOvT0oLpRSd8Z6QdA5iwxY2jWQ/exec';
+        const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbymoQcjH2K8zETk_z6ugNrorzZl4pFwi38l8AH8B6N0W1xRMxnMqaR0aYyHhXWC4uul/exec';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             auth: {
@@ -1535,6 +1541,51 @@
             updateJobTypeUI();
         }
 
+        function checkActivityEndDateRequirement(isSubmitAttempt = false) {
+            const sendDate = document.getElementById('sendDate').value;
+            const activityEndDate = document.getElementById('activityEndDate').value;
+            const isTravelOrProject = selectedJobTypes.includes('เดินทางไปปฏิบัติงาน') || selectedJobTypes.includes('โครงการ');
+
+            const asterisk = document.getElementById('activityEndDateAsterisk');
+            const input = document.getElementById('activityEndDate');
+            const errorText = document.getElementById('activityEndDateError');
+
+            if (asterisk && input && errorText) {
+                // Determine if required
+                if (sendDate && isTravelOrProject) {
+                    asterisk.classList.remove('hidden');
+                    // Check if invalid (only if we attempt to submit, or if it was previously invalid)
+                    if (isSubmitAttempt && !activityEndDate) {
+                        input.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                        errorText.classList.remove('hidden');
+                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'ข้อมูลไม่ครบถ้วน',
+                            text: 'กรุณาระบุ "วันที่สิ้นสุดโครงการ/เดินทางกลับ" ที่ไฮไลท์สีแดง',
+                            confirmButtonText: 'ตกลง',
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: 'rounded-[20px]',
+                                confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
+                            }
+                        });
+                        return false; // Validation failed
+                    } else if (activityEndDate) {
+                        // Clear error if now filled
+                        input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                        errorText.classList.add('hidden');
+                    }
+                } else {
+                    // Not required
+                    asterisk.classList.add('hidden');
+                    input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                    errorText.classList.add('hidden');
+                }
+            }
+            return true; // Validation passed
+        }
+
         function updateJobTypeUI() {
             const travelCard = document.getElementById('typeTravel');
             const procCard = document.getElementById('typeProcurement');
@@ -1593,14 +1644,17 @@
             if (activityEndDateWrapper && activityEndDateLabel) {
                 if (selectedJobTypes.includes('เดินทางไปปฏิบัติงาน')) {
                     activityEndDateWrapper.classList.remove('hidden');
-                    activityEndDateLabel.innerText = 'วันที่เดินทางกลับ';
+                    activityEndDateLabel.innerHTML = 'วันที่เดินทางกลับ <span id="activityEndDateAsterisk" class="text-red-500 hidden">*</span>';
                 } else if (selectedJobTypes.includes('โครงการ')) {
                     activityEndDateWrapper.classList.remove('hidden');
-                    activityEndDateLabel.innerText = 'วันที่โครงการแล้วเสร็จ';
+                    activityEndDateLabel.innerHTML = 'วันที่โครงการแล้วเสร็จ <span id="activityEndDateAsterisk" class="text-red-500 hidden">*</span>';
                 } else {
                     activityEndDateWrapper.classList.add('hidden');
                 }
             }
+
+            // Trigger inline validation when job types change
+            checkActivityEndDateRequirement();
 
             const formFields = document.getElementById('formFieldsSection');
             if (selectedJobTypes.length > 0) {
@@ -1625,6 +1679,28 @@
             });
         }
 
+        function toggleDateFieldLock(id, isLocked) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const fp = el._flatpickr;
+            if (fp) {
+                // If it's a date picker, restrict opening
+                fp.set('clickOpens', !isLocked);
+                // When locked, also make the input functionally readonly so typing/clearing is disabled
+                el.readOnly = true;
+            }
+            if (isLocked) {
+                el.classList.add('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80', 'pointer-events-none');
+            } else {
+                el.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed', 'opacity-80', 'pointer-events-none');
+            }
+        }
+
+        function resetAllDateFieldsLock() {
+            const dateFields = ['receiveDate', 'sendDate', 'activityEndDate', 'returnDate', 'clearedDate'];
+            dateFields.forEach(id => toggleDateFieldLock(id, false));
+        }
+
         function openCreateForm() {
             document.getElementById('currentRecordId').value = '';
             selectedJobTypes = [];
@@ -1638,6 +1714,7 @@
             document.getElementById('jobTypeSection').classList.remove('hidden');
             document.getElementById('bdForm').reset();
             setFieldsLockState(false);
+            resetAllDateFieldsLock();
 
             // Unlock borrower name when creating a new record
             const borrowerNameInput = document.getElementById('borrowerName');
@@ -1743,6 +1820,81 @@
             }
 
             document.getElementById('balanceAmount').value = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatBDNumber(input) {
+            let val = input.value.toUpperCase();
+            if (!val) return;
+
+            // Remove non-alphanumeric
+            val = val.replace(/[^A-Z0-9]/g, '');
+
+            if (val.startsWith('BD')) {
+                // Starts with BD, keep BD and allow only numbers after
+                val = 'BD' + val.substring(2).replace(/[^0-9]/g, '');
+            } else if (val === 'B') {
+                // Just 'B', allow it temporarily
+            } else {
+                // Anything else, prefix with BD and extract numbers
+                val = 'BD' + val.replace(/[^0-9]/g, '');
+            }
+
+            // Enforce max length of 13
+            if (val.length > 13) {
+                val = val.substring(0, 13);
+            }
+
+            input.value = val;
+        }
+
+        function formatPPNumber(input) {
+            let val = input.value.toUpperCase();
+            if (!val) return;
+
+            // Remove non-alphanumeric
+            val = val.replace(/[^A-Z0-9]/g, '');
+
+            if (val.startsWith('PP')) {
+                // Starts with PP, keep PP and allow only numbers after
+                val = 'PP' + val.substring(2).replace(/[^0-9]/g, '');
+            } else if (val === 'P') {
+                // Just 'P', allow it temporarily
+            } else {
+                // Anything else, prefix with PP and extract numbers
+                val = 'PP' + val.replace(/[^0-9]/g, '');
+            }
+
+            // Enforce max length of 13
+            if (val.length > 13) {
+                val = val.substring(0, 13);
+            }
+
+            input.value = val;
+        }
+
+        function formatMMNumber(input) {
+            let val = input.value;
+            if (!val) return;
+
+            // If the user starts typing 'M' or 'm', we assume it's an MM Number
+            if (val.trim().toUpperCase().startsWith('M')) {
+                val = val.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                if (val.startsWith('MM')) {
+                    val = 'MM' + val.substring(2).replace(/[^0-9]/g, '');
+                } else if (val === 'M') {
+                    // Just 'M', allow it temporarily
+                } else {
+                    val = 'MM' + val.replace(/[^0-9]/g, '');
+                }
+
+                if (val.length > 13) {
+                    val = val.substring(0, 13);
+                }
+                input.value = val;
+            }
+            // If they type anything else (e.g. "ศล.ภ.", "คำสั่ง"), we don't interfere
+            // allowing free text input for other types.
         }
 
         async function checkDuplicateBD(inputElement) {
@@ -1971,6 +2123,11 @@
                 }
             }
 
+            if (!checkActivityEndDateRequirement(true)) {
+                // Inline validation handles the UI styling, we just need to halt the save process
+                return;
+            }
+
             if (payload.used_amount > payload.amount) {
                 Swal.fire({
                     icon: 'warning',
@@ -2152,6 +2309,7 @@
                     document.getElementById('jobTypeSection').classList.remove('hidden');
                     document.getElementById('bdForm').reset();
                     setFieldsLockState(false);
+                    resetAllDateFieldsLock();
                     switchView('dashboard');
                 });
 
@@ -2426,6 +2584,13 @@
                 document.getElementById('docReturnNumber').value = data.doc_return_number || '';
                 document.getElementById('ppNumber').value = data.pp_number || '';
 
+                // Lock date fields if they already have a value in the database
+                toggleDateFieldLock('receiveDate', !!data.receive_date);
+                toggleDateFieldLock('sendDate', !!data.send_date);
+                toggleDateFieldLock('activityEndDate', !!data.activity_end_date);
+                toggleDateFieldLock('returnDate', !!data.return_date);
+                toggleDateFieldLock('clearedDate', !!data.cleared_date);
+
                 if (data.receive_date) {
                     setFieldsLockState(true);
                 } else {
@@ -2590,10 +2755,19 @@
             };
 
             flatpickr("#receiveDate", config);
-            flatpickr("#sendDate", config);
+
+            // Override onChange for sendDate and activityEndDate for inline validation
+            const validateOnChangeConfig = {
+                ...config,
+                onChange: function (selectedDates, dateStr, instance) {
+                    checkActivityEndDateRequirement();
+                }
+            };
+
+            flatpickr("#sendDate", validateOnChangeConfig);
             flatpickr("#clearedDate", config);
             flatpickr("#returnDate", config);
-            flatpickr("#activityEndDate", config);
+            flatpickr("#activityEndDate", validateOnChangeConfig);
         }
 
         // 🌟 ฟังก์ชันเริ่มต้นระบบตรวจจับการเคลื่อนไหวของผู้ใช้ (Start Idle Monitor)
