@@ -2270,7 +2270,16 @@
 
                     // 🚀 Trigger Notification for "SEND_MONEY"
                     if (!oldData.send_date && payload.send_date) {
-                        notifyBDAction('SEND_MONEY', payload);
+                        const now = new Date();
+                        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                        if (payload.send_date <= todayStr) {
+                            notifyBDAction('SEND_MONEY', payload);
+                        }
+                    }
+
+                    // 🚀 Trigger Notification for "CLEAR_MONEY" (ส่งใช้เงินยืม)
+                    if (!oldData.cleared_date && payload.cleared_date) {
+                        notifyBDAction('CLEAR_MONEY', payload);
                     }
                 } else {
                     payload.created_by = currentUserContext;
