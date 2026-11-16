@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         body {
@@ -574,14 +575,27 @@
             <div class="apple-card p-8">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <h2 class="text-xl font-semibold text-slate-800">ประวัติการทำรายการ</h2>
-                    <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        สร้างรายการใหม่
-                    </button>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button id="exportReportBtn" onclick="openExportModal()"
+                            class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full px-5 py-2.5 font-medium text-[0.95rem] shadow-sm hover:shadow transition-all inline-flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="text-sky-500">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            ดึงข้อมูล / ออกรายงาน
+                        </button>
+                        <button id="createRecordBtn" onclick="openCreateForm()" class="apple-btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            สร้างรายการใหม่
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -846,9 +860,12 @@
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่ใบยืมเหลือง
-                                        BD</label>
-                                    <input type="text" id="bdNumber" class="apple-input" oninput="formatBDNumber(this)"
+                                        BD <span id="bdNumberAsterisk" class="text-red-500 hidden">*</span></label>
+                                    <input type="text" id="bdNumber" class="apple-input transition-colors" oninput="formatBDNumber(this); checkBDNumberRequirement();"
                                         onblur="checkDuplicateBD(this)" maxlength="13" placeholder="BDXXXXXXXXXXX">
+                                    <p id="bdNumberError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาระบุเลขที่ใบยืมเหลือง BD</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
@@ -872,9 +889,12 @@
                                             <span>ระบุผู้รับผิดชอบจริง</span>
                                         </label>
                                     </div>
-                                    <input type="text" id="borrowerName" class="apple-input" required autocomplete="off"
+                                    <input type="text" id="borrowerName" class="apple-input transition-colors" required autocomplete="off"
                                         placeholder="พิมพ์ชื่อ หรือรหัสเจ้าหน้าที่...">
                                     <input type="hidden" id="borrowerEmpId">
+                                    <p id="borrowerError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาคลิกเลือกชื่อผู้ขอยืมจากรายชื่อที่ปรากฏ</p>
                                     <ul id="borrowerAutocompleteList"
                                         class="absolute z-20 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
                                         style="top: 100%;">
@@ -886,9 +906,12 @@
                                     <label
                                         class="text-[11px] font-semibold text-sky-700 mb-1.5 uppercase tracking-wide">ผู้รับผิดชอบการยืมจริง<span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" id="actualBorrowerName" class="apple-input bg-white text-sm py-2"
+                                    <input type="text" id="actualBorrowerName" class="apple-input bg-white text-sm py-2 transition-colors"
                                         autocomplete="off" placeholder="พิมพ์ชื่อ หรือรหัสเจ้าหน้าที่...">
                                     <input type="hidden" id="actualBorrowerEmpId">
+                                    <p id="actualBorrowerError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาคลิกเลือกผู้รับผิดชอบจริงจากรายชื่อ</p>
                                     <ul id="actualBorrowerAutocompleteList"
                                         class="absolute z-30 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"
                                         style="top: 100%;"></ul>
@@ -919,7 +942,7 @@
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ภาคฯ
-                                        ได้รับเงินจากศูนย์</label>
+                                        ได้รับเงินจากศูนย์ <span id="receiveDateAsterisk" class="text-red-500 hidden">*</span></label>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -936,6 +959,9 @@
                                             class="flex h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm text-slate-800 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer shadow-sm"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
+                                    <p id="receiveDateError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาระบุวันที่ได้รับเงินจากศูนย์</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
@@ -981,7 +1007,7 @@
                                     </div>
                                     <p id="activityEndDateError"
                                         class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
-                                        กรุณาระบุวันที่ตามประเภทงานให้ครบถ้วน</p>
+                                        ⚠️ กรุณาระบุวันที่ตามประเภทงานให้ครบถ้วน</p>
                                 </div>
                             </div>
                         </div>
@@ -990,10 +1016,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 <div class="flex flex-col">
                                     <label
-                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ส่งใช้เงินยืม</label>
+                                        class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">วันที่ส่งใช้เงินยืม
+                                        <span id="clearedDateAsterisk" class="text-red-500 hidden">*</span></label>
                                     <div class="relative">
                                         <div
-                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
@@ -1003,20 +1030,26 @@
                                                 <line x1="3" x2="21" y1="10" y2="10" />
                                             </svg>
                                         </div>
-                                        <input type="text" id="clearedDate" class="apple-input cursor-pointer pl-10"
+                                        <input type="text" id="clearedDate" class="apple-input cursor-pointer pl-10 transition-colors"
                                             placeholder="เลือกวันที่..." readonly>
                                     </div>
+                                    <p id="clearedDateError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาระบุวันที่ส่งใช้เงินยืม</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">จำนวนเงินที่ใช้ไป
-                                        (บาท)</label>
+                                        (บาท) <span id="usedAmountAsterisk" class="text-red-500 hidden">*</span></label>
                                     <input type="text" id="usedAmount"
                                         class="apple-input font-bold text-blue-400 transition-colors"
                                         oninput="formatCurrencyInput(this)">
                                     <p id="usedAmountError" class="text-red-500 text-xs mt-1.5 font-medium hidden">
                                         ⚠️
                                         จำนวนเงินที่ใช้ไปต้องไม่เกินจำนวนเงินที่ยืม</p>
+                                    <p id="usedAmountRequiredError"
+                                        class="text-[11px] text-red-500 mt-1.5 font-medium hidden">
+                                        ⚠️ กรุณาระบุจำนวนเงินที่ใช้ไป</p>
                                 </div>
                                 <div class="flex flex-col">
                                     <label
@@ -1031,13 +1064,13 @@
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่บันทึกนำส่งเงิน</label>
-                                    <input type="text" id="docReturnNumber" class="apple-input">
+                                    <input type="text" id="docReturnNumber" class="apple-input" oninput="checkClearedMoneyRequirement()">
                                 </div>
                                 <div class="flex flex-col">
                                     <label
                                         class="text-[13px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">เลขที่งบใบสำคัญ
                                         (PP)</label>
-                                    <input type="text" id="ppNumber" class="apple-input" oninput="formatPPNumber(this)"
+                                    <input type="text" id="ppNumber" class="apple-input" oninput="formatPPNumber(this); checkClearedMoneyRequirement();"
                                         maxlength="13" placeholder="PPXXXXXXXXXXX">
                                 </div>
                                 <div class="flex flex-col">
@@ -1101,6 +1134,208 @@
             </div>
 
 
+        </div>
+    </div>
+
+    <!-- Enterprise Export Center Modal -->
+    <div id="exportModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white/95 backdrop-blur-xl rounded-[24px] shadow-2xl border border-white max-w-2xl w-full p-6 sm:p-8 relative animate-view max-h-[92vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="flex items-start justify-between border-b border-slate-100 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-11 h-11 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">ดึงข้อมูลและออกรายงาน</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">อ้างอิงช่วงเวลาจาก "วันที่สร้างรายการ"</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeExportModal()"
+                    class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Step 1: Period Mode Tabs -->
+            <div class="mb-6">
+                <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-2.5">1.
+                    เลือกรูปแบบช่วงเวลาที่ต้องการดึงข้อมูล</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-100/80 p-1.5 rounded-2xl">
+                    <button type="button" onclick="setExportPeriodMode('daily')" id="tabExportDaily"
+                        class="export-period-tab py-2.5 px-3 rounded-xl text-sm font-medium transition-all">รายวัน</button>
+                    <button type="button" onclick="setExportPeriodMode('weekly')" id="tabExportWeekly"
+                        class="export-period-tab py-2.5 px-3 rounded-xl text-sm font-medium transition-all">รายสัปดาห์</button>
+                    <button type="button" onclick="setExportPeriodMode('monthly')" id="tabExportMonthly"
+                        class="export-period-tab py-2.5 px-3 rounded-xl text-sm font-medium transition-all">รายเดือน</button>
+                    <button type="button" onclick="setExportPeriodMode('yearly')" id="tabExportYearly"
+                        class="export-period-tab py-2.5 px-3 rounded-xl text-sm font-medium transition-all">รายปี</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Period Controls -->
+            <div class="mb-6 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70">
+                <!-- Daily Control -->
+                <div id="exportDailyBox" class="hidden">
+                    <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกวันที่ต้องการดึงข้อมูล</label>
+                    <input type="text" id="exportDailyDate" class="apple-input py-2.5 bg-white cursor-pointer"
+                        placeholder="เลือกวันที่..." readonly>
+                </div>
+
+                <!-- Weekly Control -->
+                <div id="exportWeeklyBox" class="hidden">
+                    <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกวันใดก็ได้ในสัปดาห์ที่ต้องการ</label>
+                    <input type="text" id="exportWeeklyDate" class="apple-input py-2.5 bg-white cursor-pointer"
+                        placeholder="เลือกวันที่ในสัปดาห์..." readonly>
+                    <p id="exportWeeklyRangeText" class="text-xs text-sky-600 font-medium mt-2"></p>
+                </div>
+
+                <!-- Monthly Control -->
+                <div id="exportMonthlyBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกเดือน</label>
+                        <select id="exportMonthSelect" onchange="updateExportPreview()"
+                            class="apple-input py-2.5 bg-white cursor-pointer">
+                            <option value="0">มกราคม</option>
+                            <option value="1">กุมภาพันธ์</option>
+                            <option value="2">มีนาคม</option>
+                            <option value="3">เมษายน</option>
+                            <option value="4">พฤษภาคม</option>
+                            <option value="5">มิถุนายน</option>
+                            <option value="6">กรกฎาคม</option>
+                            <option value="7">สิงหาคม</option>
+                            <option value="8">กันยายน</option>
+                            <option value="9">ตุลาคม</option>
+                            <option value="10">พฤศจิกายน</option>
+                            <option value="11">ธันวาคม</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกปี พ.ศ.</label>
+                        <select id="exportMonthYearSelect" onchange="updateExportPreview()"
+                            class="apple-input py-2.5 bg-white cursor-pointer"></select>
+                    </div>
+                </div>
+
+                <!-- Yearly Control -->
+                <div id="exportYearlyBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-2">ประเภทปี</label>
+                        <select id="exportYearModeSelect" onchange="populateExportYearOptions(); updateExportPreview();"
+                            class="apple-input py-2.5 bg-white cursor-pointer">
+                            <option value="fiscal">ปีงบประมาณ (1 ต.ค. – 30 ก.ย.)</option>
+                            <option value="calendar">ปีปฏิทิน (1 ม.ค. – 31 ธ.ค.)</option>
+                            <option value="all">ข้อมูลทั้งหมดทุกปี</option>
+                        </select>
+                    </div>
+                    <div id="exportYearValueWrapper">
+                        <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกปี พ.ศ.</label>
+                        <select id="exportYearSelect" onchange="updateExportPreview()"
+                            class="apple-input py-2.5 bg-white cursor-pointer"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Additional Filters -->
+            <div class="mb-6">
+                <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-2.5">2.
+                    ตัวกรองเพิ่มเติม</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1.5">ประเภทงาน</label>
+                        <select id="exportJobTypeSelect" onchange="updateExportPreview()"
+                            class="apple-input py-2.5 bg-white cursor-pointer text-sm">
+                            <option value="all">ทุกประเภทงาน</option>
+                            <option value="เดินทางไปปฏิบัติงาน">เดินทางไปปฏิบัติงาน</option>
+                            <option value="จัดซื้อจัดจ้าง">จัดซื้อจัดจ้าง</option>
+                            <option value="โครงการ">โครงการ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1.5">สถานะรายการ</label>
+                        <select id="exportStatusSelect" onchange="updateExportPreview()"
+                            class="apple-input py-2.5 bg-white cursor-pointer text-sm">
+                            <option value="all">ทุกสถานะ</option>
+                            <option value="pending">กำลังดำเนินการ</option>
+                            <option value="overdue">เกินกำหนด (ล่าช้า ≥ 5 วันทำการ)</option>
+                            <option value="completed">ปิดรายการสมบูรณ์</option>
+                            <option value="ยกเลิก">ยกเลิกรายการ</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Live Data Preview Box -->
+            <div class="mb-6 bg-gradient-to-br from-sky-50/90 to-indigo-50/60 border border-sky-200/70 rounded-2xl p-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-sky-200/50">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide"
+                            id="exportPeriodSummaryLabel">สรุปข้อมูลที่จะดึงออก</span>
+                    </div>
+                    <span class="text-sm font-bold text-sky-700 bg-white px-3 py-1 rounded-full shadow-sm border border-sky-100"
+                        id="exportPreviewCount">พบข้อมูล 0 รายการ</span>
+                </div>
+                <div class="grid grid-cols-3 gap-3 pt-3 text-center">
+                    <div>
+                        <p class="text-[11px] text-slate-500">เงินยืมรวมสุทธิ</p>
+                        <p class="text-sm font-bold text-blue-600" id="exportPreviewAmount">0.00 ฿</p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-500">ใช้ไปรวม</p>
+                        <p class="text-sm font-bold text-amber-600" id="exportPreviewUsed">0.00 ฿</p>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-slate-500">คงเหลือรวม</p>
+                        <p class="text-sm font-bold text-emerald-600" id="exportPreviewBalance">0.00 ฿</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Metadata Preview -->
+            <div class="mb-6 text-[11px] text-slate-400 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100 flex flex-col gap-0.5">
+                <div><strong class="text-slate-500">ผู้ดึงข้อมูล:</strong> <span id="exportMetaUser">-</span></div>
+                <div><strong class="text-slate-500">แหล่งข้อมูล:</strong> ระบบติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD Tracking System R8) - ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-end items-center gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeExportModal()"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-full text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    ปิดหน้าต่าง
+                </button>
+                <button type="button" id="btnExportExcel" onclick="handleExportExcel()"
+                    class="w-full sm:w-auto px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/20 transition-all inline-flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    ดาวน์โหลด Excel
+                </button>
+                <button type="button" id="btnExportPDF" onclick="handleExportPDF()"
+                    class="w-full sm:w-auto px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-500/20 transition-all inline-flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                        </path>
+                    </svg>
+                    ออกรายงาน PDF
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1178,10 +1413,12 @@
 
                         currentUserRole = profile.role || 'user'; // กำหนด Role จากฐานข้อมูล
 
-                        // ซ่อนปุ่ม สร้างรายการใหม่ ถ้าเป็นสิทธิ์ user
+                        // ซ่อนปุ่ม สร้างรายการใหม่ และ ปุ่มดึงข้อมูล/ออกรายงาน ถ้าเป็นสิทธิ์ user
                         if (currentUserRole === 'user') {
                             const createBtn = document.getElementById('createRecordBtn');
                             if (createBtn) createBtn.style.display = 'none';
+                            const exportBtn = document.getElementById('exportReportBtn');
+                            if (exportBtn) exportBtn.style.display = 'none';
                         }
 
                         if (position) {
@@ -1610,6 +1847,127 @@
             updateJobTypeUI();
         }
 
+        function setInputErrorState(inputEl, hasError) {
+            if (!inputEl) return;
+            const targets = [inputEl];
+            if (inputEl._flatpickr && inputEl._flatpickr.altInput) {
+                targets.push(inputEl._flatpickr.altInput);
+            }
+            targets.forEach(target => {
+                if (hasError) {
+                    target.classList.add('!border-red-500', 'ring-2', 'ring-red-500/20', '!bg-red-50/40');
+                } else {
+                    target.classList.remove('!border-red-500', 'ring-2', 'ring-red-500/20', '!bg-red-50/40');
+                }
+            });
+        }
+
+        function checkBorrowerRequirement(isSubmitAttempt = false) {
+            const isEditMode = document.getElementById('currentRecordId')?.value !== '';
+            const borrowerInput = document.getElementById('borrowerName');
+            const borrowerEmpId = document.getElementById('borrowerEmpId');
+            const borrowerError = document.getElementById('borrowerError');
+
+            const hasActual = document.getElementById('hasActualBorrower')?.checked;
+            const actualInput = document.getElementById('actualBorrowerName');
+            const actualEmpId = document.getElementById('actualBorrowerEmpId');
+            const actualError = document.getElementById('actualBorrowerError');
+
+            // 1. Clear inline errors immediately when valid
+            if (borrowerInput && borrowerError) {
+                if (isEditMode || (borrowerInput.value.trim() && borrowerEmpId?.value.trim())) {
+                    setInputErrorState(borrowerInput, false);
+                    borrowerError.classList.add('hidden');
+                }
+            }
+
+            if (actualInput && actualError) {
+                if (!hasActual || isEditMode || (actualInput.value.trim() && actualEmpId?.value.trim())) {
+                    setInputErrorState(actualInput, false);
+                    actualError.classList.add('hidden');
+                }
+            }
+
+            // 2. Enforce on submit (for new records where borrower fields are unlocked)
+            if (isSubmitAttempt && !isEditMode) {
+                if (borrowerInput && (!borrowerInput.value.trim() || !borrowerEmpId?.value.trim())) {
+                    setInputErrorState(borrowerInput, true);
+                    if (borrowerError) borrowerError.classList.remove('hidden');
+                    borrowerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+
+                if (hasActual && actualInput && (!actualInput.value.trim() || !actualEmpId?.value.trim())) {
+                    setInputErrorState(actualInput, true);
+                    if (actualError) actualError.classList.remove('hidden');
+                    actualInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function checkBDNumberRequirement(isSubmitAttempt = false) {
+            const receiveDateInput = document.getElementById('receiveDate');
+            const receiveDate = receiveDateInput?.value.trim();
+            const sendDate = document.getElementById('sendDate')?.value.trim();
+            const receiveAsterisk = document.getElementById('receiveDateAsterisk');
+            const receiveError = document.getElementById('receiveDateError');
+
+            const bdInput = document.getElementById('bdNumber');
+            const asterisk = document.getElementById('bdNumberAsterisk');
+            const errorText = document.getElementById('bdNumberError');
+
+            if (!bdInput || !asterisk || !errorText) return true;
+
+            const bdVal = bdInput.value.trim();
+
+            // Check receiveDate requirement when sendDate is selected
+            if (receiveDateInput && receiveAsterisk && receiveError) {
+                if (sendDate) {
+                    receiveAsterisk.classList.remove('hidden');
+                    if (receiveDate) {
+                        setInputErrorState(receiveDateInput, false);
+                        receiveError.classList.add('hidden');
+                    }
+                } else {
+                    receiveAsterisk.classList.add('hidden');
+                    setInputErrorState(receiveDateInput, false);
+                    receiveError.classList.add('hidden');
+                }
+            }
+
+            if (receiveDate || sendDate) {
+                asterisk.classList.remove('hidden');
+                if (bdVal) {
+                    setInputErrorState(bdInput, false);
+                    errorText.classList.add('hidden');
+                }
+            } else {
+                asterisk.classList.add('hidden');
+                setInputErrorState(bdInput, false);
+                errorText.classList.add('hidden');
+            }
+
+            if (isSubmitAttempt) {
+                if ((receiveDate || sendDate) && !bdVal) {
+                    setInputErrorState(bdInput, true);
+                    errorText.classList.remove('hidden');
+                    bdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+                if (sendDate && !receiveDate && receiveDateInput && receiveError) {
+                    setInputErrorState(receiveDateInput, true);
+                    receiveError.classList.remove('hidden');
+                    const visibleReceiveInput = (receiveDateInput._flatpickr && receiveDateInput._flatpickr.altInput) ? receiveDateInput._flatpickr.altInput : receiveDateInput;
+                    visibleReceiveInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+            return true;
+        }
+
         function checkActivityEndDateRequirement(isSubmitAttempt = false) {
             const sendDate = document.getElementById('sendDate').value;
             const activityEndDate = document.getElementById('activityEndDate').value;
@@ -1625,34 +1983,96 @@
                     asterisk.classList.remove('hidden');
                     // Check if invalid (only if we attempt to submit, or if it was previously invalid)
                     if (isSubmitAttempt && !activityEndDate) {
-                        input.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                        setInputErrorState(input, true);
                         errorText.classList.remove('hidden');
-                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'ข้อมูลไม่ครบถ้วน',
-                            text: 'กรุณาระบุ "วันที่สิ้นสุดโครงการ/เดินทางกลับ" ที่ไฮไลท์สีแดง',
-                            confirmButtonText: 'ตกลง',
-                            buttonsStyling: false,
-                            customClass: {
-                                popup: 'rounded-[20px]',
-                                confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
-                            }
-                        });
+                        const visibleInput = (input._flatpickr && input._flatpickr.altInput) ? input._flatpickr.altInput : input;
+                        visibleInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return false; // Validation failed
                     } else if (activityEndDate) {
                         // Clear error if now filled
-                        input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                        setInputErrorState(input, false);
                         errorText.classList.add('hidden');
                     }
                 } else {
                     // Not required
                     asterisk.classList.add('hidden');
-                    input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                    setInputErrorState(input, false);
                     errorText.classList.add('hidden');
                 }
             }
             return true; // Validation passed
+        }
+
+        function checkClearedMoneyRequirement(isSubmitAttempt = false) {
+            const clearedInput = document.getElementById('clearedDate');
+            const usedInput = document.getElementById('usedAmount');
+            const clearedAsterisk = document.getElementById('clearedDateAsterisk');
+            const usedAsterisk = document.getElementById('usedAmountAsterisk');
+            const clearedError = document.getElementById('clearedDateError');
+            const usedRequiredError = document.getElementById('usedAmountRequiredError');
+
+            if (!clearedInput || !usedInput) return true;
+
+            const clearedVal = clearedInput.value.trim();
+            const usedRaw = usedInput.value.trim();
+            const hasUsedAmount = usedRaw !== '';
+
+            const docReturnVal = (document.getElementById('docReturnNumber')?.value || '').trim();
+            const ppVal = (document.getElementById('ppNumber')?.value || '').trim();
+            const returnDateVal = (document.getElementById('returnDate')?.value || '').trim();
+            const hasClosingFields = !!(docReturnVal || ppVal || returnDateVal);
+
+            // 1. Dynamic Asterisks (Real-time UI cues)
+            if (clearedAsterisk) {
+                if (hasUsedAmount || hasClosingFields) {
+                    clearedAsterisk.classList.remove('hidden');
+                } else {
+                    clearedAsterisk.classList.add('hidden');
+                }
+            }
+
+            if (usedAsterisk) {
+                if (clearedVal || hasClosingFields) {
+                    usedAsterisk.classList.remove('hidden');
+                } else {
+                    usedAsterisk.classList.add('hidden');
+                }
+            }
+
+            // 2. Clear inline errors immediately when valid
+            if (clearedVal || (!hasUsedAmount && !hasClosingFields)) {
+                setInputErrorState(clearedInput, false);
+                if (clearedError) clearedError.classList.add('hidden');
+            }
+            if (hasUsedAmount || (!clearedVal && !hasClosingFields)) {
+                const isOverAmount = !document.getElementById('usedAmountError')?.classList.contains('hidden');
+                if (!isOverAmount) {
+                    setInputErrorState(usedInput, false);
+                }
+                if (usedRequiredError) usedRequiredError.classList.add('hidden');
+            }
+
+            // 3. Enforce on form submission (Inline error + scroll only, no popup)
+            if (isSubmitAttempt) {
+                // Case A: กรอกจำนวนเงินที่ใช้ไป (หรือข้อมูลปิดรายการ) แต่ไม่ระบุ "วันที่ส่งใช้เงินยืม"
+                if ((hasUsedAmount || hasClosingFields) && !clearedVal) {
+                    setInputErrorState(clearedInput, true);
+                    if (clearedError) clearedError.classList.remove('hidden');
+                    const visibleClearedInput = (clearedInput._flatpickr && clearedInput._flatpickr.altInput) ? clearedInput._flatpickr.altInput : clearedInput;
+                    visibleClearedInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+
+                // Case B: ระบุ "วันที่ส่งใช้เงินยืม" (หรือข้อมูลปิดรายการ) แต่ไม่กรอก "จำนวนเงินที่ใช้ไป"
+                if ((clearedVal || hasClosingFields) && !hasUsedAmount) {
+                    setInputErrorState(usedInput, true);
+                    if (usedRequiredError) usedRequiredError.classList.remove('hidden');
+                    usedInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         function updateJobTypeUI() {
@@ -1827,6 +2247,9 @@
 
             document.getElementById('step2-container').classList.add('hidden');
             document.getElementById('step3-container').classList.add('hidden');
+            checkBorrowerRequirement();
+            checkBDNumberRequirement();
+            checkClearedMoneyRequirement();
 
             switchView('form');
         }
@@ -1864,7 +2287,10 @@
                 section.classList.add('hidden');
                 section.classList.remove('flex');
                 borrowerDiv.classList.add('md:col-span-2');
+                document.getElementById('actualBorrowerName').value = '';
+                document.getElementById('actualBorrowerEmpId').value = '';
             }
+            checkBorrowerRequirement();
         }
 
         function calculateBalance() {
@@ -1878,17 +2304,18 @@
 
             if (usedAmount > amount) {
                 errorText.classList.remove('hidden');
-                usedAmountInput.classList.add('border-red-500', 'focus:ring-red-500', 'bg-red-50');
+                setInputErrorState(usedAmountInput, true);
                 submitBtn.disabled = true;
                 submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             } else {
                 errorText.classList.add('hidden');
-                usedAmountInput.classList.remove('border-red-500', 'focus:ring-red-500', 'bg-red-50');
+                setInputErrorState(usedAmountInput, false);
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
 
             document.getElementById('balanceAmount').value = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            checkClearedMoneyRequirement();
         }
 
         function formatBDNumber(input) {
@@ -2017,11 +2444,12 @@
                     clearTimeout(debounceTimer);
                     const val = this.value.trim();
                     currentFocus = -1;
+                    empIdInput.value = '';
+                    checkBorrowerRequirement();
 
                     if (!val) {
                         listEl.classList.add('hidden');
                         listEl.innerHTML = '';
-                        empIdInput.value = '';
                         return;
                     }
 
@@ -2056,6 +2484,7 @@
                                     empIdInput.value = li.dataset.empId;
                                     listEl.classList.add('hidden');
                                     currentFocus = -1;
+                                    checkBorrowerRequirement();
                                 });
                                 listEl.appendChild(li);
                             });
@@ -2175,25 +2604,21 @@
                 activity_end_date: activityEndDateValue
             };
 
-            if (payload.receive_date) {
-                if (!payload.bd_number || !payload.mm_number || !payload.borrower_name || !payload.item_name || !payload.amount) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'ข้อมูลไม่ครบถ้วน',
-                        text: 'กรุณาตรวจสอบข้อมูล เลขที่ใบยืมเหลือง BD, เลขที่ MM / ศล.ภ. / คำสั่ง, ชื่อผู้ขอยืม, รายการ และจำนวนเงิน (บาท) ให้ครบถ้วน ก่อนทำการบันทึก "วันที่ภาคฯ ได้รับเงินจากศูนย์"',
-                        confirmButtonText: 'ตกลง',
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: 'rounded-[20px]',
-                            confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
-                        }
-                    });
-                    return;
-                }
+            if (!checkBorrowerRequirement(true)) {
+                return;
+            }
+
+            if (!checkBDNumberRequirement(true)) {
+                return;
             }
 
             if (!checkActivityEndDateRequirement(true)) {
                 // Inline validation handles the UI styling, we just need to halt the save process
+                return;
+            }
+
+            if (!checkClearedMoneyRequirement(true)) {
+                // Inline validation handles the UI styling for clearedDate <-> usedAmount
                 return;
             }
 
@@ -2337,18 +2762,20 @@
                     // Audit Log
                     await logAudit(currentRecordId, isCompleted ? 'COMPLETE' : 'UPDATE', actionDetails);
 
+                    const updatedRecord = (updateData && updateData.length > 0) ? updateData[0] : { id: currentRecordId, ...payload };
+
                     // 🚀 Trigger Notification for "SEND_MONEY"
-                    if (!oldData.send_date && payload.send_date) {
+                    if (payload.send_date && oldData.send_date !== payload.send_date) {
                         const now = new Date();
                         const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
                         if (payload.send_date <= todayStr) {
-                            notifyBDAction('SEND_MONEY', payload);
+                            notifyBDAction('SEND_MONEY', updatedRecord);
                         }
                     }
 
                     // 🚀 Trigger Notification for "CLEAR_MONEY" (ส่งใช้เงินยืม)
                     if (!oldData.cleared_date && payload.cleared_date) {
-                        notifyBDAction('CLEAR_MONEY', payload);
+                        notifyBDAction('CLEAR_MONEY', updatedRecord);
                     }
                 } else {
                     payload.created_by = currentUserContext;
@@ -2635,7 +3062,7 @@
 
                 if (data.used_amount !== null && data.used_amount !== undefined) {
                     const rawUsedAmount = parseFloat(data.used_amount) || 0;
-                    document.getElementById('usedAmount').value = rawUsedAmount === 0 ? '' : rawUsedAmount.toLocaleString('en-US');
+                    document.getElementById('usedAmount').value = (rawUsedAmount === 0 && !data.cleared_date) ? '' : rawUsedAmount.toLocaleString('en-US');
                 } else {
                     document.getElementById('usedAmount').value = '';
                 }
@@ -2665,6 +3092,9 @@
 
                 document.getElementById('docReturnNumber').value = data.doc_return_number || '';
                 document.getElementById('ppNumber').value = data.pp_number || '';
+                checkBorrowerRequirement();
+                checkBDNumberRequirement();
+                checkClearedMoneyRequirement();
 
                 // Lock date fields if they already have a value in the database
                 toggleDateFieldLock('receiveDate', !!data.receive_date);
@@ -2836,19 +3266,34 @@
                 disableMobile: "true"
             };
 
-            flatpickr("#receiveDate", config);
+            const validateReceiveConfig = {
+                ...config,
+                onChange: function (selectedDates, dateStr, instance) {
+                    checkBDNumberRequirement();
+                }
+            };
+
+            flatpickr("#receiveDate", validateReceiveConfig);
 
             // Override onChange for sendDate and activityEndDate for inline validation
             const validateOnChangeConfig = {
                 ...config,
                 onChange: function (selectedDates, dateStr, instance) {
+                    checkBDNumberRequirement();
                     checkActivityEndDateRequirement();
                 }
             };
 
+            const validateClearedConfig = {
+                ...config,
+                onChange: function (selectedDates, dateStr, instance) {
+                    checkClearedMoneyRequirement();
+                }
+            };
+
             flatpickr("#sendDate", validateOnChangeConfig);
-            flatpickr("#clearedDate", config);
-            flatpickr("#returnDate", config);
+            flatpickr("#clearedDate", validateClearedConfig);
+            flatpickr("#returnDate", validateClearedConfig);
             flatpickr("#activityEndDate", validateOnChangeConfig);
         }
 
@@ -3114,6 +3559,830 @@
                     customClass: { popup: 'rounded-[20px]', confirmButton: 'bg-red-50 text-red-600 hover:bg-red-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-red-200 shadow-sm mx-2' }
                 });
             }
+        }
+
+        // =======================================================
+        // 📊 ENTERPRISE EXPORT CENTER (PDF & EXCEL ENGINE)
+        // =======================================================
+        let currentExportPeriodMode = 'monthly';
+        let exportPickersInitialized = false;
+        const THAI_MONTHS_FULL = [
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        ];
+
+        function initExportControls() {
+            const now = new Date();
+            const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            if (!exportPickersInitialized) {
+                const fpConfig = {
+                    locale: "th",
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "j F Y",
+                    disableMobile: "true",
+                    defaultDate: todayIso,
+                    onChange: function () {
+                        updateExportPreview();
+                    }
+                };
+                flatpickr("#exportDailyDate", fpConfig);
+                flatpickr("#exportWeeklyDate", fpConfig);
+                exportPickersInitialized = true;
+            }
+
+            // Populate Month Year Select (Available calendar years in data + current year)
+            const calYears = new Set([now.getFullYear() + 543]);
+            allBdData.forEach(item => {
+                if (item.created_at) {
+                    const d = new Date(item.created_at);
+                    if (!isNaN(d)) calYears.add(d.getFullYear() + 543);
+                }
+            });
+            const sortedCalYears = [...calYears].sort((a, b) => b - a);
+            const monthYearSelect = document.getElementById('exportMonthYearSelect');
+            if (monthYearSelect) {
+                monthYearSelect.innerHTML = sortedCalYears.map(y => `<option value="${y}">พ.ศ. ${y}</option>`).join('');
+                monthYearSelect.value = String(now.getFullYear() + 543);
+            }
+
+            const monthSelect = document.getElementById('exportMonthSelect');
+            if (monthSelect) {
+                monthSelect.value = String(now.getMonth());
+            }
+
+            populateExportYearOptions();
+        }
+
+        function populateExportYearOptions() {
+            const mode = document.getElementById('exportYearModeSelect')?.value || 'fiscal';
+            const wrapper = document.getElementById('exportYearValueWrapper');
+            const select = document.getElementById('exportYearSelect');
+            if (!select || !wrapper) return;
+
+            if (mode === 'all') {
+                wrapper.classList.add('hidden');
+                return;
+            }
+            wrapper.classList.remove('hidden');
+
+            const now = new Date();
+            const years = new Set();
+
+            if (mode === 'fiscal') {
+                years.add(getFiscalYear(now.toISOString()));
+                allBdData.forEach(item => {
+                    const fy = getFiscalYear(item.created_at);
+                    if (fy) years.add(fy);
+                });
+                const sorted = [...years].sort((a, b) => b - a);
+                select.innerHTML = sorted.map(y => `<option value="${y}">ปีงบประมาณ ${y}</option>`).join('');
+            } else {
+                years.add(now.getFullYear() + 543);
+                allBdData.forEach(item => {
+                    if (item.created_at) {
+                        const d = new Date(item.created_at);
+                        if (!isNaN(d)) years.add(d.getFullYear() + 543);
+                    }
+                });
+                const sorted = [...years].sort((a, b) => b - a);
+                select.innerHTML = sorted.map(y => `<option value="${y}">พ.ศ. ${y}</option>`).join('');
+            }
+        }
+
+        function openExportModal() {
+            if (currentUserRole === 'user') return;
+            initExportControls();
+
+            const displayUserText = document.getElementById('displayUser')?.innerText || currentUserContext || '-';
+            const metaUserEl = document.getElementById('exportMetaUser');
+            if (metaUserEl) metaUserEl.innerText = displayUserText;
+
+            setExportPeriodMode(currentExportPeriodMode);
+
+            const modal = document.getElementById('exportModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('exportModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setExportPeriodMode(mode) {
+            currentExportPeriodMode = mode;
+            const tabs = {
+                daily: document.getElementById('tabExportDaily'),
+                weekly: document.getElementById('tabExportWeekly'),
+                monthly: document.getElementById('tabExportMonthly'),
+                yearly: document.getElementById('tabExportYearly')
+            };
+            Object.keys(tabs).forEach(k => {
+                if (!tabs[k]) return;
+                if (k === mode) {
+                    tabs[k].className = 'export-period-tab py-2.5 px-3 rounded-xl text-sm font-semibold bg-white text-sky-600 shadow-sm transition-all';
+                } else {
+                    tabs[k].className = 'export-period-tab py-2.5 px-3 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-800 transition-all';
+                }
+            });
+
+            document.getElementById('exportDailyBox')?.classList.toggle('hidden', mode !== 'daily');
+            document.getElementById('exportWeeklyBox')?.classList.toggle('hidden', mode !== 'weekly');
+            document.getElementById('exportMonthlyBox')?.classList.toggle('hidden', mode !== 'monthly');
+            document.getElementById('exportYearlyBox')?.classList.toggle('hidden', mode !== 'yearly');
+
+            updateExportPreview();
+        }
+
+        function formatThaiShortDate(dateInput) {
+            if (!dateInput) return '-';
+            const d = new Date(dateInput);
+            if (isNaN(d)) return String(dateInput);
+            return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function getWeekBounds(dateStr) {
+            const parts = String(dateStr).split('-');
+            const ref = parts.length === 3
+                ? new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10))
+                : new Date();
+            const day = ref.getDay(); // 0 (Sun) - 6 (Sat)
+            const diffToMonday = day === 0 ? -6 : 1 - day;
+            const monday = new Date(ref);
+            monday.setDate(ref.getDate() + diffToMonday);
+            monday.setHours(0, 0, 0, 0);
+
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+            return { monday, sunday };
+        }
+
+        function getFilteredExportDataAndMeta() {
+            let periodLabel = '';
+            let filtered = [...allBdData];
+
+            // 1. Filter by Period (based on created_at)
+            if (currentExportPeriodMode === 'daily') {
+                const selDateStr = document.getElementById('exportDailyDate')?.value;
+                if (selDateStr) {
+                    const [y, m, d] = selDateStr.split('-').map(Number);
+                    const start = new Date(y, m - 1, d, 0, 0, 0, 0);
+                    const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+                    filtered = filtered.filter(item => {
+                        if (!item.created_at) return false;
+                        const dt = new Date(item.created_at);
+                        return dt >= start && dt <= end;
+                    });
+                    periodLabel = `รายวัน (${formatThaiShortDate(start)})`;
+                }
+            } else if (currentExportPeriodMode === 'weekly') {
+                const selDateStr = document.getElementById('exportWeeklyDate')?.value;
+                const { monday, sunday } = getWeekBounds(selDateStr);
+                const rangeText = `${formatThaiShortDate(monday)} – ${formatThaiShortDate(sunday)}`;
+                const rangeEl = document.getElementById('exportWeeklyRangeText');
+                if (rangeEl) rangeEl.innerText = `ช่วงสัปดาห์: วันจันทร์ที่ ${formatThaiShortDate(monday)} ถึง วันอาทิตย์ที่ ${formatThaiShortDate(sunday)}`;
+
+                filtered = filtered.filter(item => {
+                    if (!item.created_at) return false;
+                    const dt = new Date(item.created_at);
+                    return dt >= monday && dt <= sunday;
+                });
+                periodLabel = `รายสัปดาห์ (${rangeText})`;
+            } else if (currentExportPeriodMode === 'monthly') {
+                const monthIdx = parseInt(document.getElementById('exportMonthSelect')?.value || '0', 10);
+                const yearBE = parseInt(document.getElementById('exportMonthYearSelect')?.value || String(new Date().getFullYear() + 543), 10);
+                const yearCE = yearBE - 543;
+
+                filtered = filtered.filter(item => {
+                    if (!item.created_at) return false;
+                    const dt = new Date(item.created_at);
+                    return dt.getFullYear() === yearCE && dt.getMonth() === monthIdx;
+                });
+                periodLabel = `รายเดือน (${THAI_MONTHS_FULL[monthIdx]} พ.ศ. ${yearBE})`;
+            } else if (currentExportPeriodMode === 'yearly') {
+                const yearMode = document.getElementById('exportYearModeSelect')?.value || 'fiscal';
+                const yearBE = parseInt(document.getElementById('exportYearSelect')?.value || String(new Date().getFullYear() + 543), 10);
+
+                if (yearMode === 'fiscal') {
+                    filtered = filtered.filter(item => getFiscalYear(item.created_at) === yearBE);
+                    periodLabel = `รายปีงบประมาณ พ.ศ. ${yearBE}`;
+                } else if (yearMode === 'calendar') {
+                    const yearCE = yearBE - 543;
+                    filtered = filtered.filter(item => {
+                        if (!item.created_at) return false;
+                        return new Date(item.created_at).getFullYear() === yearCE;
+                    });
+                    periodLabel = `รายปีปฏิทิน พ.ศ. ${yearBE}`;
+                } else {
+                    periodLabel = `ข้อมูลทั้งหมดทุกปี`;
+                }
+            }
+
+            // 2. Filter by Job Type
+            const jobTypeVal = document.getElementById('exportJobTypeSelect')?.value || 'all';
+            if (jobTypeVal !== 'all') {
+                filtered = filtered.filter(item => {
+                    if (!item.job_type) return false;
+                    const types = item.job_type.split(',').map(t => t.trim());
+                    if (jobTypeVal === 'จัดซื้อจัดจ้าง') {
+                        return types.includes('จัดซื้อจัดจ้าง') || types.includes('จัดซื้อจัดจ้าง/โครงการ');
+                    }
+                    return types.includes(jobTypeVal);
+                });
+            }
+
+            // 3. Filter by Status
+            const statusVal = document.getElementById('exportStatusSelect')?.value || 'all';
+            const statusLabelsMap = {
+                all: 'ทุกสถานะ',
+                pending: 'กำลังดำเนินการ',
+                overdue: 'เกินกำหนด (ล่าช้า ≥ 5 วันทำการ)',
+                completed: 'ปิดรายการสมบูรณ์',
+                'ยกเลิก': 'ยกเลิกรายการ'
+            };
+            if (statusVal !== 'all') {
+                if (statusVal === 'completed') {
+                    filtered = filtered.filter(item => item.status === 'ปิดรายการสมบูรณ์');
+                } else if (statusVal === 'pending') {
+                    filtered = filtered.filter(item => item.status !== 'ปิดรายการสมบูรณ์' && item.status !== 'ยกเลิก');
+                } else if (statusVal === 'overdue') {
+                    filtered = filtered.filter(item => getOverdueWorkingDays(item) >= 5);
+                } else {
+                    filtered = filtered.filter(item => item.status === statusVal);
+                }
+            }
+
+            // 4. Calculate Financial & Operational Summary
+            let totalAmount = 0;
+            let totalUsed = 0;
+            let totalBalance = 0;
+            let totalCancelledAmount = 0;
+            let pendingCount = 0;
+            let completedCount = 0;
+            let cancelledCount = 0;
+
+            filtered.forEach(item => {
+                const amt = Number(item.amount || 0);
+                const used = Number(item.used_amount || 0);
+                const bal = amt - used;
+
+                if (item.status === 'ยกเลิก') {
+                    cancelledCount++;
+                    totalCancelledAmount += amt;
+                } else {
+                    totalAmount += amt;
+                    totalUsed += used;
+                    if (item.status === 'ปิดรายการสมบูรณ์') {
+                        completedCount++;
+                    } else {
+                        pendingCount++;
+                    }
+                    if (used > 0 || item.status === 'ปิดรายการสมบูรณ์') {
+                        totalBalance += bal;
+                    }
+                }
+            });
+
+            return {
+                records: filtered,
+                periodLabel,
+                jobTypeLabel: jobTypeVal === 'all' ? 'ทุกประเภทงาน' : jobTypeVal,
+                statusLabel: statusLabelsMap[statusVal] || statusVal,
+                summary: {
+                    totalCount: filtered.length,
+                    pendingCount,
+                    completedCount,
+                    cancelledCount,
+                    totalAmount,
+                    totalUsed,
+                    totalBalance,
+                    totalCancelledAmount
+                }
+            };
+        }
+
+        function updateExportPreview() {
+            const { records, periodLabel, summary } = getFilteredExportDataAndMeta();
+            const labelEl = document.getElementById('exportPeriodSummaryLabel');
+            const countEl = document.getElementById('exportPreviewCount');
+            const amtEl = document.getElementById('exportPreviewAmount');
+            const usedEl = document.getElementById('exportPreviewUsed');
+            const balEl = document.getElementById('exportPreviewBalance');
+
+            if (labelEl) labelEl.innerText = periodLabel || 'สรุปข้อมูลที่จะดึงออก';
+            if (countEl) countEl.innerText = `พบข้อมูล ${records.length.toLocaleString('th-TH')} รายการ`;
+            if (amtEl) amtEl.innerText = `${summary.totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+            if (usedEl) usedEl.innerText = `${summary.totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+            if (balEl) balEl.innerText = `${summary.totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+        }
+
+        function getExportMetadataInfo() {
+            const now = new Date();
+            const exportedAtText = now.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) + ' เวลา ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
+            const exportedByText = document.getElementById('displayUser')?.innerText || currentUserContext || 'ไม่ระบุ';
+            const sourceText = 'ระบบติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD Tracking System R8) - ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์';
+            const fileDateStamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+            return { exportedAtText, exportedByText, sourceText, fileDateStamp };
+        }
+
+        // =======================================================
+        // 🟢 1. EXPORT TO EXCEL (.XLSX)
+        // =======================================================
+        function handleExportExcel() {
+            const { records, periodLabel, jobTypeLabel, statusLabel, summary } = getFilteredExportDataAndMeta();
+            if (records.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่พบรายการข้อมูล',
+                    text: 'ไม่มีข้อมูลที่ตรงกับช่วงเวลาและตัวกรองที่คุณเลือก กรุณาเปลี่ยนเงื่อนไขใหม่ครับ',
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-sky-50 text-sky-600 hover:bg-sky-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-sky-200 shadow-sm'
+                    }
+                });
+                return;
+            }
+
+            const meta = getExportMetadataInfo();
+
+            const wsData = [
+                ['รายงานสรุปการติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD)'],
+                ['ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์'],
+                [`ช่วงเวลาที่ดึงข้อมูล: ${periodLabel} | ประเภทงาน: ${jobTypeLabel} | สถานะ: ${statusLabel}`],
+                [`สรุปจำนวนรายการ: ทั้งหมด ${summary.totalCount} รายการ (กำลังดำเนินการ ${summary.pendingCount} | ปิดสมบูรณ์ ${summary.completedCount} | ยกเลิก ${summary.cancelledCount})`],
+                [],
+                [
+                    'ลำดับ',
+                    'วันที่สร้างรายการ',
+                    'ปีงบประมาณ',
+                    'เลขที่ BD',
+                    'เลขที่ MM/คำสั่ง',
+                    'ชื่อผู้ขอยืม',
+                    'ผู้รับผิดชอบจริง',
+                    'ประเภทงาน',
+                    'รายการ',
+                    'จำนวนเงินยืม (บาท)',
+                    'จำนวนเงินที่ใช้ไป (บาท)',
+                    'จำนวนเงินคงเหลือ (บาท)',
+                    'วันที่รับเงินจากศูนย์',
+                    'วันที่จ่ายเงินให้ผู้ขอยืม',
+                    'วันที่สิ้นสุดกิจกรรม/เดินทางกลับ',
+                    'วันที่ส่งใช้เงินยืม',
+                    'เลขที่บันทึกนำส่งเงิน',
+                    'เลขที่งบใบสำคัญ (PP)',
+                    'วันที่ส่งเอกสารคืน',
+                    'สถานะ',
+                    'ล่าช้า (วันทำการ)',
+                    'เหตุผลการยกเลิก'
+                ]
+            ];
+
+            records.forEach((item, idx) => {
+                const amt = Number(item.amount || 0);
+                const used = Number(item.used_amount || 0);
+                const isClearedOrDone = used > 0 || item.status === 'ปิดรายการสมบูรณ์';
+                const bal = (item.status !== 'ยกเลิก' && isClearedOrDone) ? (amt - used) : '';
+                const overdue = getOverdueWorkingDays(item);
+
+                wsData.push([
+                    idx + 1,
+                    item.created_at ? formatThaiShortDate(item.created_at) : '-',
+                    getFiscalYear(item.created_at) || '-',
+                    item.bd_number || '-',
+                    item.mm_number || '-',
+                    item.borrower_name || '-',
+                    item.actual_borrower_name || '-',
+                    item.job_type || '-',
+                    item.item_name || '-',
+                    amt,
+                    item.status === 'ยกเลิก' ? 0 : (used > 0 || item.cleared_date ? used : ''),
+                    bal,
+                    item.receive_date ? formatThaiShortDate(item.receive_date) : '-',
+                    item.send_date ? formatThaiShortDate(item.send_date) : '-',
+                    item.activity_end_date ? formatThaiShortDate(item.activity_end_date) : '-',
+                    item.cleared_date ? formatThaiShortDate(item.cleared_date) : '-',
+                    item.doc_return_number || '-',
+                    item.pp_number || '-',
+                    item.return_date ? formatThaiShortDate(item.return_date) : '-',
+                    item.status || '-',
+                    overdue >= 5 ? overdue : '-',
+                    item.cancel_reason || '-'
+                ]);
+            });
+
+            // Total Row
+            wsData.push([]);
+            wsData.push([
+                '', '', '', '', '', '', '', '',
+                'รวมยอดสุทธิ (ไม่รวมรายการยกเลิก)',
+                summary.totalAmount,
+                summary.totalUsed,
+                summary.totalBalance,
+                '', '', '', '', '', '', '', '', '', ''
+            ]);
+
+            // Audit Metadata Footer Rows
+            wsData.push([]);
+            wsData.push(['ข้อมูลอ้างอิงการดึงรายงาน (Audit Metadata)']);
+            wsData.push(['ผู้ดึงข้อมูล:', meta.exportedByText]);
+            wsData.push(['วันที่และเวลาที่ดึงข้อมูล:', meta.exportedAtText]);
+            wsData.push(['แหล่งข้อมูล:', meta.sourceText]);
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+            // Set Column Widths
+            ws['!cols'] = [
+                { wch: 7 },  // ลำดับ
+                { wch: 15 }, // วันที่สร้างรายการ
+                { wch: 12 }, // ปีงบประมาณ
+                { wch: 16 }, // เลขที่ BD
+                { wch: 18 }, // เลขที่ MM/คำสั่ง
+                { wch: 22 }, // ชื่อผู้ขอยืม
+                { wch: 22 }, // ผู้รับผิดชอบจริง
+                { wch: 20 }, // ประเภทงาน
+                { wch: 42 }, // รายการ
+                { wch: 18 }, // เงินยืม
+                { wch: 18 }, // ใช้ไป
+                { wch: 18 }, // คงเหลือ
+                { wch: 16 }, // วันรับเงิน
+                { wch: 16 }, // วันจ่ายเงิน
+                { wch: 18 }, // วันสิ้นสุด
+                { wch: 16 }, // วันส่งใช้
+                { wch: 18 }, // เลขนำส่งเงิน
+                { wch: 16 }, // เลข PP
+                { wch: 16 }, // วันคืนเอกสาร
+                { wch: 18 }, // สถานะ
+                { wch: 15 }, // ล่าช้า
+                { wch: 25 }  // เหตุผลยกเลิก
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'BD_Report');
+            XLSX.writeFile(wb, `BD_Tracking_Report_${meta.fileDateStamp}.xlsx`);
+        }
+
+        // =======================================================
+        // 🔴 2. EXPORT TO OFFICIAL PDF (A4 LANDSCAPE)
+        // =======================================================
+        function handleExportPDF() {
+            const { records, periodLabel, jobTypeLabel, statusLabel, summary } = getFilteredExportDataAndMeta();
+            if (records.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่พบรายการข้อมูล',
+                    text: 'ไม่มีข้อมูลที่ตรงกับช่วงเวลาและตัวกรองที่คุณเลือก กรุณาเปลี่ยนเงื่อนไขใหม่ครับ',
+                    confirmButtonText: 'ตกลง',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-sky-50 text-sky-600 hover:bg-sky-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-sky-200 shadow-sm'
+                    }
+                });
+                return;
+            }
+
+            const meta = getExportMetadataInfo();
+
+            const rowsHtml = records.map((item, idx) => {
+                const amt = Number(item.amount || 0);
+                const used = Number(item.used_amount || 0);
+                const isClearedOrDone = used > 0 || item.status === 'ปิดรายการสมบูรณ์';
+                const balText = (item.status !== 'ยกเลิก' && isClearedOrDone)
+                    ? (amt - used).toLocaleString('th-TH', { minimumFractionDigits: 2 })
+                    : '-';
+                const usedText = (item.status !== 'ยกเลิก' && (used > 0 || item.cleared_date))
+                    ? used.toLocaleString('th-TH', { minimumFractionDigits: 2 })
+                    : '-';
+                const overdue = getOverdueWorkingDays(item);
+
+                let statusText = escapeHTML(item.status || '-');
+                let statusColor = '#334155';
+                if (item.status === 'ปิดรายการสมบูรณ์') statusColor = '#059669';
+                else if (item.status === 'ยกเลิก') statusColor = '#dc2626';
+                else if (overdue >= 5) {
+                    statusText += ` (ล่าช้า ${overdue} วัน)`;
+                    statusColor = '#ea580c';
+                } else {
+                    statusColor = '#0284c7';
+                }
+
+                return `
+                    <tr class="${item.status === 'ยกเลิก' ? 'cancelled-row' : ''}">
+                        <td class="text-center">${idx + 1}</td>
+                        <td class="text-center nowrap">${item.created_at ? formatThaiShortDate(item.created_at) : '-'}</td>
+                        <td class="text-center nowrap font-bold">${escapeHTML(item.bd_number || '-')}</td>
+                        <td class="text-center nowrap">${escapeHTML(item.mm_number || '-')}</td>
+                        <td>
+                            <div class="font-semibold">${escapeHTML(item.borrower_name || '-')}</div>
+                            ${item.actual_borrower_name ? `<div class="sub-borrower">ผู้รับผิดชอบจริง: ${escapeHTML(item.actual_borrower_name)}</div>` : ''}
+                        </td>
+                        <td class="text-center nowrap">${escapeHTML(item.job_type || '-')}</td>
+                        <td>${escapeHTML(item.item_name || '-')}</td>
+                        <td class="text-right nowrap font-semibold">${amt.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
+                        <td class="text-right nowrap">${usedText}</td>
+                        <td class="text-right nowrap">${balText}</td>
+                        <td class="text-center nowrap">${item.send_date ? formatThaiShortDate(item.send_date) : '-'}</td>
+                        <td class="text-center nowrap">${item.cleared_date ? formatThaiShortDate(item.cleared_date) : '-'}</td>
+                        <td class="text-center nowrap">${escapeHTML(item.pp_number || '-')}</td>
+                        <td class="text-center nowrap" style="color:${statusColor}; font-weight:600;">${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'เบราว์เซอร์บล็อกหน้าต่างป๊อปอัป',
+                    text: 'กรุณาอนุญาตให้เปิดหน้าต่างป๊อปอัป (Pop-up) สำหรับเว็บไซต์นี้เพื่อออกรายงาน PDF ครับ',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+
+            const oTag = '<';
+            const cTag = '</';
+            const htmlContent = `${oTag}!DOCTYPE html>
+${oTag}html lang="th">
+${oTag}head>
+    ${oTag}meta charset="UTF-8">
+    ${oTag}title>รายงานใบยืมเหลือง_BD_${meta.fileDateStamp}${cTag}title>
+    ${oTag}link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    ${oTag}style>
+        @page {
+            size: A4 landscape;
+            margin: 10mm 12mm;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        body {
+            font-family: 'Prompt', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 20px;
+            font-size: 11px;
+            background: #f1f5f9;
+        }
+        .page-container {
+            background: #ffffff;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .no-print-bar {
+            max-width: 1120px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 12px;
+        }
+        .btn-print {
+            background: #0ea5e9;
+            color: #ffffff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-print:hover {
+            background: #0284c7;
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+        .report-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+        }
+        .report-subtitle {
+            font-size: 12px;
+            color: #475569;
+            margin: 0;
+        }
+        .filter-tags {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #0369a1;
+            font-weight: 600;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .summary-box {
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        .summary-box .label {
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .summary-box .val {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10.5px;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tr {
+            page-break-inside: avoid;
+        }
+        th {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 7px 6px;
+            border: 1px solid #0f172a;
+            text-align: center;
+            white-space: nowrap;
+        }
+        td {
+            padding: 6px 6px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+        }
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .cancelled-row {
+            color: #94a3b8;
+            background: #fef2f2 !important;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .nowrap { white-space: nowrap; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .sub-borrower {
+            font-size: 9.5px;
+            color: #0284c7;
+            margin-top: 2px;
+        }
+        tfoot td {
+            background: #f1f5f9;
+            font-weight: 700;
+            border-top: 2px solid #0f172a;
+            padding: 8px 6px;
+        }
+        .audit-footer {
+            margin-top: 16px;
+            padding-top: 10px;
+            border-top: 1px dashed #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 10px;
+            color: #475569;
+            page-break-inside: avoid;
+        }
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .page-container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .no-print-bar {
+                display: none !important;
+            }
+        }
+    ${cTag}style>
+${cTag}head>
+${oTag}body onload="setTimeout(function(){ window.print(); }, 400)">
+    <div class="no-print-bar">
+        <div>
+            <strong>โหมดเตรียมพิมพ์รายงาน</strong>
+        </div>
+        <button class="btn-print" onclick="window.print()">สั่งพิมพ์ / บันทึกเป็น PDF</button>
+    </div>
+
+    <div class="page-container">
+        <div class="report-header">
+            <div>
+                <h1 class="report-title">รายงานสรุปการติดตามเงินยืมชั่วคราวใบยืมเหลือง (BD)</h1>
+                <p class="report-subtitle">ภาคบริการโลหิตแห่งชาติที่ 8 จ.นครสวรรค์</p>
+                <div class="filter-tags">
+                    เงื่อนไขข้อมูล: ${escapeHTML(periodLabel)} &nbsp;|&nbsp; ประเภทงาน: ${escapeHTML(jobTypeLabel)} &nbsp;|&nbsp; สถานะ: ${escapeHTML(statusLabel)}
+                </div>
+            </div>
+            <div style="text-align: right; font-size: 10.5px; color: #475569;">
+                <div><strong>จำนวนทั้งหมด:</strong> ${summary.totalCount} รายการ</div>
+                <div>กำลังดำเนินการ ${summary.pendingCount} | ปิดสมบูรณ์ ${summary.completedCount} | ยกเลิก ${summary.cancelledCount}</div>
+            </div>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-box">
+                <div class="label">จำนวนเงินยืมรวมสุทธิ</div>
+                <div class="val" style="color: #0284c7;">${summary.totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</div>
+            </div>
+            <div class="summary-box">
+                <div class="label">จำนวนเงินที่ใช้ไปรวม</div>
+                <div class="val" style="color: #d97706;">${summary.totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</div>
+            </div>
+            <div class="summary-box">
+                <div class="label">จำนวนเงินคงเหลือรวม</div>
+                <div class="val" style="color: #059669;">${summary.totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</div>
+            </div>
+            <div class="summary-box">
+                <div class="label">ยอดเงินรายการที่ยกเลิก</div>
+                <div class="val" style="color: #dc2626;">${summary.totalCancelledAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 32px;">#</th>
+                    <th>วันที่สร้าง</th>
+                    <th>เลขที่ BD</th>
+                    <th>เลขที่ MM/คำสั่ง</th>
+                    <th>ผู้ขอยืม</th>
+                    <th>ประเภท</th>
+                    <th>รายการ</th>
+                    <th>เงินยืม (฿)</th>
+                    <th>ใช้ไป (฿)</th>
+                    <th>คงเหลือ (฿)</th>
+                    <th>วันจ่ายเงิน</th>
+                    <th>วันส่งใช้เงิน</th>
+                    <th>เลขที่ PP</th>
+                    <th>สถานะ</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rowsHtml}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7" class="text-right">รวมยอดสุทธิ (ไม่รวมรายการยกเลิก)</td>
+                    <td class="text-right nowrap" style="color:#0284c7;">${summary.totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
+                    <td class="text-right nowrap" style="color:#d97706;">${summary.totalUsed.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
+                    <td class="text-right nowrap" style="color:#059669;">${summary.totalBalance.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</td>
+                    <td colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="audit-footer">
+            <div>
+                <div><strong>แหล่งข้อมูล:</strong> ${escapeHTML(meta.sourceText)}</div>
+                <div><strong>เงื่อนไขการดึงข้อมูล:</strong> อ้างอิงจากวันที่สร้างรายการ (${escapeHTML(periodLabel)})</div>
+            </div>
+            <div style="text-align: right;">
+                <div><strong>ผู้ดึงข้อมูล:</strong> ${escapeHTML(meta.exportedByText)}</div>
+                <div><strong>วันที่และเวลาที่ดึงข้อมูล:</strong> ${escapeHTML(meta.exportedAtText)}</div>
+            </div>
+        </div>
+    </div>
+${cTag}body>
+${cTag}html>`;
+
+            printWindow.document.open();
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
         }
     </script>
 </body>
