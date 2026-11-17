@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co https://script.google.com https://script.googleusercontent.com; img-src 'self' data: https:;">
+        content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co https://script.google.com https://script.googleusercontent.com; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
 
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
     <style>
         body {
@@ -684,9 +684,9 @@
                                     class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
                                     <span class="w-2 h-2 rounded-full bg-blue-400"></span>กำลังดำเนินการ
                                 </div>
-                                <div onclick="selectStatus('overdue', 'เกินกำหนด', 'bg-orange-500')"
+                                <div onclick="selectStatus('overdue', 'เกินระยะเวลาที่กำหนด', 'bg-orange-500')"
                                     class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>เกินกำหนด
+                                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>เกินระยะเวลาที่กำหนด
                                 </div>
                                 <div onclick="selectStatus('completed', 'ปิดรายการสมบูรณ์', 'bg-emerald-400')"
                                     class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
@@ -1205,46 +1205,96 @@
 
                 <!-- Monthly Control -->
                 <div id="exportMonthlyBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
+                    <div class="relative" id="exportMonthWrapper">
                         <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกเดือน</label>
-                        <select id="exportMonthSelect" onchange="updateExportPreview()"
-                            class="apple-input py-2.5 bg-white cursor-pointer">
-                            <option value="0">มกราคม</option>
-                            <option value="1">กุมภาพันธ์</option>
-                            <option value="2">มีนาคม</option>
-                            <option value="3">เมษายน</option>
-                            <option value="4">พฤษภาคม</option>
-                            <option value="5">มิถุนายน</option>
-                            <option value="6">กรกฎาคม</option>
-                            <option value="7">สิงหาคม</option>
-                            <option value="8">กันยายน</option>
-                            <option value="9">ตุลาคม</option>
-                            <option value="10">พฤศจิกายน</option>
-                            <option value="11">ธันวาคม</option>
-                        </select>
+                        <button type="button" onclick="toggleDropdown('exportMonthDropdown')" id="exportMonthBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportMonthLabel" class="flex items-center gap-2">มกราคม</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-slate-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportMonthDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view max-h-56 overflow-y-auto">
+                            <div onclick="selectExportMonth('0', 'มกราคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">มกราคม</div>
+                            <div onclick="selectExportMonth('1', 'กุมภาพันธ์')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">กุมภาพันธ์</div>
+                            <div onclick="selectExportMonth('2', 'มีนาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">มีนาคม</div>
+                            <div onclick="selectExportMonth('3', 'เมษายน')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">เมษายน</div>
+                            <div onclick="selectExportMonth('4', 'พฤษภาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">พฤษภาคม</div>
+                            <div onclick="selectExportMonth('5', 'มิถุนายน')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">มิถุนายน</div>
+                            <div onclick="selectExportMonth('6', 'กรกฎาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">กรกฎาคม</div>
+                            <div onclick="selectExportMonth('7', 'สิงหาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">สิงหาคม</div>
+                            <div onclick="selectExportMonth('8', 'กันยายน')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">กันยายน</div>
+                            <div onclick="selectExportMonth('9', 'ตุลาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">ตุลาคม</div>
+                            <div onclick="selectExportMonth('10', 'พฤศจิกายน')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">พฤศจิกายน</div>
+                            <div onclick="selectExportMonth('11', 'ธันวาคม')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">ธันวาคม</div>
+                        </div>
+                        <input type="hidden" id="exportMonthSelect" value="0">
                     </div>
-                    <div>
+                    <div class="relative" id="exportMonthYearWrapper">
                         <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกปี พ.ศ.</label>
-                        <select id="exportMonthYearSelect" onchange="updateExportPreview()"
-                            class="apple-input py-2.5 bg-white cursor-pointer"></select>
+                        <button type="button" onclick="toggleDropdown('exportMonthYearDropdown')" id="exportMonthYearBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-bold text-blue-500 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportMonthYearLabel">กำลังโหลด...</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-blue-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportMonthYearDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view max-h-56 overflow-y-auto">
+                            <!-- injected by JS -->
+                        </div>
+                        <input type="hidden" id="exportMonthYearSelect" value="">
                     </div>
                 </div>
 
                 <!-- Yearly Control -->
                 <div id="exportYearlyBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
+                    <div class="relative" id="exportYearModeWrapper">
                         <label class="text-xs font-semibold text-slate-600 block mb-2">ประเภทปี</label>
-                        <select id="exportYearModeSelect" onchange="populateExportYearOptions(); updateExportPreview();"
-                            class="apple-input py-2.5 bg-white cursor-pointer">
-                            <option value="fiscal">ปีงบประมาณ (1 ต.ค. – 30 ก.ย.)</option>
-                            <option value="calendar">ปีปฏิทิน (1 ม.ค. – 31 ธ.ค.)</option>
-                            <option value="all">ข้อมูลทั้งหมดทุกปี</option>
-                        </select>
+                        <button type="button" onclick="toggleDropdown('exportYearModeDropdown')" id="exportYearModeBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportYearModeLabel" class="truncate">ปีงบประมาณ (1 ต.ค. – 30 ก.ย.)</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-slate-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportYearModeDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                            <div onclick="selectExportYearMode('fiscal', 'ปีงบประมาณ (1 ต.ค. – 30 ก.ย.)')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">
+                                ปีงบประมาณ (1 ต.ค. – 30 ก.ย.)</div>
+                            <div onclick="selectExportYearMode('calendar', 'ปีปฏิทิน (1 ม.ค. – 31 ธ.ค.)')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors">
+                                ปีปฏิทิน (1 ม.ค. – 31 ธ.ค.)</div>
+                            <div onclick="selectExportYearMode('all', 'ข้อมูลทั้งหมดทุกปี')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors border-t border-slate-50 mt-1">
+                                ข้อมูลทั้งหมดทุกปี</div>
+                        </div>
+                        <input type="hidden" id="exportYearModeSelect" value="fiscal">
                     </div>
-                    <div id="exportYearValueWrapper">
+                    <div class="relative" id="exportYearValueWrapper">
                         <label class="text-xs font-semibold text-slate-600 block mb-2">เลือกปี พ.ศ.</label>
-                        <select id="exportYearSelect" onchange="updateExportPreview()"
-                            class="apple-input py-2.5 bg-white cursor-pointer"></select>
+                        <button type="button" onclick="toggleDropdown('exportYearDropdown')" id="exportYearBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-bold text-blue-500 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportYearLabel">กำลังโหลด...</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-blue-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportYearDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view max-h-56 overflow-y-auto">
+                            <!-- injected by JS -->
+                        </div>
+                        <input type="hidden" id="exportYearSelect" value="">
                     </div>
                 </div>
             </div>
@@ -1254,26 +1304,85 @@
                 <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-2.5">2.
                     ตัวกรองเพิ่มเติม</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
+                    <!-- Custom Export Job Type Dropdown -->
+                    <div class="relative" id="exportJobTypeWrapper">
                         <label class="text-xs text-slate-500 block mb-1.5">ประเภทงาน</label>
-                        <select id="exportJobTypeSelect" onchange="updateExportPreview()"
-                            class="apple-input py-2.5 bg-white cursor-pointer text-sm">
-                            <option value="all">ทุกประเภทงาน</option>
-                            <option value="เดินทางไปปฏิบัติงาน">เดินทางไปปฏิบัติงาน</option>
-                            <option value="จัดซื้อจัดจ้าง">จัดซื้อจัดจ้าง</option>
-                            <option value="โครงการ">โครงการ</option>
-                        </select>
+                        <button type="button" onclick="toggleDropdown('exportJobTypeDropdown')" id="exportJobTypeBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportJobTypeLabel" class="flex items-center gap-2">ประเภทงานทั้งหมด</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-slate-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportJobTypeDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                            <div onclick="selectExportJobType('all')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                ประเภทงานทั้งหมด</div>
+                            <div onclick="selectExportJobType('เดินทางไปปฏิบัติงาน')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg> เดินทางไปปฏิบัติงาน
+                            </div>
+                            <div onclick="selectExportJobType('จัดซื้อจัดจ้าง')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg> จัดซื้อจัดจ้าง
+                            </div>
+                            <div onclick="selectExportJobType('โครงการ')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                    </path>
+                                </svg> โครงการ
+                            </div>
+                        </div>
+                        <input type="hidden" id="exportJobTypeSelect" value="all">
                     </div>
-                    <div>
+
+                    <!-- Custom Export Status Dropdown -->
+                    <div class="relative" id="exportStatusWrapper">
                         <label class="text-xs text-slate-500 block mb-1.5">สถานะรายการ</label>
-                        <select id="exportStatusSelect" onchange="updateExportPreview()"
-                            class="apple-input py-2.5 bg-white cursor-pointer text-sm">
-                            <option value="all">ทุกสถานะ</option>
-                            <option value="pending">กำลังดำเนินการ</option>
-                            <option value="overdue">เกินกำหนด (ล่าช้า ≥ 5 วันทำการ)</option>
-                            <option value="completed">ปิดรายการสมบูรณ์</option>
-                            <option value="ยกเลิก">ยกเลิกรายการ</option>
-                        </select>
+                        <button type="button" onclick="toggleDropdown('exportStatusDropdown')" id="exportStatusBtn"
+                            class="apple-input py-2.5 pl-4 pr-10 bg-white shadow-sm cursor-pointer text-sm font-medium text-slate-600 flex items-center justify-between w-full outline-none hover:border-blue-400 transition-colors">
+                            <span id="exportStatusLabel" class="flex items-center gap-2">สถานะทั้งหมด</span>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-3 text-slate-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div id="exportStatusDropdown"
+                            class="hidden absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-view">
+                            <div onclick="selectExportStatus('all', 'สถานะทั้งหมด')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                สถานะทั้งหมด</div>
+                            <div onclick="selectExportStatus('pending', 'กำลังดำเนินการ', 'bg-blue-400')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-400"></span>กำลังดำเนินการ
+                            </div>
+                            <div onclick="selectExportStatus('overdue', 'เกินระยะเวลาที่กำหนด', 'bg-orange-500')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500"></span>เกินระยะเวลาที่กำหนด
+                            </div>
+                            <div onclick="selectExportStatus('completed', 'ปิดรายการสมบูรณ์', 'bg-emerald-400')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>ปิดรายการสมบูรณ์
+                            </div>
+                            <div onclick="selectExportStatus('ยกเลิก', 'ยกเลิก', 'bg-red-400')"
+                                class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span>ยกเลิก
+                            </div>
+                        </div>
+                        <input type="hidden" id="exportStatusSelect" value="all">
                     </div>
                 </div>
             </div>
@@ -1458,7 +1567,7 @@
             return year + 543; // แปลงเป็น พ.ศ.
         }
 
-        // --- ฟังก์ชันคำนวณวันทำการที่เกินกำหนด (SLA 5 วันทำการ) ---
+        // --- ฟังก์ชันคำนวณวันทำการที่เกินระยะเวลาที่กำหนด (SLA 5 วันทำการ) ---
         const THAI_HOLIDAYS = new Set([
             // 2025
             '2025-01-01', '2025-02-12', '2025-04-06', '2025-04-07', '2025-04-13', '2025-04-14', '2025-04-15', '2025-04-16',
@@ -1705,13 +1814,13 @@
                         case 'รอเคลียร์เอกสาร': statusBadge = `<span class="inline-block whitespace-nowrap bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">รอเคลียร์เอกสาร</span>`; break;
                         case 'เคลียร์เรียบร้อย':
                         case 'เคลียร์':
-                            statusBadge = `<span class="inline-block whitespace-nowrap bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-teal-500/20 text-teal-400 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(item.status)}</span>`;
                             break;
                         case 'ปิดรายการสมบูรณ์':
-                            statusBadge = `<span class="inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">${item.status}</span>`;
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(item.status)}</span>`;
                             break;
                         default:
-                            statusBadge = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${item.status || 'กำลังดำเนินการ'}</span>`;
+                            statusBadge = `<span class="inline-block whitespace-nowrap bg-[#121212]/5 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">${escapeHTML(item.status) || 'กำลังดำเนินการ'}</span>`;
                     }
 
                     if (itemUsed > 0 || item.status === 'ปิดรายการสมบูรณ์') {
@@ -1719,6 +1828,7 @@
                     }
                 }
 
+                const safeId = escapeHTML(String(item.id || ''));
                 const safeBdNumber = escapeHTML(item.bd_number || '');
                 const safeBorrowerName = escapeHTML(item.borrower_name || '');
                 const safeItemName = escapeHTML(item.item_name || '');
@@ -1756,10 +1866,10 @@
                         <td class="text-center">${statusBadge}</td>
                         <td class="text-center pr-4">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="viewRecord('${item.id}')" class="btn-view" title="ดูรายละเอียด">
+                                <button onclick="viewRecord('${safeId}')" class="btn-view" title="ดูรายละเอียด">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                                 </button>
-                                ${(item.status === 'ปิดรายการสมบูรณ์' || item.status === 'ยกเลิก' || currentUserRole === 'user') ? '' : `<button onclick="editRecord('${item.id}')" class="btn-edit h-[32px]">แก้ไข</button>`}
+                                ${(item.status === 'ปิดรายการสมบูรณ์' || item.status === 'ยกเลิก' || currentUserRole === 'user') ? '' : `<button onclick="editRecord('${safeId}')" class="btn-edit h-[32px]">แก้ไข</button>`}
                             </div>
                         </td>
                     `;
@@ -2191,6 +2301,7 @@
         }
 
         function openCreateForm() {
+            if (currentUserRole === 'user') return;
             document.getElementById('currentRecordId').value = '';
             selectedJobTypes = [];
 
@@ -2458,10 +2569,17 @@
 
                     debounceTimer = setTimeout(async () => {
                         try {
+                            const safeQueryVal = val.replace(/[,()%\\]/g, '').trim();
+                            if (!safeQueryVal) {
+                                listEl.classList.add('hidden');
+                                listEl.innerHTML = '';
+                                return;
+                            }
+
                             const { data, error } = await supabaseClient
                                 .from('employees')
                                 .select('emp_id, emp_name, department')
-                                .or(`emp_id.ilike.%${val}%,emp_name.ilike.%${val}%`)
+                                .or(`emp_id.ilike.%${safeQueryVal}%,emp_name.ilike.%${safeQueryVal}%`)
                                 .limit(10);
 
                             if (error) throw error;
@@ -2475,7 +2593,10 @@
                             data.forEach((emp) => {
                                 const li = document.createElement('li');
                                 li.className = 'autocomplete-item px-4 py-2 text-sm text-slate-700 hover:bg-sky-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors';
-                                li.innerHTML = `<span class="font-medium">${emp.emp_name}</span> <span class="text-xs text-slate-400">รหัส: ${emp.emp_id} ${emp.department ? '(' + emp.department + ')' : ''}</span>`;
+                                const safeEmpName = escapeHTML(String(emp.emp_name || ''));
+                                const safeEmpId = escapeHTML(String(emp.emp_id || ''));
+                                const safeDept = emp.department ? escapeHTML(String(emp.department)) : '';
+                                li.innerHTML = `<span class="font-medium">${safeEmpName}</span> <span class="text-xs text-slate-400">รหัส: ${safeEmpId} ${safeDept ? '(' + safeDept + ')' : ''}</span>`;
                                 li.dataset.empName = emp.emp_name;
                                 li.dataset.empId = emp.emp_id;
 
@@ -2540,12 +2661,20 @@
         setupAutocomplete('actualBorrowerName', 'actualBorrowerEmpId', 'actualBorrowerAutocompleteList');
 
         // ==========================================
-        // 🚀 Enterprise Grade: ยิงแจ้งเตือน LINE ทันทีที่บันทึกข้อมูลสำเร็จ
+        // 🚀 Enterprise Grade: ยิงแจ้งเตือน LINE ทันทีที่บันทึกข้อมูลสำเร็จ (พร้อมแนบ JWT Token ยืนยันตัวตน)
         // ==========================================
         async function notifyBDAction(action, data) {
             if (GAS_WEBHOOK_URL === 'YOUR_GAS_WEB_APP_URL') return; // ยังไม่ได้ตั้งค่า URL
+            if (currentUserRole === 'user') return; // ป้องกันผู้ใช้ทั่วไปยิงแจ้งเตือน
 
             try {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const accessToken = sessionData?.session?.access_token || '';
+                if (!accessToken) {
+                    console.warn("⚠️ ไม่พบเซสชันสำหรับส่งแจ้งเตือน Webhook");
+                    return;
+                }
+
                 console.log(`🚀 กำลังส่ง Webhook ไปที่ GAS (${action})...`);
                 fetch(GAS_WEBHOOK_URL, {
                     method: 'POST',
@@ -2556,7 +2685,8 @@
                     },
                     body: JSON.stringify({
                         system: "BD_TRACKING",
-                        action: action,  // 'CREATE' หรือ 'SEND_MONEY'
+                        action: action,  // 'CREATE', 'SEND_MONEY', 'CLEAR_MONEY', หรือ 'CANCEL'
+                        accessToken: accessToken,
                         data: data
                     })
                 }).then(() => {
@@ -2570,6 +2700,7 @@
         }
 
         async function handleFormSubmit() {
+            if (currentUserRole === 'user') return;
             const submitBtn = document.getElementById('submitBtn');
             const currentRecordId = document.getElementById('currentRecordId').value;
             const bdNumberInput = document.getElementById('bdNumber').value.trim();
@@ -2696,7 +2827,7 @@
 
                     const fieldNames = {
                         bd_number: 'เลขที่ BD',
-                        mm_number: 'เลขที่ MM/คำสั่ง',
+                        mm_number: 'เลขที่ MM/ศล.ภ./คำสั่ง',
                         borrower_name: 'ชื่อผู้ขอยืม',
                         job_type: 'ประเภทงาน',
                         item_name: 'รายการ',
@@ -2955,7 +3086,7 @@
                         <div class="grid grid-cols-2 gap-4 border-b border-slate-200 pb-4">
                             <div class="text-slate-500">เลขที่ BD:</div>
                             <div class="font-bold text-slate-800 text-base">${safeBdNumber}</div>
-                            <div class="text-slate-500">เลขที่ MM/คำสั่ง:</div>
+                            <div class="text-slate-500">เลขที่ MM/ศล.ภ./คำสั่ง:</div>
                             <div class="font-medium text-slate-800">${safeMmNumber}</div>
                             <div class="text-slate-500">ผู้ขอยืม:</div>
                             <div class="font-medium text-slate-800">${safeBorrowerName}</div>
@@ -3013,6 +3144,7 @@
         }
 
         async function editRecord(id) {
+            if (currentUserRole === 'user') return;
             Swal.fire({
                 title: 'กำลังดึงข้อมูล...',
                 html: '<div class="flex justify-center mt-4 mb-2"><svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle></svg></div>',
@@ -3169,6 +3301,7 @@
         }
 
         async function cancelCurrentRecord() {
+            if (currentUserRole === 'user') return;
             const currentRecordId = document.getElementById('currentRecordId').value;
             if (!currentRecordId) return;
 
@@ -3226,6 +3359,9 @@
 
                     // Audit Log
                     await logAudit(currentRecordId, 'CANCEL', `ยกเลิกรายการ: ${cancelReason.trim()}`);
+
+                    // 🚀 Trigger Notification for "CANCEL" (แจ้งเตือนยกเลิกใบยืมเหลือง)
+                    notifyBDAction('CANCEL', data[0]);
 
                     await Swal.fire({
                         icon: 'success',
@@ -3361,10 +3497,11 @@
 
         // 🌟 ฟังก์ชันผูกเหตุการณ์ตรวจจับพฤติกรรมผู้ใช้ (Setup Action Listeners)
         function setupActivityListeners() {
-            // ดักจับทุกเหตุการณ์: ขยับเมาส์ (mousemove), กดคีย์บอร์ด (keydown), หรือคลิกหน้าจอ (click)
-            window.addEventListener('mousemove', resetIdleTimer);
-            window.addEventListener('keydown', resetIdleTimer);
-            window.addEventListener('click', resetIdleTimer);
+            // ดักจับทุกเหตุการณ์: ขยับเมาส์ (mousemove), กดคีย์บอร์ด (keydown), คลิกหน้าจอ (click), หรือแตะหน้าจอสัมผัส (touchstart)
+            window.addEventListener('mousemove', resetIdleTimer, { passive: true });
+            window.addEventListener('keydown', resetIdleTimer, { passive: true });
+            window.addEventListener('click', resetIdleTimer, { passive: true });
+            window.addEventListener('touchstart', resetIdleTimer, { passive: true });
         }
 
         checkAuth();
@@ -3386,13 +3523,28 @@
         });
 
         // --- Custom Dropdown Logic ---
+        const ALL_CUSTOM_DROPDOWNS = [
+            { dropdownId: 'statusDropdown', wrapperId: 'statusFilterWrapper' },
+            { dropdownId: 'jobTypeDropdown', wrapperId: 'jobTypeFilterWrapper' },
+            { dropdownId: 'yearDropdown', wrapperId: 'yearFilterWrapper' },
+            { dropdownId: 'exportMonthDropdown', wrapperId: 'exportMonthWrapper' },
+            { dropdownId: 'exportMonthYearDropdown', wrapperId: 'exportMonthYearWrapper' },
+            { dropdownId: 'exportYearModeDropdown', wrapperId: 'exportYearModeWrapper' },
+            { dropdownId: 'exportYearDropdown', wrapperId: 'exportYearValueWrapper' },
+            { dropdownId: 'exportJobTypeDropdown', wrapperId: 'exportJobTypeWrapper' },
+            { dropdownId: 'exportStatusDropdown', wrapperId: 'exportStatusWrapper' }
+        ];
+
         function toggleDropdown(id) {
-            // Close other dropdowns
-            if (id !== 'statusDropdown') document.getElementById('statusDropdown').classList.add('hidden');
-            if (id !== 'yearDropdown') document.getElementById('yearDropdown').classList.add('hidden');
+            ALL_CUSTOM_DROPDOWNS.forEach(({ dropdownId }) => {
+                if (dropdownId !== id) {
+                    const el = document.getElementById(dropdownId);
+                    if (el) el.classList.add('hidden');
+                }
+            });
 
             const dropdown = document.getElementById(id);
-            dropdown.classList.toggle('hidden');
+            if (dropdown) dropdown.classList.toggle('hidden');
         }
 
         function selectStatus(val, label, colorClass = null) {
@@ -3415,18 +3567,12 @@
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', function (event) {
-            if (!event.target.closest('#statusFilterWrapper')) {
-                const sd = document.getElementById('statusDropdown');
-                if (sd) sd.classList.add('hidden');
-            }
-            if (!event.target.closest('#jobTypeFilterWrapper')) {
-                const jd = document.getElementById('jobTypeDropdown');
-                if (jd) jd.classList.add('hidden');
-            }
-            if (!event.target.closest('#yearFilterWrapper')) {
-                const yd = document.getElementById('yearDropdown');
-                if (yd) yd.classList.add('hidden');
-            }
+            ALL_CUSTOM_DROPDOWNS.forEach(({ dropdownId, wrapperId }) => {
+                if (!event.target.closest(`#${wrapperId}`)) {
+                    const el = document.getElementById(dropdownId);
+                    if (el) el.classList.add('hidden');
+                }
+            });
         });
 
         // --- Audit Log Logic ---
@@ -3571,6 +3717,77 @@
             'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
         ];
 
+        const exportJobTypeIconsMap = {
+            'เดินทางไปปฏิบัติงาน': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> เดินทางไปปฏิบัติงาน</span>',
+            'จัดซื้อจัดจ้าง': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> จัดซื้อจัดจ้าง</span>',
+            'โครงการ': '<span class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg> โครงการ</span>'
+        };
+
+        function selectExportMonth(val, label, triggerPreview = true) {
+            const input = document.getElementById('exportMonthSelect');
+            const labelEl = document.getElementById('exportMonthLabel');
+            const dropdown = document.getElementById('exportMonthDropdown');
+            if (input) input.value = String(val);
+            if (labelEl) labelEl.innerText = label;
+            if (dropdown) dropdown.classList.add('hidden');
+            if (triggerPreview) updateExportPreview();
+        }
+
+        function selectExportMonthYear(val, label, triggerPreview = true) {
+            const input = document.getElementById('exportMonthYearSelect');
+            const labelEl = document.getElementById('exportMonthYearLabel');
+            const dropdown = document.getElementById('exportMonthYearDropdown');
+            if (input) input.value = String(val);
+            if (labelEl) labelEl.innerText = label;
+            if (dropdown) dropdown.classList.add('hidden');
+            if (triggerPreview) updateExportPreview();
+        }
+
+        function selectExportYearMode(val, label) {
+            const input = document.getElementById('exportYearModeSelect');
+            const labelEl = document.getElementById('exportYearModeLabel');
+            const dropdown = document.getElementById('exportYearModeDropdown');
+            if (input) input.value = val;
+            if (labelEl) labelEl.innerText = label;
+            if (dropdown) dropdown.classList.add('hidden');
+            populateExportYearOptions();
+            updateExportPreview();
+        }
+
+        function selectExportYear(val, label, triggerPreview = true) {
+            const input = document.getElementById('exportYearSelect');
+            const labelEl = document.getElementById('exportYearLabel');
+            const dropdown = document.getElementById('exportYearDropdown');
+            if (input) input.value = String(val);
+            if (labelEl) labelEl.innerText = label;
+            if (dropdown) dropdown.classList.add('hidden');
+            if (triggerPreview) updateExportPreview();
+        }
+
+        function selectExportJobType(val) {
+            const input = document.getElementById('exportJobTypeSelect');
+            const labelEl = document.getElementById('exportJobTypeLabel');
+            const dropdown = document.getElementById('exportJobTypeDropdown');
+            if (input) input.value = val;
+            if (labelEl) labelEl.innerHTML = val === 'all' ? 'ประเภทงานทั้งหมด' : exportJobTypeIconsMap[val];
+            if (dropdown) dropdown.classList.add('hidden');
+            updateExportPreview();
+        }
+
+        function selectExportStatus(val, label, colorClass = null) {
+            const input = document.getElementById('exportStatusSelect');
+            const labelEl = document.getElementById('exportStatusLabel');
+            const dropdown = document.getElementById('exportStatusDropdown');
+            if (input) input.value = val;
+            if (labelEl) {
+                labelEl.innerHTML = colorClass
+                    ? `<span class="w-2 h-2 rounded-full ${colorClass}"></span>${label}`
+                    : label;
+            }
+            if (dropdown) dropdown.classList.add('hidden');
+            updateExportPreview();
+        }
+
         function initExportControls() {
             const now = new Date();
             const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -3592,8 +3809,9 @@
                 exportPickersInitialized = true;
             }
 
-            // Populate Month Year Select (Available calendar years in data + current year)
-            const calYears = new Set([now.getFullYear() + 543]);
+            // Populate Month Year Custom Dropdown (Available calendar years in data + current year)
+            const currentYearBE = now.getFullYear() + 543;
+            const calYears = new Set([currentYearBE]);
             allBdData.forEach(item => {
                 if (item.created_at) {
                     const d = new Date(item.created_at);
@@ -3601,16 +3819,16 @@
                 }
             });
             const sortedCalYears = [...calYears].sort((a, b) => b - a);
-            const monthYearSelect = document.getElementById('exportMonthYearSelect');
-            if (monthYearSelect) {
-                monthYearSelect.innerHTML = sortedCalYears.map(y => `<option value="${y}">พ.ศ. ${y}</option>`).join('');
-                monthYearSelect.value = String(now.getFullYear() + 543);
+            const monthYearDropdown = document.getElementById('exportMonthYearDropdown');
+            if (monthYearDropdown) {
+                monthYearDropdown.innerHTML = sortedCalYears.map(y =>
+                    `<div onclick="selectExportMonthYear('${y}', 'พ.ศ. ${y}')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">พ.ศ. ${y}</div>`
+                ).join('');
             }
+            selectExportMonthYear(currentYearBE, `พ.ศ. ${currentYearBE}`, false);
 
-            const monthSelect = document.getElementById('exportMonthSelect');
-            if (monthSelect) {
-                monthSelect.value = String(now.getMonth());
-            }
+            const currentMonthIdx = now.getMonth();
+            selectExportMonth(currentMonthIdx, THAI_MONTHS_FULL[currentMonthIdx], false);
 
             populateExportYearOptions();
         }
@@ -3618,8 +3836,8 @@
         function populateExportYearOptions() {
             const mode = document.getElementById('exportYearModeSelect')?.value || 'fiscal';
             const wrapper = document.getElementById('exportYearValueWrapper');
-            const select = document.getElementById('exportYearSelect');
-            if (!select || !wrapper) return;
+            const dropdown = document.getElementById('exportYearDropdown');
+            if (!dropdown || !wrapper) return;
 
             if (mode === 'all') {
                 wrapper.classList.add('hidden');
@@ -3631,15 +3849,20 @@
             const years = new Set();
 
             if (mode === 'fiscal') {
-                years.add(getFiscalYear(now.toISOString()));
+                const currentFY = getFiscalYear(now.toISOString());
+                years.add(currentFY);
                 allBdData.forEach(item => {
                     const fy = getFiscalYear(item.created_at);
                     if (fy) years.add(fy);
                 });
                 const sorted = [...years].sort((a, b) => b - a);
-                select.innerHTML = sorted.map(y => `<option value="${y}">ปีงบประมาณ ${y}</option>`).join('');
+                dropdown.innerHTML = sorted.map(y =>
+                    `<div onclick="selectExportYear('${y}', 'ปีงบประมาณ ${y}')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">ปีงบประมาณ ${y}</div>`
+                ).join('');
+                selectExportYear(sorted[0], `ปีงบประมาณ ${sorted[0]}`, false);
             } else {
-                years.add(now.getFullYear() + 543);
+                const currentYearBE = now.getFullYear() + 543;
+                years.add(currentYearBE);
                 allBdData.forEach(item => {
                     if (item.created_at) {
                         const d = new Date(item.created_at);
@@ -3647,7 +3870,10 @@
                     }
                 });
                 const sorted = [...years].sort((a, b) => b - a);
-                select.innerHTML = sorted.map(y => `<option value="${y}">พ.ศ. ${y}</option>`).join('');
+                dropdown.innerHTML = sorted.map(y =>
+                    `<div onclick="selectExportYear('${y}', 'พ.ศ. ${y}')" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-blue-600 cursor-pointer transition-colors flex items-center gap-2">พ.ศ. ${y}</div>`
+                ).join('');
+                selectExportYear(sorted[0], `พ.ศ. ${sorted[0]}`, false);
             }
         }
 
@@ -3800,7 +4026,7 @@
             const statusLabelsMap = {
                 all: 'ทุกสถานะ',
                 pending: 'กำลังดำเนินการ',
-                overdue: 'เกินกำหนด (ล่าช้า ≥ 5 วันทำการ)',
+                overdue: 'เกินระยะเวลาที่กำหนด',
                 completed: 'ปิดรายการสมบูรณ์',
                 'ยกเลิก': 'ยกเลิกรายการ'
             };
@@ -3896,7 +4122,20 @@
         // =======================================================
         // 🟢 1. EXPORT TO EXCEL (.XLSX)
         // =======================================================
+        // ป้องกันช่องโหว่ Excel / CSV Formula Injection (OWASP CWE-1236)
+        function sanitizeExcelCell(val) {
+            if (val === null || val === undefined) return '-';
+            if (typeof val === 'number') return val;
+            const str = String(val);
+            if (str === '-' || str === '') return str;
+            if (/^[=+\-@\t\r]/.test(str)) {
+                return "'" + str;
+            }
+            return str;
+        }
+
         function handleExportExcel() {
+            if (currentUserRole === 'user') return;
             const { records, periodLabel, jobTypeLabel, statusLabel, summary } = getFilteredExportDataAndMeta();
             if (records.length === 0) {
                 Swal.fire({
@@ -3926,7 +4165,7 @@
                     'วันที่สร้างรายการ',
                     'ปีงบประมาณ',
                     'เลขที่ BD',
-                    'เลขที่ MM/คำสั่ง',
+                    'เลขที่ MM/ศล.ภ./คำสั่ง',
                     'ชื่อผู้ขอยืม',
                     'ผู้รับผิดชอบจริง',
                     'ประเภทงาน',
@@ -3958,12 +4197,12 @@
                     idx + 1,
                     item.created_at ? formatThaiShortDate(item.created_at) : '-',
                     getFiscalYear(item.created_at) || '-',
-                    item.bd_number || '-',
-                    item.mm_number || '-',
-                    item.borrower_name || '-',
-                    item.actual_borrower_name || '-',
-                    item.job_type || '-',
-                    item.item_name || '-',
+                    sanitizeExcelCell(item.bd_number || '-'),
+                    sanitizeExcelCell(item.mm_number || '-'),
+                    sanitizeExcelCell(item.borrower_name || '-'),
+                    sanitizeExcelCell(item.actual_borrower_name || '-'),
+                    sanitizeExcelCell(item.job_type || '-'),
+                    sanitizeExcelCell(item.item_name || '-'),
                     amt,
                     item.status === 'ยกเลิก' ? 0 : (used > 0 || item.cleared_date ? used : ''),
                     bal,
@@ -3971,12 +4210,12 @@
                     item.send_date ? formatThaiShortDate(item.send_date) : '-',
                     item.activity_end_date ? formatThaiShortDate(item.activity_end_date) : '-',
                     item.cleared_date ? formatThaiShortDate(item.cleared_date) : '-',
-                    item.doc_return_number || '-',
-                    item.pp_number || '-',
+                    sanitizeExcelCell(item.doc_return_number || '-'),
+                    sanitizeExcelCell(item.pp_number || '-'),
                     item.return_date ? formatThaiShortDate(item.return_date) : '-',
-                    item.status || '-',
+                    sanitizeExcelCell(item.status || '-'),
                     overdue >= 5 ? overdue : '-',
-                    item.cancel_reason || '-'
+                    sanitizeExcelCell(item.cancel_reason || '-')
                 ]);
             });
 
@@ -4007,7 +4246,7 @@
                 { wch: 15 }, // วันที่สร้างรายการ
                 { wch: 12 }, // ปีงบประมาณ
                 { wch: 16 }, // เลขที่ BD
-                { wch: 18 }, // เลขที่ MM/คำสั่ง
+                { wch: 18 }, // เลขที่ MM/ศล.ภ./คำสั่ง
                 { wch: 22 }, // ชื่อผู้ขอยืม
                 { wch: 22 }, // ผู้รับผิดชอบจริง
                 { wch: 20 }, // ประเภทงาน
@@ -4035,6 +4274,7 @@
         // 🔴 2. EXPORT TO OFFICIAL PDF (A4 LANDSCAPE)
         // =======================================================
         function handleExportPDF() {
+            if (currentUserRole === 'user') return;
             const { records, periodLabel, jobTypeLabel, statusLabel, summary } = getFilteredExportDataAndMeta();
             if (records.length === 0) {
                 Swal.fire({
@@ -4339,7 +4579,7 @@ ${oTag}body onload="setTimeout(function(){ window.print(); }, 400)">
                     <th style="width: 32px;">#</th>
                     <th>วันที่สร้าง</th>
                     <th>เลขที่ BD</th>
-                    <th>เลขที่ MM/คำสั่ง</th>
+                    <th>เลขที่ MM/ศล.ภ./คำสั่ง</th>
                     <th>ผู้ขอยืม</th>
                     <th>ประเภท</th>
                     <th>รายการ</th>

@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://npmcdn.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
+        content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://bixfhtemapsrahdrkaze.supabase.co; img-src 'self' data: https:;">
     <title>BD Tracking System R8</title>
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -325,11 +325,11 @@
         <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();" class="space-y-6">
             <div>
                 <label class="block text-sm font-medium text-slate-600 mb-2">ชื่อผู้ใช้งาน (Username)</label>
-                <input type="text" id="username" class="apple-input">
+                <input type="text" id="username" class="apple-input" autocomplete="username" required maxlength="64">
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-600 mb-2">รหัสผ่าน (Password)</label>
-                <input type="password" id="password" class="apple-input">
+                <input type="password" id="password" class="apple-input" autocomplete="current-password" required maxlength="128">
             </div>
             <button type="submit" id="loginBtn" class="apple-btn-primary mt-4">
                 ลงชื่อเข้าใช้
@@ -387,9 +387,24 @@
 
         // --- 2. ฟังก์ชันจัดการการเข้าสู่ระบบ ---
         async function handleLogin() {
-            const usernameInput = document.getElementById('username').value.trim();
+            const rawUsername = document.getElementById('username').value.trim();
+            const usernameInput = rawUsername.replace(/[^a-zA-Z0-9._-]/g, '');
             const passwordInput = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
+
+            if (!usernameInput || !passwordInput) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ข้อมูลไม่ครบถ้วน',
+                    text: 'กรุณากรอกชื่อผู้ใช้งานและรหัสผ่านให้ครบถ้วน',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'rounded-[20px]',
+                        confirmButton: 'bg-amber-50 text-amber-600 hover:bg-amber-100 px-6 py-2.5 rounded-full font-medium transition-colors border border-amber-200 shadow-sm mx-2'
+                    }
+                });
+                return;
+            }
 
             // รวม Username เข้ากับโดเมนจำลอง เพื่อส่งให้ Supabase ตรวจสอบ
             const mappedEmail = usernameInput + INTERNAL_DOMAIN;
